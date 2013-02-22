@@ -43,8 +43,8 @@ RESTful request can ba made to any implementation of CosmObjects(model) via the 
 <li>Trigger -> TriggerRequester // TODO</li>
 </ul>
 
-On success, the Requester implementation will return the object post CRUD operation (with the exception of delete, returns void).
-On faliure, the Requester implementation will throw:
+<br/>On success, the Requester implementation will return the object post CRUD operation (with the exception of delete, returns void).
+<br/>On faliure, the Requester implementation will throw:
 <ul>
 <li>HttpException, if the response status is not 2xx</li>
 <li>ParseToObjectException, if the returned response cannot be parse into CosmObject implementations </li>
