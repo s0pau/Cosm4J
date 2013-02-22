@@ -1,5 +1,8 @@
 package com.cosm.client.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
@@ -11,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value = "datapoint")
-// @XmlRootElement(name = "datapoints")
+@XmlRootElement(name = "datapoints")
 public class Datapoint implements CosmObject
 {
 	/**
@@ -38,5 +41,12 @@ public class Datapoint implements CosmObject
 	public void setValue(String value)
 	{
 		this.value = value;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getIdString()
+	{
+		return at;
 	}
 }

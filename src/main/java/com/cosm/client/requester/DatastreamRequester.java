@@ -1,7 +1,5 @@
 package com.cosm.client.requester;
 
-import org.apache.http.HttpException;
-
 import com.cosm.client.model.Datastream;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
 
@@ -59,7 +57,7 @@ public class DatastreamRequester
 	private String getResourcesPath(String feedId)
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("/").append("feeds").append("/").append(feedId).append("/").append("datastreams");
+		sb.append("feeds").append("/").append(feedId).append("/").append("datastreams");
 		return sb.toString();
 	}
 }

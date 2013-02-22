@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpException;
-
 import com.cosm.client.model.Datastream;
 import com.cosm.client.model.Feed;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
@@ -101,7 +99,7 @@ public class FeedRequester
 	private String getResourcesPath()
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("/").append("feeds");
+		sb.append("feeds");
 		return sb.toString();
 	}
 

@@ -2,6 +2,7 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -124,5 +125,12 @@ public class Datastream implements CosmObject
 	public void setDatapoints(Collection<Datapoint> datapoints)
 	{
 		this.datapoints = datapoints;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getIdString()
+	{
+		return id;
 	}
 }

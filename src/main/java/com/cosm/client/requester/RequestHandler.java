@@ -8,6 +8,8 @@ import com.cosm.client.CosmConfig.AcceptedMediaType;
 import com.cosm.client.model.CosmObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -80,36 +82,76 @@ public class RequestHandler
 		// TODO user agent
 		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMedia();
 
-		String apiCall = appPath;
+		String apiUri = appPath;
 		if (RequestMethod.GET == requestMethod)
 		{
-			apiCall = apiCall.concat(".").concat(mediaType.name());
+			apiUri = apiUri.concat(".").concat(mediaType.name());
+		}
+		apiUri = concatParams(apiUri, params);
+
+		ClientResponse response = null;
+
+		try
+		{
+			WebResource service = getClient().resource(baseURI);
+			WebResource.Builder b = service.path(apiUri).accept(mediaType.getMediaType())
+					.header(HEADER_KEY_API, CosmConfig.getInstance().getApiKey());
+
+			if (RequestMethod.DELETE == requestMethod)
+			{
+				response = b.delete(ClientResponse.class);
+			} else if (RequestMethod.GET == requestMethod)
+			{
+				response = b.get(ClientResponse.class);
+			} else if (RequestMethod.POST == requestMethod)
+			{
+				String json = ParserUtil.toJson(getObjectMapper(), false, body);
+				response = b.post(ClientResponse.class, json);
+			} else if (RequestMethod.PUT == requestMethod)
+			{
+				String json = ParserUtil.toJson(getObjectMapper(), true, body);
+				response = b.put(ClientResponse.class, json);
+			}
+		} catch (UniformInterfaceException e)
+		{
+			throw new HttpException("Http request did not return successfully.", e.getResponse());
 		}
 
-		apiCall = concatParams(apiCall, params);
+		if (!isHttpStatusOK(response.getStatus()))
+		{
+			throw new HttpException("Http request returned with unsuccessful status.", response);
+		}
 
-		WebResource service = getClient().resource(baseURI);
-		WebResource.Builder b = service.path(apiCall).accept(mediaType.getMediaType())
-				.header(HEADER_KEY_API, CosmConfig.getInstance().getApiKey());
+		return extractResponse(requestMethod, appPath, response, body);
+	}
 
-		String response = null;
+	private <T extends CosmObject> String extractResponse(RequestMethod requestMethod, String appPath, ClientResponse response,
+			T... body)
+	{
+		String retval = "";
+
 		if (RequestMethod.DELETE == requestMethod)
 		{
-			response = b.delete(String.class);
+			retval = "1";
 		} else if (RequestMethod.GET == requestMethod)
 		{
-			response = b.get(String.class);
+			retval = response.getEntity(String.class);
 		} else if (RequestMethod.POST == requestMethod)
 		{
-			String json = ParserUtil.toJson(getObjectMapper(), false, body);
-			b.post(json);
+			StringBuilder sb = new StringBuilder();
+			for (T o : body)
+			{
+				sb.append(baseURI);
+				sb.append(appPath).append("/");
+				sb.append(o.getIdString());
+			}
+			retval = sb.toString();
 		} else if (RequestMethod.PUT == requestMethod)
 		{
-			String json = ParserUtil.toJson(getObjectMapper(), true, body);
-			b.put(json);
+			retval = "1";
 		}
 
-		return response;
+		return retval;
 	}
 
 	private Client getClient()
@@ -130,15 +172,18 @@ public class RequestHandler
 		{
 			ObjectMapper retval = new ObjectMapper();
 
-			JacksonXmlModule module = new JacksonXmlModule();
-			module.setDefaultUseWrapper(false);
-
-			AnnotationIntrospector primary = new JacksonAnnotationIntrospector();
-			AnnotationIntrospector secondary = new JaxbAnnotationIntrospector();
-			AnnotationIntrospector pair = new AnnotationIntrospector.Pair(primary, secondary);
-			retval.getDeserializationConfig().setAnnotationIntrospector(pair);
-			retval.getSerializationConfig().setAnnotationIntrospector(pair);
-
+			// JacksonXmlModule module = new JacksonXmlModule();
+			// module.setDefaultUseWrapper(false);
+			//
+			// AnnotationIntrospector primary = new
+			// JacksonAnnotationIntrospector();
+			// AnnotationIntrospector secondary = new
+			// JaxbAnnotationIntrospector();
+			// AnnotationIntrospector pair = new
+			// AnnotationIntrospector.Pair(primary, secondary);
+			// retval.getDeserializationConfig().setAnnotationIntrospector(pair);
+			// retval.getSerializationConfig().setAnnotationIntrospector(pair);
+			//
 			// retval.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 			// retval.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 			objectMapper = retval;
@@ -193,5 +238,15 @@ public class RequestHandler
 		}
 
 		return sb.toString();
+	}
+
+	private boolean isHttpStatusOK(int statusCode)
+	{
+		if (statusCode >= 300)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

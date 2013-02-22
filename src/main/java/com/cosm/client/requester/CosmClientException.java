@@ -1,24 +1,27 @@
 package com.cosm.client.requester;
 
-import java.io.IOException;
-
 public class CosmClientException extends RuntimeException
 {
-	Exception wrapped;
+	public CosmClientException(String msg, Throwable e)
+	{
+		super(msg, e);
+	}
 
-	public CosmClientException(String msg, IOException e)
+	public CosmClientException(String msg)
 	{
 		super(msg);
-		this.wrapped = e;
 	}
 
-	public Throwable getCause()
+	@Override
+	public String getLocalizedMessage()
 	{
-		return wrapped == null ? null : wrapped.getCause();
+		return String.format("%s: exception: %s", super.getMessage(), super.getCause() == null ? "" : super.getCause()
+				.getLocalizedMessage());
 	}
 
-	public String getLocalisedMessage()
+	@Override
+	public synchronized Throwable getCause()
 	{
-		return wrapped == null ? null : wrapped.getLocalizedMessage();
+		return super.getCause();
 	}
 }

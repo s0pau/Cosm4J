@@ -2,6 +2,7 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -74,5 +75,12 @@ public class ApiKey implements CosmObject
 	public void setPermissions(Collection<Permission> permissions)
 	{
 		this.permissions = permissions;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getIdString()
+	{
+		return apiKey;
 	}
 }

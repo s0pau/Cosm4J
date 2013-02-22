@@ -1,5 +1,7 @@
 package com.cosm.client.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Marker interface for all resources that can be requested from Cosm API
  * directly
@@ -9,4 +11,5 @@ package com.cosm.client.model;
  */
 public interface CosmObject
 {
+	String getIdString();
 }

@@ -23,6 +23,7 @@ public class ParserUtil
 	 */
 	static <T extends CosmObject> String toJson(ObjectMapper objectMapper, boolean isUpdate, T... models)
 	{
+		// TODO strip nodes that has a null key
 		String json = null;
 
 		try

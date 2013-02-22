@@ -3,9 +3,9 @@ package com.cosm.client.model;
 import java.net.URI;
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Feed resource/model
@@ -192,5 +192,12 @@ public class Feed implements CosmObject
 	public void setDatastreams(Collection<Datastream> datastreams)
 	{
 		this.datastreams = datastreams;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getIdString()
+	{
+		return String.valueOf(id);
 	}
 }

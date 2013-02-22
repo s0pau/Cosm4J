@@ -3,8 +3,6 @@ package com.cosm.client.requester;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpException;
-
 import com.cosm.client.model.Datapoint;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
 
@@ -41,14 +39,14 @@ public class DatapointRequester
 		return requestHandler.doRequest(RequestMethod.GET, getParentResourcePath(feedId, dataStreamId), params);
 	}
 
-	public void update(String feedId, String dataStreamId, Datapoint toUpdate) throws HttpException
+	public String update(String feedId, String dataStreamId, Datapoint toUpdate) throws HttpException
 	{
-		requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, dataStreamId, toUpdate.getAt()), toUpdate);
+		return requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, dataStreamId, toUpdate.getAt()), toUpdate);
 	}
 
-	public void delete(String feedId, String dataStreamId, String datapointAt) throws HttpException
+	public String delete(String feedId, String dataStreamId, String datapointAt) throws HttpException
 	{
-		requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
+		return requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
 	}
 
 	public void deleteMultiple(String feedId, String dataStreamId, String startAt) throws HttpException
@@ -83,7 +81,7 @@ public class DatapointRequester
 	private String getResourcesPath(String feedId, String dataStreamId)
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("/").append("feeds").append("/").append(feedId);
+		sb.append("feeds").append("/").append(feedId);
 		sb.append("/").append("datastreams").append("/").append(dataStreamId);
 		sb.append("/").append("datapoints");
 		return sb.toString();
@@ -98,7 +96,7 @@ public class DatapointRequester
 	private String getParentResourcePath(String feedId, String dataStreamId)
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("/").append("feeds").append("/").append(feedId);
+		sb.append("feeds").append("/").append(feedId);
 		sb.append("/").append("datastreams").append("/").append(dataStreamId);
 		return sb.toString();
 	}
