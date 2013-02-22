@@ -24,6 +24,10 @@ import com.sun.jersey.api.json.JSONConfiguration;
 public class RequestHandler
 {
 	private static final String HEADER_KEY_API = "X-ApiKey";
+	private static final String HEADER_USER_AGENT = "User Agent";
+	// TODO share properties between this and maven 
+	private static final String COSM_USER_AGENT = "cosm-java";
+	
 	private String baseURI;
 
 	private Client httpClient;
@@ -78,8 +82,6 @@ public class RequestHandler
 	private <T extends CosmObject> String doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params,
 			T... body)
 	{
-
-		// TODO user agent
 		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMedia();
 
 		String apiUri = appPath;
@@ -95,7 +97,8 @@ public class RequestHandler
 		{
 			WebResource service = getClient().resource(baseURI);
 			WebResource.Builder b = service.path(apiUri).accept(mediaType.getMediaType())
-					.header(HEADER_KEY_API, CosmConfig.getInstance().getApiKey());
+					.header(HEADER_KEY_API, CosmConfig.getInstance().getApiKey())
+					.header(HEADER_USER_AGENT, COSM_USER_AGENT);
 
 			if (RequestMethod.DELETE == requestMethod)
 			{
