@@ -31,11 +31,13 @@ CosmObject is the interface for all objects that can be directly accessed via Co
 
 RESTful request can ba made to any implementation of CosmObjects(model) via the corresponding implementaion of Requesters: 
 
-Feed -> FeedRequester
-Datastream -> DatastreamRequester
-Datapoint -> DatapointRequester
-ApiKey -> ApiKeyRequester // TODO 
-Trigger -> TriggerRequester // TODO
+<ul>
+<li>Feed -> FeedRequester</li>
+<li>Datastream -> DatastreamRequester</li>
+<li>Datapoint -> DatapointRequester</li>
+<li>ApiKey -> ApiKeyRequester // TODO </li>
+<li>Trigger -> TriggerRequester // TODO</li>
+</ul>
 
 On success, the Requester implementation will return the object post CRUD operation (with the exception of delete, returns void).
 On faliure, the Requester implementation will throw:
