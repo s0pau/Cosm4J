@@ -33,7 +33,7 @@ CosmObject is the interface for all objects that can be directly accessed via Co
 
 ## RESTful Requests
 
-RESTful request can ba made to any implementation of CosmObjects(model) via the corresponding implementaion of Requesters: 
+RESTful request can be made to any implementation of CosmObjects(model) via the corresponding implementaion of Requesters: 
 
 <ul>
 <li>Feed -> FeedRequester</li>
