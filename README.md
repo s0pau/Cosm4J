@@ -24,21 +24,27 @@ To use cosm-java library on Maven-based projects, use following dependency:
 
 # Quickstart
 
+## Config
+CosmConfig contains the configuration needed for the library. 
+User preferences are loaded from config.properties into CosmObject, overwriting the default value if user preference is specified. 
+
 ## CosmObject
 CosmObject is the interface for all objects that can be directly accessed via Cosm's restful API.
 
-## RESTful requests
+## RESTful Requests
 
-RESTful request can ba made to any implementation of CosmObjects(model) via the corresponding implementaion of Requesters: 
+RESTful request can be made to any implementation of CosmObjects(model) via the corresponding implementaion of Requesters: 
 
-Feed -> FeedRequester
-Datastream -> DatastreamRequester
-Datapoint -> DatapointRequester
-ApiKey -> ApiKeyRequester // TODO 
-Trigger -> TriggerRequester // TODO
+<ul>
+<li>Feed -> FeedRequester</li>
+<li>Datastream -> DatastreamRequester</li>
+<li>Datapoint -> DatapointRequester</li>
+<li>ApiKey -> ApiKeyRequester // TODO </li>
+<li>Trigger -> TriggerRequester // TODO</li>
+</ul>
 
-On success, the Requester implementation will return the object post CRUD operation (with the exception of delete, returns void).
-On faliure, the Requester implementation will throw:
+<br/>On success, the Requester implementation will return the object post CRUD operation (with the exception of delete, returns void).
+<br/>On faliure, the Requester implementation will throw:
 <ul>
 <li>HttpException, if the response status is not 2xx</li>
 <li>ParseToObjectException, if the returned response cannot be parse into CosmObject implementations </li>
@@ -54,16 +60,8 @@ CosmClientException - any exception thrown out of the cosm-java library is a sub
 ## Mobile Feeds
 // TODO 
 
-# TODO
-<ul>
-<li>Java 7</li>
-<li>Maven 3 integration</li>
-<li>RESTful client using Jersey (implementation of JAX-RS)</li>
-<li>TODO JSON/XML parsing to dataobjects for downstream OO handling</li>
-<li>TODO add CSV support</li>
-<li>TODO add web socket support</li>
-<li>TODO add trigger support</li>
-<li>TODO add slf4j logging</li>
-<li>TODO add google-guice dependency injection</li>
-</ul>
+## Mobile Feeds
+// TODO 
+
+
 
