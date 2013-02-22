@@ -1,14 +1,20 @@
 package com.cosm.client.requester;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.CosmConfig.AcceptedMediaType;
@@ -19,46 +25,90 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class DatapointRequesterTest
 {
-	private static final String datapointId = "2013-02-03T00:00:00.000000Z";
 	private static final String feedId = "97684";
 	private static final String datastreamId = "Light_Level";
-	private static final String datapointId2 = "2013-01-01T00:00:00.000000Z";
+	private static final String datapointId1 = "2013-01-01T00:00:00.000000Z";
+	private static final String datapointId2 = "2013-02-02T00:00:00.000000Z";
 
-	private DatapointRequester fr;
-	private Datapoint datapoint1;
+	private DatapointRequester requester;
 	private ObjectMapper mapper;
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+	private Datapoint datapoint1;
+	private Datapoint datapoint2;
+	private String datapoint1_JSON;
+	private String datapoint2_JSON;
 
 	@Before
 	public void setUp() throws Exception
 	{
+		// Set up with default config, i.e. JSON as main MIME type for most test
+		// unless otherwise specified.
 		CosmConfig.getInstance().setApiKey("QYz6Tgyg4f2kmo1S9ffFJV8XoKiSAKx1RW40UkNyS1R1UT0g");
-		fr = new DatapointRequester();
+		requester = new DatapointRequester();
 		mapper = new ObjectMapper();
-		// datapoint1 =
-		// Fixjure.of(Datapoint.class).from(YamlSource.newYamlResource("datapoint1.yaml")).create();
+
+		String fixtureUri = "src/test/res";
+		datapoint1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint1.json")), Datapoint.class);
+		datapoint2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint2.json")), Datapoint.class);
+
+		datapoint1_JSON = getStringFromFile(fixtureUri + "/datapoint1.json");
+		datapoint2_JSON = getStringFromFile(fixtureUri + "/datapoint2.json");
+
+		DatapointRequester fr = new DatapointRequester();
+		fr.create(feedId, datastreamId, datapoint1);
+	}
+
+	private String getStringFromFile(String filePath)
+	{
+		try
+		{
+			FileInputStream fileStream = null;
+			try
+			{
+				fileStream = new FileInputStream(new File(filePath));
+				FileChannel fileChannel = fileStream.getChannel();
+				MappedByteBuffer bb = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
+				return Charset.defaultCharset().decode(bb).toString();
+			} finally
+			{
+				fileStream.close();
+			}
+		} catch (IOException io)
+		{
+			throw new RuntimeException(io);
+		}
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
+		tearDownFixture(datapointId1);
+		tearDownFixture(datapointId2);
 		CosmConfig.getInstance().reset();
-		fr = null;
+		requester = null;
+	}
+
+	private void tearDownFixture(String fixtureId)
+	{
+		try
+		{
+			// requester.delete(feedId, datastreamId, fixtureId);
+		} catch (HttpException e)
+		{
+			// NOT_FOUND is ok as the test ran could have not created/deleted it
+			if (HttpStatus.NOT_FOUND.getCode() != e.getStatusCode())
+			{
+				throw e;
+			}
+		}
 	}
 
 	@Test
 	public void testCreate()
 	{
-		DatapointRequester fr = new DatapointRequester();
-		Datapoint toCreate = new Datapoint();
-		toCreate.setAt(datapointId);
-		toCreate.setValue("121");
-
 		try
 		{
-			String s = fr.create(feedId, datastreamId, toCreate);
+			String retval = requester.create(feedId, datastreamId, datapoint2);
+			assertEquals(retval, "http://api.cosm.com/v2/feeds/" + feedId + "/datastreams/" + datastreamId + "/datapoints/" + datapointId2);
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to create a datapoint");
@@ -68,17 +118,12 @@ public class DatapointRequesterTest
 	@Test
 	public void testCreateMultiple()
 	{
-		DatapointRequester fr = new DatapointRequester();
-		Datapoint toCreate1 = new Datapoint();
-		toCreate1.setAt(datapointId2);
-		toCreate1.setValue("111");
-
-		Datapoint toCreate2 = new Datapoint();
-		toCreate2.setAt("2013-02-02T00:00:00.000000Z");
-		toCreate2.setValue("222");
+		// covered in setup... perhaps not needed here
 		try
 		{
-			String s = fr.create(feedId, datastreamId, toCreate1, toCreate2);
+			String retval = requester.create(feedId, datastreamId, datapoint1, datapoint2);
+			assertTrue(retval.contains("http://api.cosm.com/v2/feeds/" + feedId + "/datastreams/" + datastreamId + "/datapoints/" + datapointId1));
+			assertTrue(retval.contains("http://api.cosm.com/v2/feeds/" + feedId + "/datastreams/" + datastreamId + "/datapoints/" + datapointId2));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to create multiple datapoints");
@@ -86,13 +131,14 @@ public class DatapointRequesterTest
 	}
 
 	@Test
-	public void testJSONAcceptHeader()
+	public void testJSONAcceptHeaderAndConverstion()
 	{
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.json);
-			String retval = fr.get(feedId, datastreamId, datapointId);
+			String retval = requester.get(feedId, datastreamId, datapointId1);
 			Datapoint retObj = mapper.readValue(retval, Datapoint.class);
+			assertEqualObjects(retObj, datapoint1);
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a datapoint");
@@ -102,16 +148,18 @@ public class DatapointRequesterTest
 		}
 	}
 
+	@Ignore("unable to deserialise EEML atm")
 	@Test
-	public void testXMLAcceptHeader()
+	public void testXMLAcceptHeaderAndConverstion()
 	{
 		ObjectMapper mapper = new XmlMapper();
 
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.xml);
-			String retval = fr.get(feedId, datastreamId, datapointId);
+			String retval = requester.get(feedId, datastreamId, datapointId1);
 			Datapoint retObj = mapper.readValue(retval, Datapoint.class);
+			// assertEqualToFixture(retObj);
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a datapoint");
@@ -121,17 +169,18 @@ public class DatapointRequesterTest
 		}
 	}
 
+	@Ignore("unable to deserialise CSV atm")
 	@Test
-	public void testCSVAcceptHeader()
+	public void testCSVAcceptHeaderAndConverstion()
 	{
 		CsvMapper mapper = new CsvMapper();
 
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.csv);
-			String retval = fr.get(feedId, datastreamId, datapointId);
+			String retval = requester.get(feedId, datastreamId, datapointId1);
 			Datapoint retObj = mapper.readValue(retval, Datapoint.class);
-			// assert that retval is csv
+			// assertEqualToFixture(retObj);
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a datapoint");
@@ -141,12 +190,20 @@ public class DatapointRequesterTest
 		}
 	}
 
+	private void assertEqualObjects(Datapoint retObj, Datapoint fixtureObj)
+	{
+		assertEquals(fixtureObj.getAt(), retObj.getAt());
+		assertEquals(fixtureObj.getValue(), retObj.getValue());
+	}
+
 	@Test
 	public void testGet()
 	{
 		try
 		{
-			String retval = fr.get(feedId, datastreamId, datapointId);
+			String retval = requester.get(feedId, datastreamId, datapointId1);
+			// assertEquals(datapoint1_JSON, retval);
+			assertTrue(retval.contains("\"at\":\"" + datapointId1 + "\""));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a datapoint");
@@ -156,10 +213,12 @@ public class DatapointRequesterTest
 	@Test
 	public void testGetWithParams()
 	{
-		DatapointRequester fr = new DatapointRequester();
 		try
 		{
-			String s = fr.get(feedId, datastreamId, "2012-04-01T00:00:00.000000Z", "2013-04-01T00:00:00.000000Z", 86400);
+			String retval = requester.get(feedId, datastreamId, "2012-04-01T00:00:00.000000Z", "2013-01-02T00:00:00.000000Z",
+					86400);
+			assertTrue(retval.contains("\"at\":\"" + datapointId1 + "\""));
+			assertTrue(!retval.contains("\"at\":\"" + datapointId2 + "\""));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get datapoints with parameters");
@@ -169,14 +228,13 @@ public class DatapointRequesterTest
 	@Test
 	public void testUpdate()
 	{
-		DatapointRequester fr = new DatapointRequester();
-		Datapoint toUpdate = new Datapoint();
-		toUpdate.setAt(datapointId);
-		toUpdate.setValue("555");
+		datapoint1.setValue("555");
 
 		try
 		{
-			fr.update(feedId, datastreamId, toUpdate);
+			requester.update(feedId, datastreamId, datapoint1);
+			String retval = requester.update(feedId, datastreamId, datapoint1);
+			assertEquals(retval, "1");
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to update a datapoint");
@@ -186,10 +244,10 @@ public class DatapointRequesterTest
 	@Test
 	public void testDelete()
 	{
-		DatapointRequester fr = new DatapointRequester();
 		try
 		{
-			fr.delete(feedId, datastreamId, datapointId2);
+			String retval = requester.delete(feedId, datastreamId, datapointId1);
+			assertEquals(retval, "1");
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a datapoint");
