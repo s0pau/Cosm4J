@@ -1,0 +1,12 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Exclude Eclipse project files#
+target/
+.project
+.settings/
+.classpath
