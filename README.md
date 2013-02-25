@@ -64,4 +64,7 @@ CosmClientException - any exception thrown out of the cosm-java library is a sub
 // TODO 
 
 
-
+// TODO General
+<br/>- move docs to gh_pages
+<br/>- use github maven
+<br/>- use slf4j to log 

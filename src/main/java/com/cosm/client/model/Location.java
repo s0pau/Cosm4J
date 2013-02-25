@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
- * Location model, accessible from {@link Feed}.
+ * Location that describes the {@link Feed}.
  * 
  * @author s0pau
  * 

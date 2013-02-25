@@ -2,6 +2,7 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
+import com.cosm.client.requester.CollectionUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -13,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName("key")
-public class ApiKey implements CosmObject
+public class ApiKey implements CosmObject<ApiKey>
 {
 	/**
 	 * Actual string of the api key
@@ -82,5 +83,48 @@ public class ApiKey implements CosmObject
 	public String getIdString()
 	{
 		return apiKey;
+	}
+
+	@Override
+	public boolean memberEquals(ApiKey other)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null)
+		{
+			return false;
+		}
+
+		if (this == obj)
+		{
+			return true;
+		}
+
+		if (!(obj instanceof ApiKey))
+		{
+			return false;
+		}
+
+		ApiKey other = (ApiKey) obj;
+
+		if (!CollectionUtil.nullCheckEquals(this.apiKey, other.apiKey))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int retval = 1;
+		retval += (apiKey == null ? 0 : apiKey.hashCode() * 37);
+		return retval;
 	}
 }

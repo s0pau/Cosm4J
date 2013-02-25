@@ -2,6 +2,7 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
+import com.cosm.client.requester.CollectionUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -15,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value = "datastream")
-public class Datastream implements CosmObject
+public class Datastream implements CosmObject<Datastream>
 {
 	private String id;
 
@@ -132,5 +133,86 @@ public class Datastream implements CosmObject
 	public String getIdString()
 	{
 		return id;
+	}
+
+	public boolean memberEquals(Datastream other)
+	{
+		if (!equals(other))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.nullCheckEquals(this.updatedAt, other.updatedAt))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.nullCheckEquals(this.value, other.value))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.nullCheckEquals(this.minValue, other.minValue))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.nullCheckEquals(this.maxValue, other.maxValue))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.memberEquals(this.getTags(), other.getTags()))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.nullCheckEquals(this.getUnit(), other.getUnit()))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.memberEquals(this.getDatapoints(), other.getDatapoints()))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null)
+		{
+			return false;
+		}
+
+		if (this == obj)
+		{
+			return true;
+		}
+
+		if (!(obj instanceof Datastream))
+		{
+			return false;
+		}
+
+		Datastream other = (Datastream) obj;
+
+		if (!CollectionUtil.nullCheckEquals(this.id, other.id))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int retval = 1;
+		retval += (id == null ? 0 : id.hashCode() * 37);
+		return retval;
 	}
 }

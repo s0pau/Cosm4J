@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @author s0pau
  * 
  */
-public class Trigger
+public class Trigger implements CosmObject<Trigger>
 {
 
 	/**
@@ -132,5 +132,54 @@ public class Trigger
 	public void setNotifiedAt(String notifiedAt)
 	{
 		this.notifiedAt = notifiedAt;
+	}
+
+	@Override
+	public String getIdString()
+	{
+		return String.valueOf(id);
+	}
+
+	@Override
+	public boolean memberEquals(Trigger other)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null)
+		{
+			return false;
+		}
+
+		if (this == obj)
+		{
+			return true;
+		}
+
+		if (!(obj instanceof Trigger))
+		{
+			return false;
+		}
+
+		Trigger other = (Trigger) obj;
+
+		if (this.id != other.id)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int retval = 1;
+		retval += (id == null ? 0 : id.hashCode() * 37);
+		return retval;
 	}
 }
