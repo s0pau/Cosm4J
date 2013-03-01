@@ -1,5 +1,5 @@
-JCosm
-=====
+cosm-java
+=========
 
 <p>
 Java Cosm Client <i>(formerly Pachube)</i> - wrapper for Cosm Api. 
