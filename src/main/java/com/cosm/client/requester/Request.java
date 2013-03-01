@@ -3,10 +3,10 @@ package com.cosm.client.requester;
 import java.util.Collection;
 import java.util.Map;
 
-import com.cosm.client.model.CosmObject;
+import com.cosm.client.model.ConnectedObject;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
 
-public class Request<T extends CosmObject>
+public class Request<T extends ConnectedObject>
 {
 	RequestMethod requestMethod;
 	String app;

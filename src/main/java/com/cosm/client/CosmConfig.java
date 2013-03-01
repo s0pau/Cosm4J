@@ -2,6 +2,11 @@ package com.cosm.client;
 
 import javax.ws.rs.core.MediaType;
 
+/**
+ * Config for accessing Cosm API.
+ * 
+ * @author s0pau
+ */
 public class CosmConfig
 {
 	private static CosmConfig instance;

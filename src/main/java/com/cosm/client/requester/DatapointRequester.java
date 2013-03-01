@@ -20,9 +20,19 @@ public class DatapointRequester
 {
 	private final RequestHandler<Datapoint> requestHandler = RequestHandler.make();
 
+	/**
+	 * 
+	 * @param feedId
+	 * @param dataStreamId
+	 * @param toCreate
+	 *            datapoint to be created over the API
+	 * @return the datapoint that was passed in, on successful operation
+	 * @throws HttpException
+	 *             if failed to create datapoint over the API
+	 */
 	public Datapoint create(int feedId, String dataStreamId, Datapoint toCreate) throws HttpException
 	{
-		create(feedId, dataStreamId, new Datapoint[] { toCreate });
+		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
 		return toCreate;
 	}
 
@@ -32,15 +42,40 @@ public class DatapointRequester
 		return Arrays.asList(toCreate);
 	}
 
-	public Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException
+	/**
+	 * @param feedId
+	 * @param dataStreamId
+	 * @param datapointAt
+	 *            the id of the datapoint to be retrieved
+	 * @return a datapoint object parsed from the json returned from the API
+	 * @throws HttpException
+	 *             if failed to get datapoint over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to datapoint
+	 */
+	public Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException, ParseToObjectException
 	{
 		Response<Datapoint> response = requestHandler.doRequest(RequestMethod.GET,
 				getResourcePath(feedId, dataStreamId, datapointAt));
 		return response.getBodyAsObject(Datapoint.class);
 	}
 
+	/**
+	 * 
+	 * @param feedId
+	 * @param dataStreamId
+	 * @param startAt
+	 * @param endAt
+	 * @param samplingInterval
+	 * @return a collection of datapoint objects matching the params, parsed
+	 *         from the json returned from the API
+	 * @throws HttpException
+	 *             if failed to get datapoint over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to datapoint
+	 */
 	public Collection<Datapoint> get(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
-			throws HttpException
+			throws HttpException, ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("start", startAt);
@@ -52,6 +87,16 @@ public class DatapointRequester
 		return response.getBodyAsObjects(Datapoint.class);
 	}
 
+	/**
+	 * 
+	 * @param feedId
+	 * @param dataStreamId
+	 * @param toUpdate
+	 *            datapoint to be updated over the API
+	 * @return the datapoint that was passed in, on successful operation
+	 * @throws HttpException
+	 *             if failed to create datapoint over the API
+	 */
 	public Datapoint update(int feedId, String dataStreamId, Datapoint toUpdate) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, dataStreamId, toUpdate.getAt()), toUpdate);

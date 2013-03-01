@@ -1,7 +1,5 @@
 package com.cosm.client.requester;
 
-import com.cosm.client.model.CosmObject;
-
 /**
  * Exception condition when parsing requests to {@link CosmObject}
  * 

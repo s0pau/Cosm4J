@@ -24,7 +24,7 @@ public class DatastreamRequester
 		return Arrays.asList(toCreate);
 	}
 
-	public Datastream get(String feedId, String dataStreamId) throws HttpException
+	public Datastream get(String feedId, String dataStreamId) throws HttpException, ParseToObjectException
 	{
 		Response<Datastream> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId, dataStreamId));
 		return response.getBodyAsObject(Datastream.class);

@@ -20,19 +20,56 @@ public class FeedRequester
 {
 	private final RequestHandler requestHandler = RequestHandler.make();
 
+	/**
+	 * @param toCreate
+	 *            the feed to be created over the API
+	 * @return the feed that was passed in, on successful operation
+	 * @throws HttpException
+	 *             if failed to create feed over the API
+	 */
+	public Feed create(Feed toCreate) throws HttpException
+	{
+		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
+		return toCreate;
+	}
+
 	public Collection<Feed> create(Feed... toCreate) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
 		return Arrays.asList(toCreate);
 	}
 
-	public Feed get(int feedId) throws HttpException
+	/**
+	 * @param feedId
+	 *            the id of the feed to be retrieved
+	 * @return a feed object parsed from the json returned from the API
+	 * @throws HttpException
+	 *             if failed to get feed over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to feed
+	 */
+	public Feed get(int feedId) throws HttpException, ParseToObjectException
+
 	{
 		Response<Feed> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId));
 		return response.getBodyAsObject(Feed.class);
 	}
 
-	public Collection<Feed> get(int feedId, String isShowUser, String... dataStreamIds) throws HttpException
+	/**
+	 * 
+	 * @param feedId
+	 *            the id of the feed to be retrieved
+	 * @param isShowUser
+	 * @param dataStreamIds
+	 * @return a collection of feed objects matching the params, parsed from the
+	 *         json returned from the API
+	 * @throws HttpException
+	 *             if failed to get feed over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to feed
+	 */
+	public Collection<Feed> get(int feedId, String isShowUser, String... dataStreamIds) throws HttpException,
+			ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("datastreams", Arrays.asList(dataStreamIds));
@@ -43,8 +80,22 @@ public class FeedRequester
 	}
 
 	// TODO can this location based params be also in filterParam?
+	/**
+	 * 
+	 * @param feedId
+	 * @param latitude
+	 * @param longitude
+	 * @param distance
+	 * @param distanceUnits
+	 * @return a collection of feed objects matching the params, parsed from the
+	 *         json returned from the API
+	 * @throws HttpException
+	 *             if failed to get feed over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to feed
+	 */
 	public Collection<Feed> getByLocation(int feedId, String latitude, String longitude, Double distance, String distanceUnits)
-			throws HttpException
+			throws HttpException, ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("lat", latitude);
@@ -56,14 +107,36 @@ public class FeedRequester
 		return response.getBodyAsObjects(Feed.class);
 	}
 
-	public Collection<Feed> get(int feedId, FilterParam filterParam) throws HttpException
+	/**
+	 * @param filterParam
+	 * @return a collection of feed objects matching the parameters given,
+	 *         parsed from the json returned from the API
+	 * @throws HttpException
+	 *             if failed to get feed over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to feed
+	 */
+	public Collection<Feed> get(FeedFilterParam filterParam) throws HttpException, ParseToObjectException
 	{
-		Response<Feed> response = requestHandler
-				.doRequest(RequestMethod.GET, getResourcePath(feedId), filterParam.getParamsMap());
+		Response<Feed> response = requestHandler.doRequest(RequestMethod.GET, getResourcesPath(), filterParam.getParamsMap());
 		return response.getBodyAsObjects(Feed.class);
 	}
 
-	public Collection<Feed> get(int feedId, String startAt, String endAt, int samplingInterval) throws HttpException
+	/**
+	 * 
+	 * @param feedId
+	 * @param startAt
+	 * @param endAt
+	 * @param samplingInterval
+	 * @return a feed with history on datastreams and datapoints that matches
+	 *         the given parameters
+	 * @throws HttpException
+	 *             if failed to get feed over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to feed
+	 */
+	public Feed getHistory(int feedId, String startAt, String endAt, int samplingInterval) throws HttpException,
+			ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("start", startAt);
@@ -72,11 +145,18 @@ public class FeedRequester
 
 		Response<Feed> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId), params);
 
-		return response.getBodyAsObjects(Feed.class);
+		return response.getBodyAsObject(Feed.class);
 	}
 
 	// TODO getMobileFeed(), "waypoints" etc
 
+	/**
+	 * @param toUpdate
+	 *            the feed to be updated over the API
+	 * @return the feed that was passed in, on successful operation
+	 * @throws HttpException
+	 *             if failed to get feed over the API
+	 */
 	public Feed update(Feed toUpdate) throws HttpException
 	{
 		Response<Feed> response = requestHandler.doRequest(RequestMethod.PUT, getResourcePath(toUpdate.getId()), toUpdate);
@@ -96,7 +176,7 @@ public class FeedRequester
 	private String getResourcePath(int feedId)
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append(getResourcesPath()).append("/").append(feedId);
+		sb.append(getResourcesPath()).append("/").append(String.valueOf(feedId));
 		return sb.toString();
 	}
 
@@ -112,58 +192,4 @@ public class FeedRequester
 		return sb.toString();
 	}
 
-	static final class FilterParam
-	{
-		enum OrderBy
-		{
-			CreatedAt("created_at"), RetrievedAt("reterived_at"), Relevance("relevance");
-
-			private String queryValue;
-
-			private OrderBy(String queryValue)
-			{
-				this.queryValue = queryValue;
-			}
-
-			public String getQueryValue()
-			{
-				return queryValue;
-			}
-		}
-
-		private Integer onPage;
-
-		private Integer pageSize;
-
-		private Boolean summaryOnly;
-
-		private String textSearch;
-
-		private String tag;
-
-		private String creator;
-
-		private String unitLabel;
-		Feed.Status status;
-		OrderBy orderBy;
-		Boolean showUser;
-
-		Map<String, Object> getParamsMap()
-		{
-			Map<String, Object> params = new HashMap<>();
-
-			params.put("page", onPage);
-			params.put("per_page", pageSize);
-			params.put("content", summaryOnly == null ? null : (summaryOnly ? "summary" : "full"));
-			params.put("q", textSearch);
-			params.put("tag", tag);
-			params.put("user", creator);
-			params.put("units", unitLabel);
-			params.put("status", status);
-			params.put("order", orderBy == null ? null : orderBy.getQueryValue());
-			params.put("show_user", showUser);
-
-			return params;
-		}
-	}
 }
