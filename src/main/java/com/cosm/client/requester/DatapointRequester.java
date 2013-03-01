@@ -21,9 +21,10 @@ public class DatapointRequester
 	private final RequestHandler<Datapoint> requestHandler = RequestHandler.make();
 
 	/**
-	 * 
 	 * @param feedId
+	 *            indirect parent of the datapoint
 	 * @param dataStreamId
+	 *            parent of the datapoint
 	 * @param toCreate
 	 *            datapoint to be created over the API
 	 * @return the datapoint that was passed in, on successful operation
@@ -44,7 +45,9 @@ public class DatapointRequester
 
 	/**
 	 * @param feedId
+	 *            indirect parent of the datapoint
 	 * @param dataStreamId
+	 *            parent of the datapoint
 	 * @param datapointAt
 	 *            the id of the datapoint to be retrieved
 	 * @return a datapoint object parsed from the json returned from the API
@@ -63,7 +66,9 @@ public class DatapointRequester
 	/**
 	 * 
 	 * @param feedId
+	 *            indirect parent of the datapoint
 	 * @param dataStreamId
+	 *            parent of the datapoint
 	 * @param startAt
 	 * @param endAt
 	 * @param samplingInterval
@@ -90,7 +95,9 @@ public class DatapointRequester
 	/**
 	 * 
 	 * @param feedId
+	 *            indirect parent of the datapoint
 	 * @param dataStreamId
+	 *            parent of the datapoint
 	 * @param toUpdate
 	 *            datapoint to be updated over the API
 	 * @return the datapoint that was passed in, on successful operation

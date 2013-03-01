@@ -18,18 +18,55 @@ public class DatastreamRequester
 {
 	private final RequestHandler requestHandler = RequestHandler.make();
 
+	/**
+	 * 
+	 * @param feedId
+	 *            parent of the datastream
+	 * @param toCreate
+	 *            datastream to be created datapoint to be created over the API
+	 * @return the datastream that was passed in, on successful operation
+	 * @throws HttpException
+	 *             if failed to create datastream over the API
+	 */
+	public Datastream create(String feedId, Datastream toCreate) throws HttpException
+	{
+		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId), toCreate);
+		return toCreate;
+	}
+
 	public Collection<Datastream> create(String feedId, Datastream... toCreate) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId), toCreate);
 		return Arrays.asList(toCreate);
 	}
 
+	/**
+	 * @param feedId
+	 *            parent of the datastream
+	 * @param dataStreamId
+	 *            the id of the datastream to be retrieved
+	 * @return a datastream object parsed from the json returned from the API
+	 * @throws HttpException
+	 *             if failed to get datastream over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to datastream
+	 */
 	public Datastream get(String feedId, String dataStreamId) throws HttpException, ParseToObjectException
 	{
 		Response<Datastream> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId, dataStreamId));
 		return response.getBodyAsObject(Datastream.class);
 	}
 
+	/**
+	 * 
+	 * @param feedId
+	 *            parent of the datastream
+	 * @param toUpdate
+	 *            datastream to be updated over the API
+	 * @return the datastream that was passed in, on successful operation
+	 * @throws HttpException
+	 *             if failed to create datastream over the API
+	 */
 	public Datastream update(String feedId, Datastream toUpdate) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, toUpdate.getId()), toUpdate);

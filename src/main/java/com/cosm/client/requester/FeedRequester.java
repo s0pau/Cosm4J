@@ -11,7 +11,7 @@ import com.cosm.client.requester.RequestHandler.RequestMethod;
 /**
  * Class for making request for datapoint from COSM API
  * 
- * {@see https ://cosm.com/docs/v2/feed/}
+ * {@link https ://cosm.com/docs/v2/feed/}
  * 
  * @author s0pau
  * 
