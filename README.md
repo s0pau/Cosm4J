@@ -29,12 +29,12 @@ CosmConfig contains the configuration needed for the library.
 User preferences are loaded from config.properties into ConnectedObject, overwriting the default value if user preference is specified. 
 
 ## ConnectedObject
-ConnectedObject is the interface for all objects that can be directly accessed via Cosm's restful API.
+ConnectedObject is the interface for all objects that can be directly accessed/modified via Cosm's restful API.
 
-## RESTful Requests
+## CRUD Operation on ConnectedObject
+CRUD operations on any ConnectedObject is implemented by Requester. The Requester will make RESTful requests to Cosm's API. It  will encapsulate the parsing of ConnectedObjects to HTTP request parameters and from HTTP response to ConnectedObjects again. Therefore, applications downstream of this library only need to ceonverse in ConnectedObject.
 
-RESTful request can be made to any implementation of ConnectedObjects(model) via the corresponding implementaion of Requesters: 
-
+Each implementation of ConnectedObject has a corresponding implementation of Requester:
 <ul>
 <li>Feed -> FeedRequester</li>
 <li>Datastream -> DatastreamRequester</li>
@@ -43,7 +43,15 @@ RESTful request can be made to any implementation of ConnectedObjects(model) via
 <li>Trigger -> TriggerRequester // TODO</li>
 </ul>
 
-<br/>On success, the Requester implementation will return the object post CRUD operation (with the exception of delete, returns void).
+<br/>On success, the Requester implementation will return the object post CRUD operation:
+
+<ul>
+<li>*create* - returns the ConnectedObject(s) created</li>
+<li>*get (read)* - returns the ConnectedObject(s) retrieved</li>
+<li>*update* - returns the updated ConnectedObject</li>
+<li>*delete* - returns an empty ConnectedObject with the id only (TODO would love to have the deletedat)</li>
+</ul>
+
 <br/>On faliure, the Requester implementation will throw:
 <ul>
 <li>HttpException, if the response status is not 2xx</li>
