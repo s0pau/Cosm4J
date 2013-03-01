@@ -1,10 +1,10 @@
 package com.cosm.client.requester;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.cosm.client.model.Datastream;
 import com.cosm.client.model.Feed;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
 
@@ -20,27 +20,30 @@ public class FeedRequester
 {
 	private final RequestHandler requestHandler = RequestHandler.make();
 
-	public String create(Feed... toCreate) throws HttpException
+	public Collection<Feed> create(Feed... toCreate) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
+		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
+		return Arrays.asList(toCreate);
 	}
 
-	public String get(String feedId) throws HttpException
+	public Feed get(int feedId) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId));
+		Response<Feed> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId));
+		return response.getBodyAsObject(Feed.class);
 	}
 
-	public String get(String feedId, String isShowUser, String... dataStreamIds) throws HttpException
+	public Collection<Feed> get(int feedId, String isShowUser, String... dataStreamIds) throws HttpException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("datastreams", Arrays.asList(dataStreamIds));
 		params.put("show_user", isShowUser);
 
-		return requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId), params);
+		Response<Feed> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId), params);
+		return response.getBodyAsObjects(Feed.class);
 	}
 
 	// TODO can this location based params be also in filterParam?
-	public String getByLocation(String feedId, String latitude, String longitude, Double distance, String distanceUnits)
+	public Collection<Feed> getByLocation(int feedId, String latitude, String longitude, Double distance, String distanceUnits)
 			throws HttpException
 	{
 		Map<String, Object> params = new HashMap<>();
@@ -49,32 +52,38 @@ public class FeedRequester
 		params.put("distance", distance);
 		params.put("distance_unit", distanceUnits);
 
-		return requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId), params);
+		Response<Feed> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId), params);
+		return response.getBodyAsObjects(Feed.class);
 	}
 
-	public String get(String feedId, FilterParam filterParam) throws HttpException
+	public Collection<Feed> get(int feedId, FilterParam filterParam) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId), filterParam.getParamsMap());
+		Response<Feed> response = requestHandler
+				.doRequest(RequestMethod.GET, getResourcePath(feedId), filterParam.getParamsMap());
+		return response.getBodyAsObjects(Feed.class);
 	}
 
-	// TODO what is version?
-	// TODO there is a "waypoints" element for mobile feed? What for?
-	public String get(String feedId, String startAt, String endAt, int samplingInterval) throws HttpException
+	public Collection<Feed> get(int feedId, String startAt, String endAt, int samplingInterval) throws HttpException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("start", startAt);
 		params.put("end", endAt);
 		params.put("interval", samplingInterval);
 
-		return requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId), params);
+		Response<Feed> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId), params);
+
+		return response.getBodyAsObjects(Feed.class);
 	}
 
-	public void update(Datastream toUpdate) throws HttpException
+	// TODO getMobileFeed(), "waypoints" etc
+
+	public Feed update(Feed toUpdate) throws HttpException
 	{
-		requestHandler.doRequest(RequestMethod.PUT, getResourcePath(toUpdate.getId()), toUpdate);
+		Response<Feed> response = requestHandler.doRequest(RequestMethod.PUT, getResourcePath(toUpdate.getId()), toUpdate);
+		return toUpdate;
 	}
 
-	public void delete(String feedId) throws HttpException
+	public void delete(int feedId) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(feedId));
 	}
@@ -84,7 +93,7 @@ public class FeedRequester
 	 * @return the restful path to a specifc datastream resource, which can then
 	 *         be appended to a base path for a complete uri
 	 */
-	private String getResourcePath(String feedId)
+	private String getResourcePath(int feedId)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append(getResourcesPath()).append("/").append(feedId);

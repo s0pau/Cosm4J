@@ -1,5 +1,8 @@
 package com.cosm.client.requester;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.cosm.client.model.Datastream;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
 
@@ -15,19 +18,22 @@ public class DatastreamRequester
 {
 	private final RequestHandler requestHandler = RequestHandler.make();
 
-	public String create(String feedId, Datastream... toCreate) throws HttpException
+	public Collection<Datastream> create(String feedId, Datastream... toCreate) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId), toCreate);
+		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId), toCreate);
+		return Arrays.asList(toCreate);
 	}
 
-	public String get(String feedId, String dataStreamId) throws HttpException
+	public Datastream get(String feedId, String dataStreamId) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId, dataStreamId));
+		Response<Datastream> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId, dataStreamId));
+		return response.getBodyAsObject(Datastream.class);
 	}
 
-	public void update(String feedId, Datastream toUpdate) throws HttpException
+	public Datastream update(String feedId, Datastream toUpdate) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, toUpdate.getId()), toUpdate);
+		return toUpdate;
 	}
 
 	public void delete(String feedId, String dataStreamId) throws HttpException

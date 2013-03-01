@@ -15,7 +15,9 @@ public interface ConnectedObject<T>
 
 	/**
 	 * @param other
-	 * @return true, if all member fields are equal by equal() method (collections are considered equal if the members of the collection's equal() returns true using
+	 * @return true, if all member fields are equal by equal() method
+	 *         (collections are considered equal if the members of the
+	 *         collection's equal() returns true using
 	 *         {@link CollectionUtil#equal(java.util.Collection, java.util.Collection)}
 	 *         ; false otherwise
 	 */

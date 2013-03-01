@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import com.cosm.client.CosmConfig;
 import com.cosm.client.CosmConfig.AcceptedMediaType;
 import com.cosm.client.model.ConnectedObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -21,17 +20,16 @@ import com.sun.jersey.api.json.JSONConfiguration;
  * 
  * @author s0pau
  */
-public class RequestHandler
+public class RequestHandler<T extends ConnectedObject>
 {
 	private static final String HEADER_KEY_API = "X-ApiKey";
 	private static final String HEADER_USER_AGENT = "User Agent";
-	// TODO share properties between this and maven 
+	// TODO share properties between this and maven
 	private static final String COSM_USER_AGENT = "cosm-java";
-	
+
 	private String baseURI;
 
 	private Client httpClient;
-	private ObjectMapper objectMapper;
 
 	public enum RequestMethod
 	{
@@ -48,17 +46,17 @@ public class RequestHandler
 		return new RequestHandler(CosmConfig.getInstance().getBaseURI());
 	}
 
-	public <T extends ConnectedObject> String doRequest(RequestMethod requestMethod, String appPath)
+	public Response<T> doRequest(RequestMethod requestMethod, String appPath)
 	{
 		return doRequest(requestMethod, appPath, (Map<String, Object>) null);
 	}
 
-	public <T extends ConnectedObject> String doRequest(RequestMethod requestMethod, String appPath, T... objects)
+	public Response<T> doRequest(RequestMethod requestMethod, String appPath, T... objects)
 	{
 		return doRequest(requestMethod, appPath, null, objects);
 	}
 
-	public <T extends ConnectedObject> String doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params)
+	public Response<T> doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params)
 	{
 		return doRequest(requestMethod, appPath, params, null);
 	}
@@ -66,7 +64,7 @@ public class RequestHandler
 	/**
 	 * * Make the request to Cosm API and return the response string
 	 * 
-	 * @param <T>
+	 * @param <T extends ConnectedObject>
 	 * 
 	 * @param requestMethod
 	 *            http request methods
@@ -79,8 +77,8 @@ public class RequestHandler
 	 * 
 	 * @return response string
 	 */
-	private <T extends ConnectedObject> String doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params,
-			T... body)
+
+	private Response<T> doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params, T... body)
 	{
 		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMedia();
 
@@ -97,8 +95,7 @@ public class RequestHandler
 		{
 			WebResource service = getClient().resource(baseURI);
 			WebResource.Builder b = service.path(apiUri).accept(mediaType.getMediaType())
-					.header(HEADER_KEY_API, CosmConfig.getInstance().getApiKey())
-					.header(HEADER_USER_AGENT, COSM_USER_AGENT);
+					.header(HEADER_KEY_API, CosmConfig.getInstance().getApiKey()).header(HEADER_USER_AGENT, COSM_USER_AGENT);
 
 			if (RequestMethod.DELETE == requestMethod)
 			{
@@ -108,11 +105,11 @@ public class RequestHandler
 				response = b.get(ClientResponse.class);
 			} else if (RequestMethod.POST == requestMethod)
 			{
-				String json = ParserUtil.toJson(getObjectMapper(), false, body);
+				String json = ParserUtil.toJson(false, body);
 				response = b.post(ClientResponse.class, json);
 			} else if (RequestMethod.PUT == requestMethod)
 			{
-				String json = ParserUtil.toJson(getObjectMapper(), true, body);
+				String json = ParserUtil.toJson(true, body);
 				response = b.put(ClientResponse.class, json);
 			}
 		} catch (UniformInterfaceException e)
@@ -125,35 +122,15 @@ public class RequestHandler
 			throw new HttpException("Http request returned with unsuccessful status.", response);
 		}
 
-		return extractResponse(requestMethod, appPath, response, body);
+		return toResponse(requestMethod, appPath, response, body);
 	}
 
-	private <T extends ConnectedObject> String extractResponse(RequestMethod requestMethod, String appPath, ClientResponse response,
-			T... body)
+	private Response<T> toResponse(RequestMethod requestMethod, String appPath, ClientResponse response, T... body)
 	{
-		String retval = "";
-
-		if (RequestMethod.DELETE == requestMethod)
-		{
-			retval = "1";
-		} else if (RequestMethod.GET == requestMethod)
-		{
-			retval = response.getEntity(String.class);
-		} else if (RequestMethod.POST == requestMethod)
-		{
-			StringBuilder sb = new StringBuilder();
-			for (T o : body)
-			{
-				sb.append(baseURI);
-				sb.append(appPath).append("/");
-				sb.append(o.getIdString());
-			}
-			retval = sb.toString();
-		} else if (RequestMethod.PUT == requestMethod)
-		{
-			retval = "1";
-		}
-
+		Response<T> retval = new Response<T>();
+		retval.setStatusCode(response.getStatus());
+		retval.setBody(response.getEntity(String.class));
+		retval.setHeaders(response.getHeaders());
 		return retval;
 	}
 
@@ -167,31 +144,6 @@ public class RequestHandler
 			httpClient.addFilter(new LoggingFilter(System.out));
 		}
 		return httpClient;
-	}
-
-	private ObjectMapper getObjectMapper()
-	{
-		if (objectMapper == null)
-		{
-			ObjectMapper retval = new ObjectMapper();
-
-			// JacksonXmlModule module = new JacksonXmlModule();
-			// module.setDefaultUseWrapper(false);
-			//
-			// AnnotationIntrospector primary = new
-			// JacksonAnnotationIntrospector();
-			// AnnotationIntrospector secondary = new
-			// JaxbAnnotationIntrospector();
-			// AnnotationIntrospector pair = new
-			// AnnotationIntrospector.Pair(primary, secondary);
-			// retval.getDeserializationConfig().setAnnotationIntrospector(pair);
-			// retval.getSerializationConfig().setAnnotationIntrospector(pair);
-			//
-			// retval.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-			// retval.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-			objectMapper = retval;
-		}
-		return objectMapper;
 	}
 
 	private String concatParams(String apiCall, Map<String, Object> params)

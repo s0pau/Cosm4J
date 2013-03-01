@@ -1,5 +1,11 @@
 package com.cosm.client.requester;
 
+/**
+ * Parent exception from which all exception classes in this library extends.
+ * 
+ * @author s0pau
+ * 
+ */
 public class CosmClientException extends RuntimeException
 {
 	public CosmClientException(String msg, Throwable e)

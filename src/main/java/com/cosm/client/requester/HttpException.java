@@ -2,6 +2,12 @@ package com.cosm.client.requester;
 
 import com.sun.jersey.api.client.ClientResponse;
 
+/**
+ * Exception condition when making HTTP requests to COSM API
+ * 
+ * @author s0pau
+ * 
+ */
 public class HttpException extends CosmClientException
 {
 	private ClientResponse response = null;
@@ -27,5 +33,4 @@ public class HttpException extends CosmClientException
 	{
 		return response.getStatus();
 	}
-
 }

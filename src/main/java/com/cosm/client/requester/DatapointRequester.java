@@ -1,5 +1,7 @@
 package com.cosm.client.requester;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,19 +18,28 @@ import com.cosm.client.requester.RequestHandler.RequestMethod;
  */
 public class DatapointRequester
 {
-	private final RequestHandler requestHandler = RequestHandler.make();
+	private final RequestHandler<Datapoint> requestHandler = RequestHandler.make();
 
-	public String create(String feedId, String dataStreamId, Datapoint... toCreate) throws HttpException
+	public Datapoint create(int feedId, String dataStreamId, Datapoint toCreate) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
+		create(feedId, dataStreamId, new Datapoint[] { toCreate });
+		return toCreate;
 	}
 
-	public String get(String feedId, String dataStreamId, String datapointAt) throws HttpException
+	public Collection<Datapoint> create(int feedId, String dataStreamId, Datapoint... toCreate) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId, dataStreamId, datapointAt));
+		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
+		return Arrays.asList(toCreate);
 	}
 
-	public String get(String feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
+	public Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException
+	{
+		Response<Datapoint> response = requestHandler.doRequest(RequestMethod.GET,
+				getResourcePath(feedId, dataStreamId, datapointAt));
+		return response.getBodyAsObject(Datapoint.class);
+	}
+
+	public Collection<Datapoint> get(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
 			throws HttpException
 	{
 		Map<String, Object> params = new HashMap<>();
@@ -36,23 +47,27 @@ public class DatapointRequester
 		params.put("end", endAt);
 		params.put("interval", samplingInterval);
 
-		return requestHandler.doRequest(RequestMethod.GET, getParentResourcePath(feedId, dataStreamId), params);
+		Response<Datapoint> response = requestHandler.doRequest(RequestMethod.GET, getParentResourcePath(feedId, dataStreamId),
+				params);
+		return response.getBodyAsObjects(Datapoint.class);
 	}
 
-	public String update(String feedId, String dataStreamId, Datapoint toUpdate) throws HttpException
+	public Datapoint update(int feedId, String dataStreamId, Datapoint toUpdate) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, dataStreamId, toUpdate.getAt()), toUpdate);
+		requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, dataStreamId, toUpdate.getAt()), toUpdate);
+		return toUpdate;
 	}
 
-	public String delete(String feedId, String dataStreamId, String datapointAt) throws HttpException
+	public void delete(int feedId, String dataStreamId, String datapointAt) throws HttpException
 	{
-		return requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
+		requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
 	}
 
-	public void deleteMultiple(String feedId, String dataStreamId, String startAt) throws HttpException
+	public void deleteMultiple(int feedId, String dataStreamId, String startAt) throws HttpException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("start", startAt);
+
 		requestHandler.doRequest(RequestMethod.DELETE, getResourcesPath(feedId, dataStreamId), params);
 	}
 
@@ -64,7 +79,7 @@ public class DatapointRequester
 	 * @return the restful path to a specifc datapoint resource, which can then
 	 *         be appended to a base path for a complete uri
 	 */
-	private String getResourcePath(String feedId, String dataStreamId, String datapointAt)
+	private String getResourcePath(int feedId, String dataStreamId, String datapointAt)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append(getResourcesPath(feedId, dataStreamId)).append("/").append(datapointAt);
@@ -78,7 +93,7 @@ public class DatapointRequester
 	 *         and datastream, which can then be appended to a base path for a
 	 *         complete uri
 	 */
-	private String getResourcesPath(String feedId, String dataStreamId)
+	private String getResourcesPath(int feedId, String dataStreamId)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("feeds").append("/").append(feedId);
@@ -93,12 +108,11 @@ public class DatapointRequester
 	 * @return the restful path to a the datastream, which can then be appended
 	 *         to a base path for a complete uri
 	 */
-	private String getParentResourcePath(String feedId, String dataStreamId)
+	private String getParentResourcePath(int feedId, String dataStreamId)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("feeds").append("/").append(feedId);
 		sb.append("/").append("datastreams").append("/").append(dataStreamId);
 		return sb.toString();
 	}
-
 }

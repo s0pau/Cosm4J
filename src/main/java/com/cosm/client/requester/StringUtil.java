@@ -75,7 +75,7 @@ public class StringUtil
 			return toCommaDelimitedString((List) o);
 		} else
 		{
-			throw new UnsupportedOperationException(String.format("Cannot create comma delimited string for %s", o.getClass()));
+			throw new ParseToObjectException(String.format("Cannot create comma delimited string for %s", o.getClass()));
 		}
 	}
 }
