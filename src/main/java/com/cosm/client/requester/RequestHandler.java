@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.CosmConfig.AcceptedMediaType;
-import com.cosm.client.model.CosmObject;
+import com.cosm.client.model.ConnectedObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -48,17 +48,17 @@ public class RequestHandler
 		return new RequestHandler(CosmConfig.getInstance().getBaseURI());
 	}
 
-	public <T extends CosmObject> String doRequest(RequestMethod requestMethod, String appPath)
+	public <T extends ConnectedObject> String doRequest(RequestMethod requestMethod, String appPath)
 	{
 		return doRequest(requestMethod, appPath, (Map<String, Object>) null);
 	}
 
-	public <T extends CosmObject> String doRequest(RequestMethod requestMethod, String appPath, T... objects)
+	public <T extends ConnectedObject> String doRequest(RequestMethod requestMethod, String appPath, T... objects)
 	{
 		return doRequest(requestMethod, appPath, null, objects);
 	}
 
-	public <T extends CosmObject> String doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params)
+	public <T extends ConnectedObject> String doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params)
 	{
 		return doRequest(requestMethod, appPath, params, null);
 	}
@@ -79,7 +79,7 @@ public class RequestHandler
 	 * 
 	 * @return response string
 	 */
-	private <T extends CosmObject> String doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params,
+	private <T extends ConnectedObject> String doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params,
 			T... body)
 	{
 		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMedia();
@@ -128,7 +128,7 @@ public class RequestHandler
 		return extractResponse(requestMethod, appPath, response, body);
 	}
 
-	private <T extends CosmObject> String extractResponse(RequestMethod requestMethod, String appPath, ClientResponse response,
+	private <T extends ConnectedObject> String extractResponse(RequestMethod requestMethod, String appPath, ClientResponse response,
 			T... body)
 	{
 		String retval = "";

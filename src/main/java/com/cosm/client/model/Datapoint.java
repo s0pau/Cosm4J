@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  */
 @JsonRootName(value = "datapoint")
 @XmlRootElement(name = "datapoints")
-public class Datapoint implements CosmObject<Datapoint>
+public class Datapoint implements ConnectedObject<Datapoint>
 {
 	/**
 	 * id of the datapoint

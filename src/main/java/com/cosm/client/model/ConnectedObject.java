@@ -9,7 +9,7 @@ import com.cosm.client.requester.CollectionUtil;
  * @author s0pau
  * 
  */
-public interface CosmObject<T>
+public interface ConnectedObject<T>
 {
 	String getIdString();
 

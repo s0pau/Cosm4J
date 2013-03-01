@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @author s0pau
  * 
  */
-public class Trigger implements CosmObject<Trigger>
+public class Trigger implements ConnectedObject<Trigger>
 {
 
 	/**

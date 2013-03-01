@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value = "")
-public class Feed implements CosmObject<Feed>
+public class Feed implements ConnectedObject<Feed>
 {
 	public enum Status
 	{

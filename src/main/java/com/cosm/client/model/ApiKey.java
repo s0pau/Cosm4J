@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName("key")
-public class ApiKey implements CosmObject<ApiKey>
+public class ApiKey implements ConnectedObject<ApiKey>
 {
 	/**
 	 * Actual string of the api key

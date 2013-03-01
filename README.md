@@ -26,14 +26,14 @@ To use cosm-java library on Maven-based projects, use following dependency:
 
 ## Config
 CosmConfig contains the configuration needed for the library. 
-User preferences are loaded from config.properties into CosmObject, overwriting the default value if user preference is specified. 
+User preferences are loaded from config.properties into ConnectedObject, overwriting the default value if user preference is specified. 
 
-## CosmObject
-CosmObject is the interface for all objects that can be directly accessed via Cosm's restful API.
+## ConnectedObject
+ConnectedObject is the interface for all objects that can be directly accessed via Cosm's restful API.
 
 ## RESTful Requests
 
-RESTful request can be made to any implementation of CosmObjects(model) via the corresponding implementaion of Requesters: 
+RESTful request can be made to any implementation of ConnectedObjects(model) via the corresponding implementaion of Requesters: 
 
 <ul>
 <li>Feed -> FeedRequester</li>
@@ -47,7 +47,7 @@ RESTful request can be made to any implementation of CosmObjects(model) via the 
 <br/>On faliure, the Requester implementation will throw:
 <ul>
 <li>HttpException, if the response status is not 2xx</li>
-<li>ParseToObjectException, if the returned response cannot be parse into CosmObject implementations </li>
+<li>ParseToObjectException, if the returned response cannot be parse into ConnectedObject implementations </li>
 </ul> 
 
 ## Exception

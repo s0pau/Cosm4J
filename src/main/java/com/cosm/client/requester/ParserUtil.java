@@ -2,7 +2,7 @@ package com.cosm.client.requester;
 
 import java.io.IOException;
 
-import com.cosm.client.model.CosmObject;
+import com.cosm.client.model.ConnectedObject;
 import com.cosm.client.model.Datapoint;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,7 @@ public class ParserUtil
 	 * @throws CosmClientException
 	 *             if unable to completely parse from model to json
 	 */
-	static <T extends CosmObject> String toJson(ObjectMapper objectMapper, boolean isUpdate, T... models)
+	static <T extends ConnectedObject> String toJson(ObjectMapper objectMapper, boolean isUpdate, T... models)
 	{
 		// TODO strip nodes that has a null key
 		String json = null;

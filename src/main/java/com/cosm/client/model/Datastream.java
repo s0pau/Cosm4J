@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value = "datastream")
-public class Datastream implements CosmObject<Datastream>
+public class Datastream implements ConnectedObject<Datastream>
 {
 	private String id;
 
