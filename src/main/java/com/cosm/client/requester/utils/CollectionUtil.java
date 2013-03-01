@@ -1,4 +1,4 @@
-package com.cosm.client.requester;
+package com.cosm.client.requester.utils;
 
 import java.util.Collection;
 

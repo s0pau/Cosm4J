@@ -1,5 +1,6 @@
-package com.cosm.client.requester;
+package com.cosm.client.requester.exceptions;
 
+import com.cosm.client.CosmClientException;
 import com.sun.jersey.api.client.ClientResponse;
 
 /**

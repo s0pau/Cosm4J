@@ -21,6 +21,8 @@ import com.cosm.client.CosmConfig;
 import com.cosm.client.CosmConfig.AcceptedMediaType;
 import com.cosm.client.model.Feed;
 import com.cosm.client.requester.Response.HttpStatus;
+import com.cosm.client.requester.exceptions.HttpException;
+import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;

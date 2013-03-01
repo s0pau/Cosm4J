@@ -1,11 +1,13 @@
-package com.cosm.client.requester;
+package com.cosm.client.requester.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.cosm.client.CosmClientException;
 import com.cosm.client.model.ConnectedObject;
 import com.cosm.client.model.Datapoint;
+import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +30,7 @@ public class ParserUtil
 	 * @throws CosmClientException
 	 *             if unable to completely parse from model to json
 	 */
-	static <T extends ConnectedObject> String toJson(boolean isUpdate, T... models)
+	public static <T extends ConnectedObject> String toJson(boolean isUpdate, T... models)
 	{
 		// TODO strip nodes that has a null key
 		String json = null;
@@ -77,7 +79,7 @@ public class ParserUtil
 		return json;
 	}
 
-	static <T extends ConnectedObject> Collection<T> toConnectedObjects(String body, Class elementType)
+	public static <T extends ConnectedObject> Collection<T> toConnectedObjects(String body, Class elementType)
 	{
 		Collection<T> objs;
 

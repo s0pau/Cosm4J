@@ -1,6 +1,8 @@
-package com.cosm.client.requester;
+package com.cosm.client.requester.utils;
 
 import java.util.List;
+
+import com.cosm.client.requester.exceptions.ParseToObjectException;
 
 public class StringUtil
 {

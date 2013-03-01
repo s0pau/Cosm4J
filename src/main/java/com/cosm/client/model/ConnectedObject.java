@@ -1,6 +1,6 @@
 package com.cosm.client.model;
 
-import com.cosm.client.requester.CollectionUtil;
+import com.cosm.client.requester.utils.CollectionUtil;
 
 /**
  * Marker interface for all resources that can be requested from Cosm API

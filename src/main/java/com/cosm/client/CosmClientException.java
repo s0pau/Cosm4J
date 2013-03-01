@@ -1,4 +1,4 @@
-package com.cosm.client.requester;
+package com.cosm.client;
 
 /**
  * Parent exception from which all exception classes in this library extends.

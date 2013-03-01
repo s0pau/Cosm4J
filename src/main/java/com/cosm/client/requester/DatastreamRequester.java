@@ -5,11 +5,14 @@ import java.util.Collection;
 
 import com.cosm.client.model.Datastream;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
+import com.cosm.client.requester.exceptions.HttpException;
+import com.cosm.client.requester.exceptions.ParseToObjectException;
 
 /**
  * Class for making request for datastream from COSM API
  * 
- * {@see https ://cosm.com/docs/v2/datastream/}
+ * {@link https ://cosm.com/docs/v2/datastream/}
+ * 
  * 
  * @author s0pau
  * 

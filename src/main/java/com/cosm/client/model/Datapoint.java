@@ -2,7 +2,7 @@ package com.cosm.client.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.cosm.client.requester.CollectionUtil;
+import com.cosm.client.requester.utils.CollectionUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 

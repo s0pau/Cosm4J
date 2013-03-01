@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.cosm.client.model.Feed;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
+import com.cosm.client.requester.exceptions.HttpException;
+import com.cosm.client.requester.exceptions.ParseToObjectException;
 
 /**
  * Class for making request for datapoint from COSM API

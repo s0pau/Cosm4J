@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.cosm.client.model.ConnectedObject;
+import com.cosm.client.requester.exceptions.ParseToObjectException;
+import com.cosm.client.requester.utils.ParserUtil;
 
 /**
  * Wrapper to decouple response implementation from the rest of the library

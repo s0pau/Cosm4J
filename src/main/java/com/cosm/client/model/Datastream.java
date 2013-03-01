@@ -2,7 +2,7 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
-import com.cosm.client.requester.CollectionUtil;
+import com.cosm.client.requester.utils.CollectionUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;

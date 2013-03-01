@@ -1,4 +1,6 @@
-package com.cosm.client.requester;
+package com.cosm.client.requester.exceptions;
+
+import com.cosm.client.CosmClientException;
 
 /**
  * Exception condition when parsing requests to {@link CosmObject}
