@@ -1,12 +1,10 @@
 package com.cosm.client.requester;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Collection;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,14 +23,11 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class FeedRequesterTest
 {
-	private static final int feedId1 = 666;
-	private static final int feedId2 = 667;
-	private static final int feedId3 = 668;
-
 	private FeedRequester requester;
 	private ObjectMapper mapper;
 	private Feed feed1;
 	private Feed feed2;
+	private Feed feedTooMinimal;
 	private String feed1_JSON;
 	private String feed2_JSON;
 
@@ -46,19 +41,21 @@ public class FeedRequesterTest
 		String fixtureUri = "src/test/res";
 		feed1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed1.json")), Feed.class);
 		feed2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed2.json")), Feed.class);
+		feedTooMinimal = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed_title_only.json")), Feed.class);
 
 		feed1_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed1.json");
 		feed2_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed2.json");
 
 		requester = new FeedRequester();
-		requester.create(feed1);
+		feed1 = requester.create(feed2);
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
-		tearDownFixture(feedId1);
-		tearDownFixture(feedId2);
+		tearDownFixture(feed1.getId());
+		tearDownFixture(feed2.getId());
+		tearDownFixture(feedTooMinimal.getId());
 		CosmConfig.getInstance().reset();
 		requester = null;
 	}
@@ -92,28 +89,12 @@ public class FeedRequesterTest
 	}
 
 	@Test
-	public void testCreateMultiple()
-	{
-		// covered in setup... perhaps not needed here
-		try
-		{
-			Collection<Feed> retval = requester.create(feed1, feed2);
-			assertEquals(2, retval.size());
-			assertTrue(retval.contains(feed1));
-			assertTrue(retval.contains(feed2));
-		} catch (HttpException e)
-		{
-			fail("failed on requesting to create multiple feeds");
-		}
-	}
-
-	@Test
 	public void testJSONAcceptHeaderAndConverstion()
 	{
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.json);
-			Feed retval = requester.get(feedId1);
+			Feed retval = requester.get(feed1.getId());
 			assertEquals(feed1, retval);
 		} catch (HttpException e)
 		{
@@ -133,7 +114,7 @@ public class FeedRequesterTest
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.xml);
-			Feed retval = requester.get(feedId1);
+			Feed retval = requester.get(feed1.getId());
 			assertEquals(feed1, retval);
 		} catch (HttpException e)
 		{
@@ -153,7 +134,7 @@ public class FeedRequesterTest
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.csv);
-			Feed retval = requester.get(feedId1);
+			Feed retval = requester.get(feed1.getId());
 			// assertEqualToFixture(retObj);
 		} catch (HttpException e)
 		{
@@ -169,7 +150,7 @@ public class FeedRequesterTest
 	{
 		try
 		{
-			Feed retval = requester.get(feedId1);
+			Feed retval = requester.get(feed1.getId());
 			assertEquals(feed1, retval);
 		} catch (HttpException e)
 		{
@@ -198,7 +179,7 @@ public class FeedRequesterTest
 	{
 		try
 		{
-			requester.delete(feedId1);
+			requester.delete(feed1.getId());
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a feed");

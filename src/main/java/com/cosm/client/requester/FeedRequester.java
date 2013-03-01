@@ -25,21 +25,24 @@ public class FeedRequester
 	/**
 	 * @param toCreate
 	 *            the feed to be created over the API
-	 * @return the feed that was passed in, on successful operation
+	 * @return the feed that was passed in with the id field updated, on
+	 *         successful operation
 	 * @throws HttpException
 	 *             if failed to create feed over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to feed
 	 */
 	public Feed create(Feed toCreate) throws HttpException
 	{
-		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
+		Response<Feed> response = requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
+		String feedUrl = response.getHeaders(Response.HEADER_FEED_URI);
+		int feedId = getIdFromUrl(feedUrl);
+		toCreate.setId(feedId);
 		return toCreate;
 	}
 
-	public Collection<Feed> create(Feed... toCreate) throws HttpException
-	{
-		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
-		return Arrays.asList(toCreate);
-	}
+	// Unsupported:
+	// public Collection<Feed> create(Feed... toCreate)
 
 	/**
 	 * @param feedId
@@ -194,4 +197,9 @@ public class FeedRequester
 		return sb.toString();
 	}
 
+	private int getIdFromUrl(String feedUrl)
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

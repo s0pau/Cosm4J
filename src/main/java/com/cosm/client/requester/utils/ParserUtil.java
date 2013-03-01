@@ -7,6 +7,7 @@ import java.util.Collection;
 import com.cosm.client.CosmClientException;
 import com.cosm.client.model.ConnectedObject;
 import com.cosm.client.model.Datapoint;
+import com.cosm.client.model.Feed;
 import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,7 +49,7 @@ public class ParserUtil
 
 					// FIXME Very dodgy way to strip the node that
 					// represents id because UPDATE doesn't like the full json
-					// object
+					// object, at least do this with some @Id annotation
 					if (model instanceof Datapoint)
 					{
 						((ObjectNode) nodes).remove("at");
@@ -64,11 +65,15 @@ public class ParserUtil
 				}
 			} else
 			{
-				// Setting SerializationConfig.Feature.WRAP_ROOT_VALUE for
-				// mapper did not read the annotation value label, instead it
-				// sets root value to "<classname>[]". FIXME
-				String rootName = models[0].getClass().getSimpleName().toLowerCase().concat("s");
-				json = getObjectMapper().writer().withRootName(rootName).writeValueAsString(models);
+				if (!(models[0] instanceof Feed))
+				{
+					// Setting SerializationConfig.Feature.WRAP_ROOT_VALUE at
+					// mapper did not read annotated label properly, use
+					// withRootName
+					String rootName = models[0].getClass().getSimpleName().toLowerCase().concat("s");
+					json = getObjectMapper().writer().withRootName(rootName).writeValueAsString(models);
+				}
+				// if feed, API does not accept root name.
 			}
 
 		} catch (IOException e)

@@ -16,6 +16,7 @@ import com.cosm.client.requester.utils.ParserUtil;
  */
 public class Response<T extends ConnectedObject>
 {
+	public static final String HEADER_FEED_URI = "feed";
 
 	/**
 	 * Didn't want to import the whole Http library for just the codes.
@@ -74,6 +75,11 @@ public class Response<T extends ConnectedObject>
 	public Map<String, String> getHeaders()
 	{
 		return headers;
+	}
+
+	public String getHeaders(String key)
+	{
+		return headers.get(key);
 	}
 
 	/**
