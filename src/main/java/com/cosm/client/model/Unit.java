@@ -1,6 +1,7 @@
 package com.cosm.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Unit model
@@ -13,9 +14,26 @@ public class Unit
 	/**
 	 * http://www.eeml.org/#units
 	 */
-	enum IFCClassification
+	public enum IFCClassification
 	{
-		BASIC_SI, DERIVED_SI, CONVERSION_BASED_UNITS, DERIVED_UNITS, CONTEXT_DEPENDENT_UNITS;
+		BASIC_SI("basicSI"),
+		DERIVED_SI("derivedSI"),
+		CONVERSION_BASED_UNITS("conservationBasedUnits"),
+		DERIVED_UNITS("derivedUnits"),
+		CONTEXT_DEPENDENT_UNITS("contextDependentUnits");
+
+		private String jsonVal;
+
+		private IFCClassification(String jsonVal)
+		{
+			this.jsonVal = jsonVal;
+		}
+
+		@JsonValue
+		public String getJsonVal()
+		{
+			return jsonVal;
+		}
 	}
 
 	/**
@@ -33,7 +51,8 @@ public class Unit
 	 * consider deprecated.
 	 */
 	@Deprecated
-	@JsonProperty("type")
+	// @JsonProperty("type") TODO putting this on the member doesnt seem to have
+	// effect for enum, investigate if feature needs to be switched on
 	private IFCClassification unitType;
 
 	public String getLabel()
@@ -56,6 +75,7 @@ public class Unit
 		this.symbol = symbol;
 	}
 
+	@JsonProperty("type")
 	public IFCClassification getUnitType()
 	{
 		return unitType;

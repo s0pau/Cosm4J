@@ -115,7 +115,7 @@ public class ParserUtil
 			// retval.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
 			retval.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-			retval.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+			retval.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			objectMapper = retval;
 		}
 		return objectMapper;

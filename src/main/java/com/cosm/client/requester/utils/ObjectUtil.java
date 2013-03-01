@@ -2,9 +2,8 @@ package com.cosm.client.requester.utils;
 
 import java.util.Collection;
 
-public class CollectionUtil
+public class ObjectUtil
 {
-
 	public static boolean equal(Collection<? extends Object> tags, Collection<? extends Object> tags2)
 	{
 		// TODO Auto-generated method stub
@@ -16,7 +15,7 @@ public class CollectionUtil
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	public static <O extends Object> boolean nullCheckEquals(O one, O two)
 	{
 		if (one == null)

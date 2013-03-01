@@ -122,7 +122,7 @@ public class RequestHandler<T extends ConnectedObject>
 
 		if (!isHttpStatusOK(response.getStatus()))
 		{
-			throw new HttpException("Http request returned with unsuccessful status.", response);
+			throw new HttpException("Http response status indicates unsuccessful operation.", response);
 		}
 
 		return toResponse(requestMethod, appPath, response, body);

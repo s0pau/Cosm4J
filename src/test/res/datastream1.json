@@ -1,6 +1,1 @@
-{"id":"stream_1"
-,"current_value":"111"
-,"at":"2013-01-01T00:00:00.000000Z"
-,"max_value":"999.0"
-,"min_value":"-999.0"
-,"version":"1.0.0"}
+{"id":"test_stream_1","current_value":"111"}

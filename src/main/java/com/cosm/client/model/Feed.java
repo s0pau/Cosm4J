@@ -3,7 +3,7 @@ package com.cosm.client.model;
 import java.net.URI;
 import java.util.Collection;
 
-import com.cosm.client.requester.utils.CollectionUtil;
+import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -210,47 +210,47 @@ public class Feed implements ConnectedObject<Feed>
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.getTitle(), other.getTitle()))
+		if (!ObjectUtil.nullCheckEquals(this.getTitle(), other.getTitle()))
 		{
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.getDescription(), other.getDescription()))
+		if (!ObjectUtil.nullCheckEquals(this.getDescription(), other.getDescription()))
 		{
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.getUpdatedAt(), other.getUpdatedAt()))
+		if (!ObjectUtil.nullCheckEquals(this.getUpdatedAt(), other.getUpdatedAt()))
 		{
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.getCreatedAt(), other.getCreatedAt()))
+		if (!ObjectUtil.nullCheckEquals(this.getCreatedAt(), other.getCreatedAt()))
 		{
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.getCreatorUri(), other.getCreatorUri()))
+		if (!ObjectUtil.nullCheckEquals(this.getCreatorUri(), other.getCreatorUri()))
 		{
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.getFeedUri(), other.getFeedUri()))
+		if (!ObjectUtil.nullCheckEquals(this.getFeedUri(), other.getFeedUri()))
 		{
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.getStatus(), other.getStatus()))
+		if (!ObjectUtil.nullCheckEquals(this.getStatus(), other.getStatus()))
 		{
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.getWebsite(), other.getWebsite()))
+		if (!ObjectUtil.nullCheckEquals(this.getWebsite(), other.getWebsite()))
 		{
 			return false;
 		}
 
-		if (!CollectionUtil.memberEquals(this.getTags(), other.getTags()))
+		if (!ObjectUtil.memberEquals(this.getTags(), other.getTags()))
 		{
 			return false;
 		}
@@ -267,7 +267,7 @@ public class Feed implements ConnectedObject<Feed>
 			return false;
 		}
 
-		if (!CollectionUtil.memberEquals(this.getDatastreams(), other.getDatastreams()))
+		if (!ObjectUtil.memberEquals(this.getDatastreams(), other.getDatastreams()))
 		{
 			return false;
 		}

@@ -6,10 +6,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.util.Collection;
 
 import org.junit.After;
@@ -29,8 +25,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class DatapointRequesterTest
 {
-	private static final int feedId = 97684;
-	private static final String datastreamId = "Light_Level";
+	private static final int feedId = 109;
+	private static final String datastreamId = "stream_id0";
 	private static final String datapointId1 = "2013-01-01T00:00:00.000000Z";
 	private static final String datapointId2 = "2013-02-02T00:00:00.000000Z";
 
@@ -44,43 +40,18 @@ public class DatapointRequesterTest
 	@Before
 	public void setUp() throws Exception
 	{
-		// Set up with default config, i.e. JSON as main MIME type for most test
-		// unless otherwise specified.
-		CosmConfig.getInstance().setApiKey("QYz6Tgyg4f2kmo1S9ffFJV8XoKiSAKx1RW40UkNyS1R1UT0g");
-		requester = new DatapointRequester();
+		TestUtil.loadDefaultTestConfig();
 		mapper = new ObjectMapper();
 
 		String fixtureUri = "src/test/res";
 		datapoint1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint1.json")), Datapoint.class);
 		datapoint2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint2.json")), Datapoint.class);
 
-		datapoint1_JSON = getStringFromFile(fixtureUri + "/datapoint1.json");
-		datapoint2_JSON = getStringFromFile(fixtureUri + "/datapoint2.json");
+		datapoint1_JSON = TestUtil.getStringFromFile(fixtureUri + "/datapoint1.json");
+		datapoint2_JSON = TestUtil.getStringFromFile(fixtureUri + "/datapoint2.json");
 
-		DatapointRequester fr = new DatapointRequester();
-		fr.create(feedId, datastreamId, datapoint1);
-
-	}
-
-	private String getStringFromFile(String filePath)
-	{
-		try
-		{
-			FileInputStream fileStream = null;
-			try
-			{
-				fileStream = new FileInputStream(new File(filePath));
-				FileChannel fileChannel = fileStream.getChannel();
-				MappedByteBuffer bb = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
-				return Charset.defaultCharset().decode(bb).toString();
-			} finally
-			{
-				fileStream.close();
-			}
-		} catch (IOException io)
-		{
-			throw new RuntimeException(io);
-		}
+		requester = new DatapointRequester();
+		requester.create(feedId, datastreamId, datapoint1);
 	}
 
 	@After
@@ -96,7 +67,7 @@ public class DatapointRequesterTest
 	{
 		try
 		{
-			requester.delete(feedId, datastreamId, fixtureId);
+			// requester.delete(feedId, datastreamId, fixtureId);
 		} catch (HttpException e)
 		{
 			// NOT_FOUND is ok as the test ran could have not created/deleted it
@@ -128,8 +99,8 @@ public class DatapointRequesterTest
 		{
 			Collection<Datapoint> retval = requester.create(feedId, datastreamId, datapoint1, datapoint2);
 			assertEquals(2, retval.size());
-			assertTrue(retval.contains(datapointId1));
-			assertTrue(retval.contains(datapointId2));
+			assertTrue(retval.contains(datapoint1));
+			assertTrue(retval.contains(datapoint2));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to create multiple datapoints");

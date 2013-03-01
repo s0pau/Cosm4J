@@ -7,6 +7,8 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
+import com.cosm.client.CosmConfig;
+
 public class TestUtil
 {
 	public static String getStringFromFile(String filePath)
@@ -28,5 +30,11 @@ public class TestUtil
 		{
 			throw new RuntimeException(io);
 		}
+	}
+
+	public static void loadDefaultTestConfig()
+	{
+		CosmConfig.getInstance().setApiKey("EI-h5T4VzXt9eQlIGYVhoMyisnySAKxXYU0zbjF5dGtYZz0g");
+		CosmConfig.getInstance().setBaseURI("http://api.dds-1537376.192.168.60.179.xip.io/v2/");
 	}
 }

@@ -31,13 +31,13 @@ public class DatastreamRequester
 	 * @throws HttpException
 	 *             if failed to create datastream over the API
 	 */
-	public Datastream create(String feedId, Datastream toCreate) throws HttpException
+	public Datastream create(int feedId, Datastream toCreate) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId), toCreate);
 		return toCreate;
 	}
 
-	public Collection<Datastream> create(String feedId, Datastream... toCreate) throws HttpException
+	public Collection<Datastream> create(int feedId, Datastream... toCreate) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId), toCreate);
 		return Arrays.asList(toCreate);
@@ -54,7 +54,7 @@ public class DatastreamRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to datastream
 	 */
-	public Datastream get(String feedId, String dataStreamId) throws HttpException, ParseToObjectException
+	public Datastream get(int feedId, String dataStreamId) throws HttpException, ParseToObjectException
 	{
 		Response<Datastream> response = requestHandler.doRequest(RequestMethod.GET, getResourcePath(feedId, dataStreamId));
 		return response.getBodyAsObject(Datastream.class);
@@ -70,13 +70,13 @@ public class DatastreamRequester
 	 * @throws HttpException
 	 *             if failed to create datastream over the API
 	 */
-	public Datastream update(String feedId, Datastream toUpdate) throws HttpException
+	public Datastream update(int feedId, Datastream toUpdate) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, toUpdate.getId()), toUpdate);
 		return toUpdate;
 	}
 
-	public void delete(String feedId, String dataStreamId) throws HttpException
+	public void delete(int feedId, String dataStreamId) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(feedId, dataStreamId));
 	}
@@ -87,7 +87,7 @@ public class DatastreamRequester
 	 * @return the restful path to a specifc datastream resource, which can then
 	 *         be appended to a base path for a complete uri
 	 */
-	private String getResourcePath(String feedId, String dataStreamId)
+	private String getResourcePath(int feedId, String dataStreamId)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append(getResourcesPath(feedId)).append("/").append(dataStreamId);
@@ -100,10 +100,10 @@ public class DatastreamRequester
 	 *         and datastream, which can then be appended to a base path for a
 	 *         complete uri
 	 */
-	private String getResourcesPath(String feedId)
+	private String getResourcesPath(int feedId)
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("feeds").append("/").append(feedId).append("/").append("datastreams");
+		sb.append("feeds").append("/").append(String.valueOf(feedId)).append("/").append("datastreams");
 		return sb.toString();
 	}
 }

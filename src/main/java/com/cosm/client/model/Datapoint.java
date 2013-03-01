@@ -2,7 +2,7 @@ package com.cosm.client.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.cosm.client.requester.utils.CollectionUtil;
+import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -59,7 +59,7 @@ public class Datapoint implements ConnectedObject<Datapoint>
 			return false;
 		}
 
-		if (!CollectionUtil.nullCheckEquals(this.value, other.value))
+		if (!ObjectUtil.nullCheckEquals(this.value, other.value))
 		{
 			return false;
 		}
@@ -87,7 +87,7 @@ public class Datapoint implements ConnectedObject<Datapoint>
 
 		Datapoint other = (Datapoint) obj;
 
-		if (!CollectionUtil.nullCheckEquals(this.at, other.at))
+		if (!ObjectUtil.nullCheckEquals(this.at, other.at))
 		{
 			return false;
 		}

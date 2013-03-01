@@ -2,7 +2,7 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
-import com.cosm.client.requester.utils.CollectionUtil;
+import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -112,7 +112,7 @@ public class ApiKey implements ConnectedObject<ApiKey>
 
 		ApiKey other = (ApiKey) obj;
 
-		if (!CollectionUtil.nullCheckEquals(this.apiKey, other.apiKey))
+		if (!ObjectUtil.nullCheckEquals(this.apiKey, other.apiKey))
 		{
 			return false;
 		}

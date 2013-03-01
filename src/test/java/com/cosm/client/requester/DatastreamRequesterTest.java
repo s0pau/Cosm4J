@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.CosmConfig.AcceptedMediaType;
-import com.cosm.client.model.Feed;
+import com.cosm.client.model.Datastream;
 import com.cosm.client.requester.Response.HttpStatus;
 import com.cosm.client.requester.exceptions.HttpException;
 import com.cosm.client.requester.exceptions.ParseToObjectException;
@@ -23,51 +23,54 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-public class FeedRequesterTest
+public class DatastreamRequesterTest
 {
-	private static final int feedId1 = 666;
-	private static final int feedId2 = 667;
-	private static final int feedId3 = 668;
+	private static final int feedId = 109;
 
-	private FeedRequester requester;
+	private static final String datastreamId1 = "test_stream_1";
+	private static final String datastreamId2 = "test_stream_2";
+	private static final String datastreamId3 = "test_stream_3";
+	private static final String datastreamId_bad = "stream - bogus";
+
+	private DatastreamRequester requester;
 	private ObjectMapper mapper;
-	private Feed feed1;
-	private Feed feed2;
-	private String feed1_JSON;
-	private String feed2_JSON;
+	private Datastream datastream1;
+	private Datastream datastream2;
+	private String datastream1_JSON;
+	private String datastream2_JSON;
 
 	@Before
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-
 		mapper = new ObjectMapper();
 
 		String fixtureUri = "src/test/res";
-		feed1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed1.json")), Feed.class);
-		feed2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed2.json")), Feed.class);
+		datastream1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datastream1.json")), Datastream.class);
+		datastream2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datastream2.json")), Datastream.class);
 
-		feed1_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed1.json");
-		feed2_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed2.json");
+		datastream1_JSON = TestUtil.getStringFromFile(fixtureUri + "/datastream1.json");
+		datastream2_JSON = TestUtil.getStringFromFile(fixtureUri + "/datastream2.json");
 
-		requester = new FeedRequester();
-		requester.create(feed1);
+		requester = new DatastreamRequester();
+		requester.create(feedId, datastream1);
 	}
 
 	@After
 	public void tearDown() throws Exception
 	{
-		tearDownFixture(feedId1);
-		tearDownFixture(feedId2);
+		tearDownFixture(datastreamId1);
+		tearDownFixture(datastreamId2);
+		tearDownFixture(datastreamId3);
 		CosmConfig.getInstance().reset();
 		requester = null;
 	}
 
-	private void tearDownFixture(int fixtureId)
+	private void tearDownFixture(String fixtureId)
 	{
 		try
 		{
-			requester.delete(fixtureId);
+			requester.delete(feedId, fixtureId);
 		} catch (HttpException e)
 		{
 			// NOT_FOUND is ok as the test ran could have not created/deleted it
@@ -83,27 +86,30 @@ public class FeedRequesterTest
 	{
 		try
 		{
-			Feed retval = requester.create(feed2);
-			assertEquals(retval, feed2);
+			Datastream retval = requester.create(feedId, datastream2);
+			assertEquals(retval, datastream2);
 		} catch (HttpException e)
 		{
-			fail("failed on requesting to create a feed");
+			fail("failed on requesting to create a datastream");
 		}
 	}
 
 	@Test
 	public void testCreateMultiple()
 	{
-		// covered in setup... perhaps not needed here
+		Datastream datastream3 = new Datastream();
+		datastream3.setId(datastreamId3);
+		datastream3.setValue("333");
+
 		try
 		{
-			Collection<Feed> retval = requester.create(feed1, feed2);
+			Collection<Datastream> retval = requester.create(feedId, datastream2, datastream3);
 			assertEquals(2, retval.size());
-			assertTrue(retval.contains(feed1));
-			assertTrue(retval.contains(feed2));
+			assertTrue(retval.contains(datastream2));
+			assertTrue(retval.contains(datastream3));
 		} catch (HttpException e)
 		{
-			fail("failed on requesting to create multiple feeds");
+			fail("failed on requesting to create multiple datastreams");
 		}
 	}
 
@@ -113,11 +119,11 @@ public class FeedRequesterTest
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.json);
-			Feed retval = requester.get(feedId1);
-			assertEquals(feed1, retval);
+			Datastream retval = requester.get(feedId, datastreamId1);
+			assertEquals(datastream1, retval);
 		} catch (HttpException e)
 		{
-			fail("failed on requesting to get a feed");
+			fail("failed on requesting to get a datastream");
 		} catch (ParseToObjectException e)
 		{
 			fail("response is not a valid json");
@@ -133,11 +139,11 @@ public class FeedRequesterTest
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.xml);
-			Feed retval = requester.get(feedId1);
-			assertEquals(feed1, retval);
+			Datastream retval = requester.get(feedId, datastreamId1);
+			assertEquals(datastream1, retval);
 		} catch (HttpException e)
 		{
-			fail("failed on requesting to get a feed");
+			fail("failed on requesting to get a datastream");
 		} catch (ParseToObjectException e)
 		{
 			fail("response is not a valid xml");
@@ -153,11 +159,11 @@ public class FeedRequesterTest
 		try
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.csv);
-			Feed retval = requester.get(feedId1);
+			Datastream retval = requester.get(feedId, datastreamId1);
 			// assertEqualToFixture(retObj);
 		} catch (HttpException e)
 		{
-			fail("failed on requesting to get a feed");
+			fail("failed on requesting to get a datastream");
 		} catch (ParseToObjectException e)
 		{
 			fail("response is not a valid csv");
@@ -169,27 +175,26 @@ public class FeedRequesterTest
 	{
 		try
 		{
-			Feed retval = requester.get(feedId1);
-			assertEquals(feed1, retval);
+			Datastream retval = requester.get(feedId, datastreamId1);
+			assertEquals(datastream1, retval);
 		} catch (HttpException e)
 		{
-			fail("failed on requesting to get a feed");
+			fail("failed on requesting to get a datastream");
 		}
 	}
 
 	@Test
 	public void testUpdate()
 	{
-		feed1.setDescription("unit test feed description");
+		datastream1.setValue("666");
 
 		try
 		{
-			requester.update(feed1);
-			Feed retval = requester.update(feed1);
-			assertEquals(feed1, retval);
+			Datastream retval = requester.update(feedId, datastream1);
+			assertEquals(datastream1, retval);
 		} catch (HttpException e)
 		{
-			fail("failed on requesting to update a feed");
+			fail("failed on requesting to update a datastream");
 		}
 	}
 
@@ -198,10 +203,10 @@ public class FeedRequesterTest
 	{
 		try
 		{
-			requester.delete(feedId1);
+			requester.delete(feedId, datastreamId1);
 		} catch (HttpException e)
 		{
-			fail("failed on requesting to delete a feed");
+			fail("failed on requesting to delete a datastream");
 		}
 	}
 }

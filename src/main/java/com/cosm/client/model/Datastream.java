@@ -2,7 +2,7 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
-import com.cosm.client.requester.utils.CollectionUtil;
+import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -135,51 +135,6 @@ public class Datastream implements ConnectedObject<Datastream>
 		return id;
 	}
 
-	public boolean memberEquals(Datastream other)
-	{
-		if (!equals(other))
-		{
-			return false;
-		}
-
-		if (!CollectionUtil.nullCheckEquals(this.updatedAt, other.updatedAt))
-		{
-			return false;
-		}
-
-		if (!CollectionUtil.nullCheckEquals(this.value, other.value))
-		{
-			return false;
-		}
-
-		if (!CollectionUtil.nullCheckEquals(this.minValue, other.minValue))
-		{
-			return false;
-		}
-
-		if (!CollectionUtil.nullCheckEquals(this.maxValue, other.maxValue))
-		{
-			return false;
-		}
-
-		if (!CollectionUtil.memberEquals(this.getTags(), other.getTags()))
-		{
-			return false;
-		}
-
-		if (!CollectionUtil.nullCheckEquals(this.getUnit(), other.getUnit()))
-		{
-			return false;
-		}
-
-		if (!CollectionUtil.memberEquals(this.getDatapoints(), other.getDatapoints()))
-		{
-			return false;
-		}
-
-		return true;
-	}
-
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -200,7 +155,7 @@ public class Datastream implements ConnectedObject<Datastream>
 
 		Datastream other = (Datastream) obj;
 
-		if (!CollectionUtil.nullCheckEquals(this.id, other.id))
+		if (!ObjectUtil.nullCheckEquals(this.id, other.id))
 		{
 			return false;
 		}
@@ -214,5 +169,50 @@ public class Datastream implements ConnectedObject<Datastream>
 		int retval = 1;
 		retval += (id == null ? 0 : id.hashCode() * 37);
 		return retval;
+	}
+
+	public boolean memberEquals(Datastream other)
+	{
+		if (!equals(other))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.updatedAt, other.updatedAt))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.value, other.value))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.minValue, other.minValue))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.maxValue, other.maxValue))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.memberEquals(this.getTags(), other.getTags()))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.getUnit(), other.getUnit()))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.memberEquals(this.getDatapoints(), other.getDatapoints()))
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
