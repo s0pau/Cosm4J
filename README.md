@@ -68,11 +68,10 @@ CosmClientException - any exception thrown out of the cosm-java library is a sub
 ## Mobile Feeds
 // TODO 
 
-## Mobile Feeds
-// TODO 
-
 
 // TODO General
 <br/>- move docs to gh_pages
 <br/>- use github maven
 <br/>- use slf4j to log 
+<br/>- use maven properties on build
+<br/>- make properties configurable via flat file
