@@ -8,6 +8,8 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 import com.cosm.client.CosmConfig;
+import com.cosm.client.requester.utils.ParserUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestUtil
 {
@@ -36,5 +38,10 @@ public class TestUtil
 	{
 		CosmConfig.getInstance().setApiKey("EI-h5T4VzXt9eQlIGYVhoMyisnySAKxXYU0zbjF5dGtYZz0g");
 		CosmConfig.getInstance().setBaseURI("http://api.dds-1537376.192.168.60.179.xip.io/v2/");
+	}
+
+	public static ObjectMapper getObjectMapper()
+	{
+		return ParserUtil.getObjectMapper();
 	}
 }

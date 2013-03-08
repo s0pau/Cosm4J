@@ -43,7 +43,7 @@ public class DatastreamRequesterTest
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-		mapper = new ObjectMapper();
+		mapper = TestUtil.getObjectMapper();
 
 		String fixtureUri = "src/test/res";
 		datastream1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datastream1.json")), Datastream.class);

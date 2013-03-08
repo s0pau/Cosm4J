@@ -2,20 +2,42 @@ package com.cosm.client.requester.utils;
 
 import java.util.Collection;
 
+import com.cosm.client.model.ConnectedObject;
+
 public class ObjectUtil
 {
-	public static boolean equal(Collection<? extends Object> tags, Collection<? extends Object> tags2)
+	public static <T extends ConnectedObject> boolean deepEquals(Collection<T> one, Collection<T> two)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if (!CollectionUtil.deepEquals(one, two))
+		{
+			return false;
+		}
+
+		int matchedCounts = 0;
+		int i = 1;
+		int quitEarlyThreshold = (int) Math.round(one.size() / 2 + 0.5);
+		for (T obj1 : one)
+		{
+			if (i >= quitEarlyThreshold && matchedCounts < quitEarlyThreshold)
+			{
+				// optimisation - quit early over half of the collection objects
+				// does not match
+				return false;
+			}
+
+			for (T obj2 : two)
+			{
+				if (obj1.memberEquals(two))
+				{
+					matchedCounts++;
+				}
+			}
+			i++;
+		}
+
+		return matchedCounts == one.size();
 	}
 
-	public static boolean memberEquals(Collection<? extends Object> tags, Collection<? extends Object> tags2)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
 	public static <O extends Object> boolean nullCheckEquals(O one, O two)
 	{
 		if (one == null)

@@ -112,7 +112,7 @@ public class ParserUtil
 		return obj;
 	}
 
-	private static ObjectMapper getObjectMapper()
+	public static ObjectMapper getObjectMapper()
 	{
 		if (objectMapper == null)
 		{

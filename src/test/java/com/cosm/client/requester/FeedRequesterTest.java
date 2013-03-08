@@ -35,10 +35,10 @@ public class FeedRequesterTest
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-
-		mapper = new ObjectMapper();
+		mapper = TestUtil.getObjectMapper();
 
 		String fixtureUri = "src/test/res";
+
 		feed1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed1.json")), Feed.class);
 		feed2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed2.json")), Feed.class);
 		feedTooMinimal = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed_title_only.json")), Feed.class);
@@ -47,7 +47,7 @@ public class FeedRequesterTest
 		feed2_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed2.json");
 
 		requester = new FeedRequester();
-		feed1 = requester.create(feed2);
+		feed1 = requester.create(feed1);
 	}
 
 	@After

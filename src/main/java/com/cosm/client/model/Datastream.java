@@ -2,6 +2,7 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
+import com.cosm.client.requester.utils.CollectionUtil;
 import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -198,7 +199,7 @@ public class Datastream implements ConnectedObject<Datastream>
 			return false;
 		}
 
-		if (!ObjectUtil.memberEquals(this.getTags(), other.getTags()))
+		if (!CollectionUtil.deepEquals(this.getTags(), other.getTags()))
 		{
 			return false;
 		}
@@ -208,7 +209,7 @@ public class Datastream implements ConnectedObject<Datastream>
 			return false;
 		}
 
-		if (!ObjectUtil.memberEquals(this.getDatapoints(), other.getDatapoints()))
+		if (!ObjectUtil.deepEquals(this.getDatapoints(), other.getDatapoints()))
 		{
 			return false;
 		}

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public class DatapointRequesterTest
 {
 	private static final int feedId = 109;
-	private static final String datastreamId = "stream_id0";
+	private static final String datastreamId = "stream_id2";
 	private static final String datapointId1 = "2013-01-01T00:00:00.000000Z";
 	private static final String datapointId2 = "2013-02-02T00:00:00.000000Z";
 
@@ -41,7 +41,7 @@ public class DatapointRequesterTest
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-		mapper = new ObjectMapper();
+		mapper = TestUtil.getObjectMapper();
 
 		String fixtureUri = "src/test/res";
 		datapoint1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint1.json")), Datapoint.class);
