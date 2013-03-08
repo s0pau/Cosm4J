@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value = "")
-public class Feed implements ConnectedObject<Feed>
+public class Feed implements ConnectedObject
 {
 	public enum Status
 	{
@@ -204,13 +204,14 @@ public class Feed implements ConnectedObject<Feed>
 	}
 
 	@Override
-	public boolean memberEquals(Feed other)
+	public boolean memberEquals(ConnectedObject obj)
 	{
-		if (!equals(other))
+		if (!equals(obj))
 		{
 			return false;
 		}
 
+		Feed other = (Feed) obj;
 		if (!ObjectUtil.nullCheckEquals(this.getTitle(), other.getTitle()))
 		{
 			return false;

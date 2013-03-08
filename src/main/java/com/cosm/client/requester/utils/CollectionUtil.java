@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public class CollectionUtil
 {
-	public static boolean deepEquals(Collection one, Collection two)
+	public static <T extends Object> boolean deepEquals(Collection<T> one, Collection<T> two)
 	{
 		if (!ObjectUtil.nullCheckEquals(one, two))
 		{

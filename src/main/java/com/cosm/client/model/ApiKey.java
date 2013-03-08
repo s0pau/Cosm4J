@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName("key")
-public class ApiKey implements ConnectedObject<ApiKey>
+public class ApiKey implements ConnectedObject
 {
 	/**
 	 * Actual string of the api key
@@ -86,7 +86,7 @@ public class ApiKey implements ConnectedObject<ApiKey>
 	}
 
 	@Override
-	public boolean memberEquals(ApiKey other)
+	public boolean memberEquals(ConnectedObject obj)
 	{
 		// TODO Auto-generated method stub
 		return false;

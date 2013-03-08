@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @author s0pau
  * 
  */
-public class Trigger implements ConnectedObject<Trigger>
+public class Trigger implements ConnectedObject
 {
 
 	/**
@@ -141,7 +141,7 @@ public class Trigger implements ConnectedObject<Trigger>
 	}
 
 	@Override
-	public boolean memberEquals(Trigger other)
+	public boolean memberEquals(ConnectedObject other)
 	{
 		// TODO Auto-generated method stub
 		return false;

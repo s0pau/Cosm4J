@@ -27,7 +27,7 @@ public class ObjectUtil
 
 			for (T obj2 : two)
 			{
-				if (obj1.memberEquals(two))
+				if (obj1.memberEquals((ConnectedObject) two))
 				{
 					matchedCounts++;
 				}
@@ -38,7 +38,7 @@ public class ObjectUtil
 		return matchedCounts == one.size();
 	}
 
-	public static <O extends Object> boolean nullCheckEquals(O one, O two)
+	public static <T extends Object> boolean nullCheckEquals(T one, T two)
 	{
 		if (one == null)
 		{

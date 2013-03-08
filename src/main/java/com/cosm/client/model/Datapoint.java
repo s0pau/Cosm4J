@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  */
 @JsonRootName(value = "datapoint")
 @XmlRootElement(name = "datapoints")
-public class Datapoint implements ConnectedObject<Datapoint>
+public class Datapoint implements ConnectedObject
 {
 	/**
 	 * id of the datapoint
@@ -52,13 +52,14 @@ public class Datapoint implements ConnectedObject<Datapoint>
 	}
 
 	@Override
-	public boolean memberEquals(Datapoint other)
+	public boolean memberEquals(ConnectedObject obj)
 	{
-		if (!equals(other))
+		if (!equals(obj))
 		{
 			return false;
 		}
 
+		Datapoint other = (Datapoint) obj;
 		if (!ObjectUtil.nullCheckEquals(this.value, other.value))
 		{
 			return false;
