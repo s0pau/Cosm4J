@@ -16,10 +16,7 @@
       "current_value":"111",
       "max_value":"10000.0",
       "min_value":"-10.0",
-      "id":"test_feed_stream0"
-    },
-    {
-      "id":"test_feed_stream_1"
+      "id":"test_feed_stream2"
     }
   ]
 }

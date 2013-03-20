@@ -9,9 +9,10 @@ import com.cosm.client.model.Feed;
 import com.cosm.client.requester.RequestHandler.RequestMethod;
 import com.cosm.client.requester.exceptions.HttpException;
 import com.cosm.client.requester.exceptions.ParseToObjectException;
+import com.cosm.client.requester.utils.StringUtil;
 
 /**
- * Class for making request for datapoint from COSM API
+ * Class for making request for feed from COSM API
  * 
  * {@link https ://cosm.com/docs/v2/feed/}
  * 
@@ -20,13 +21,13 @@ import com.cosm.client.requester.exceptions.ParseToObjectException;
  */
 public class FeedRequester
 {
+	private static final String RESOURCES_PATH = "feeds";
 	private final RequestHandler requestHandler = RequestHandler.make();
 
 	/**
 	 * @param toCreate
 	 *            the feed to be created over the API
-	 * @return the feed that was passed in with the id field updated, on
-	 *         successful operation
+	 * @return the feed created, on successful operation
 	 * @throws HttpException
 	 *             if failed to create feed over the API
 	 * @throws ParseToObjectException
@@ -35,10 +36,8 @@ public class FeedRequester
 	public Feed create(Feed toCreate) throws HttpException
 	{
 		Response<Feed> response = requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
-		String feedUrl = response.getHeaders(Response.HEADER_FEED_URI);
-		int feedId = getIdFromUrl(feedUrl);
-		toCreate.setId(feedId);
-		return toCreate;
+		int feedId = getIdFromResponse(response);
+		return get(feedId);
 	}
 
 	// Unsupported:
@@ -175,8 +174,8 @@ public class FeedRequester
 
 	/**
 	 * @param feedId
-	 * @return the restful path to a specifc datastream resource, which can then
-	 *         be appended to a base path for a complete uri
+	 * @return the restful path to a specifc feed resource, which can then be
+	 *         appended to a base path for a complete uri
 	 */
 	private String getResourcePath(int feedId)
 	{
@@ -186,20 +185,19 @@ public class FeedRequester
 	}
 
 	/**
-	 * @return the restful path to a all datastream resource for the given feed
-	 *         and datastream, which can then be appended to a base path for a
-	 *         complete uri
+	 * @return the restful path to a all feeds, which can then be appended to a
+	 *         base path for a complete uri
 	 */
 	private String getResourcesPath()
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("feeds");
-		return sb.toString();
+		return RESOURCES_PATH;
 	}
 
-	private int getIdFromUrl(String feedUrl)
+	private int getIdFromResponse(Response<Feed> response)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		Collection<String> headerVal = (Collection<String>) response.getHeaders(response.HEADER_FEED_URI);
+		String feedUrlStr = (String) headerVal.toArray()[0];
+		String[] tokens = feedUrlStr.split("/");
+		return Integer.valueOf(tokens[tokens.length - 1]);
 	}
 }

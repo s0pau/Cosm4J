@@ -11,6 +11,11 @@ public class CollectionUtil
 			return false;
 		}
 
+		if (one == null)
+		{
+			return true;
+		}
+
 		if (one.size() != two.size())
 		{
 			return false;

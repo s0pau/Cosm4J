@@ -16,7 +16,7 @@ import com.cosm.client.requester.utils.ParserUtil;
  */
 public class Response<T extends ConnectedObject>
 {
-	public static final String HEADER_FEED_URI = "feed";
+	public static final String HEADER_FEED_URI = "Location";
 
 	/**
 	 * Didn't want to import the whole Http library for just the codes.
@@ -54,7 +54,7 @@ public class Response<T extends ConnectedObject>
 	}
 
 	private HttpStatus statusCode;
-	private Map<String, String> headers;
+	private Map<String, Object> headers;
 	private String body;
 
 	public HttpStatus getStatusCode()
@@ -72,12 +72,12 @@ public class Response<T extends ConnectedObject>
 		this.statusCode = statusCode;
 	}
 
-	public Map<String, String> getHeaders()
+	public Map<String, Object> getHeaders()
 	{
 		return headers;
 	}
 
-	public String getHeaders(String key)
+	public Object getHeaders(String key)
 	{
 		return headers.get(key);
 	}

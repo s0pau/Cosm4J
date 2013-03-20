@@ -73,7 +73,11 @@ public class ParserUtil
 					String rootName = models[0].getClass().getSimpleName().toLowerCase().concat("s");
 					json = getObjectMapper().writer().withRootName(rootName).writeValueAsString(models);
 				}
-				// if feed, API does not accept root name.
+				else if (models.length == 1)
+				{
+					// if feed, API does not accept root name and only accept one create at a time.
+					json = getObjectMapper().writeValueAsString(models[0]);
+				}
 			}
 
 		} catch (IOException e)

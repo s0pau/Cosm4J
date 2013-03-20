@@ -1,6 +1,7 @@
 package com.cosm.client.requester;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -41,7 +42,6 @@ public class FeedRequesterTest
 
 		feed1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed1.json")), Feed.class);
 		feed2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed2.json")), Feed.class);
-		feedTooMinimal = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed_title_only.json")), Feed.class);
 
 		feed1_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed1.json");
 		feed2_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed2.json");
@@ -53,9 +53,16 @@ public class FeedRequesterTest
 	@After
 	public void tearDown() throws Exception
 	{
-		tearDownFixture(feed1.getId());
-		tearDownFixture(feed2.getId());
-		tearDownFixture(feedTooMinimal.getId());
+		// if id is null, it was never persisted
+		if (feed1.getId() != null)
+		{
+			tearDownFixture(feed1.getId());
+		}
+
+		if (feed2.getId() != null)
+		{
+			tearDownFixture(feed2.getId());
+		}
 		CosmConfig.getInstance().reset();
 		requester = null;
 	}
@@ -81,6 +88,7 @@ public class FeedRequesterTest
 		try
 		{
 			Feed retval = requester.create(feed2);
+			feed2.setId(retval.getId());
 			assertEquals(retval, feed2);
 		} catch (HttpException e)
 		{
@@ -95,7 +103,7 @@ public class FeedRequesterTest
 		{
 			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.json);
 			Feed retval = requester.get(feed1.getId());
-			assertEquals(feed1, retval);
+			assertTrue(feed1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a feed");
@@ -151,7 +159,8 @@ public class FeedRequesterTest
 		try
 		{
 			Feed retval = requester.get(feed1.getId());
-			assertEquals(feed1, retval);
+			feed1.setUpdatedAt(retval.getUpdatedAt());
+			assertTrue(feed1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a feed");
@@ -167,7 +176,7 @@ public class FeedRequesterTest
 		{
 			requester.update(feed1);
 			Feed retval = requester.update(feed1);
-			assertEquals(feed1, retval);
+			assertTrue(feed1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to update a feed");
