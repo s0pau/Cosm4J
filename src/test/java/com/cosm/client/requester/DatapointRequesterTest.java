@@ -25,7 +25,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class DatapointRequesterTest
 {
-	private static final int feedId = 109;
+	private static final int feedId = TestUtil.TEST_FEED_ID;
 	private static final String datastreamId = "stream_id2";
 	private static final String datapointId1 = "2013-01-01T00:00:00.000000Z";
 	private static final String datapointId2 = "2013-02-02T00:00:00.000000Z";

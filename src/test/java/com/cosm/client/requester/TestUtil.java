@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestUtil
 {
+	public static final int TEST_FEED_ID = 320;
+
 	public static String getStringFromFile(String filePath)
 	{
 		try
@@ -36,7 +38,7 @@ public class TestUtil
 
 	public static void loadDefaultTestConfig()
 	{
-		CosmConfig.getInstance().setApiKey("EI-h5T4VzXt9eQlIGYVhoMyisnySAKxXYU0zbjF5dGtYZz0g");
+		CosmConfig.getInstance().setApiKey("GKCBPYAlYhrg4tiN7llhFzqChB6SAKxoTlYzdFluNDU0MD0g");
 		CosmConfig.getInstance().setBaseURI("http://api.dds-1537376.192.168.60.179.xip.io/v2/");
 	}
 

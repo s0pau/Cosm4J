@@ -25,7 +25,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class DatastreamRequesterTest
 {
-	private static final int feedId = 109;
+	private static final int feedId = TestUtil.TEST_FEED_ID;
 
 	private static final String datastreamId1 = "test_stream_1";
 	private static final String datastreamId2 = "test_stream_2";
