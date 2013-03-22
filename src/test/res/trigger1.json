@@ -1,0 +1,7 @@
+{
+  "stream_id":"stream_id0", 
+  "url":"http:\/\/www.postbin.org\/1ijyltn",
+  "environment_id":320,
+  "threshold_value":"15.0",
+  "trigger_type":"lt"
+}

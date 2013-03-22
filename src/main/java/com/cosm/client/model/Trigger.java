@@ -2,6 +2,8 @@ package com.cosm.client.model;
 
 import java.net.URI;
 
+import com.cosm.client.requester.utils.ObjectUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -15,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public class Trigger implements ConnectedObject
 {
-
 	/**
 	 * Types of triggers available
 	 * 
@@ -48,7 +49,10 @@ public class Trigger implements ConnectedObject
 	}
 
 	private Integer id;
+
+	@JsonProperty("trigger_type")
 	private TriggerType type;
+
 	@JsonProperty("stream_id")
 	private String datastreamId;
 
@@ -71,7 +75,10 @@ public class Trigger implements ConnectedObject
 	 */
 	private URI url;
 
+	@JsonIgnore
 	private transient Datastream datastream;
+
+	@JsonIgnore
 	private transient Feed feed;
 
 	public Integer getId()
@@ -92,6 +99,16 @@ public class Trigger implements ConnectedObject
 	public void setDatastreamId(String datastreamId)
 	{
 		this.datastreamId = datastreamId;
+	}
+
+	public String getFeedId()
+	{
+		return feedId;
+	}
+
+	public void setFeedId(String feedId)
+	{
+		this.feedId = feedId;
 	}
 
 	public Double getThresholdValue()
@@ -124,6 +141,16 @@ public class Trigger implements ConnectedObject
 		this.url = url;
 	}
 
+	public String getLogin()
+	{
+		return login;
+	}
+
+	public void setLogin(String login)
+	{
+		this.login = login;
+	}
+
 	public String getNotifiedAt()
 	{
 		return notifiedAt;
@@ -134,6 +161,7 @@ public class Trigger implements ConnectedObject
 		this.notifiedAt = notifiedAt;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getIdString()
 	{
@@ -141,10 +169,51 @@ public class Trigger implements ConnectedObject
 	}
 
 	@Override
-	public boolean memberEquals(ConnectedObject other)
+	public boolean memberEquals(ConnectedObject obj)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if (!equals(obj))
+		{
+			return false;
+		}
+
+		Trigger other = (Trigger) obj;
+
+		if (!ObjectUtil.nullCheckEquals(this.type, other.type))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.datastreamId, other.datastreamId))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.feedId, other.feedId))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.login, other.login))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.notifiedAt, other.notifiedAt))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.thresholdValue, other.thresholdValue))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.url, other.url))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

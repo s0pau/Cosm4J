@@ -28,7 +28,7 @@ public class RequestHandler<T extends ConnectedObject>
 	private static final String HEADER_KEY_API = "X-ApiKey";
 	private static final String HEADER_USER_AGENT = "User Agent";
 	// TODO share properties between this and maven
-	private static final String COSM_USER_AGENT = "cosm-java";
+	private static final String COSM_USER_AGENT = "Cosm-Java-Lib/1.0";
 
 	private String baseURI;
 
@@ -108,11 +108,11 @@ public class RequestHandler<T extends ConnectedObject>
 				response = b.get(ClientResponse.class);
 			} else if (RequestMethod.POST == requestMethod)
 			{
-				String json = ParserUtil.toJson(false, body);
+				String json = ParserUtil.toJson(body);
 				response = b.post(ClientResponse.class, json);
 			} else if (RequestMethod.PUT == requestMethod)
 			{
-				String json = ParserUtil.toJson(true, body);
+				String json = ParserUtil.toJson(body);
 				response = b.put(ClientResponse.class, json);
 			}
 		} catch (UniformInterfaceException e)

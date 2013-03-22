@@ -36,7 +36,7 @@ public class FeedRequester
 	public Feed create(Feed toCreate) throws HttpException
 	{
 		Response<Feed> response = requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
-		int feedId = getIdFromResponse(response);
+		int feedId = response.getIdFromResponse();
 		return get(feedId);
 	}
 
@@ -191,13 +191,5 @@ public class FeedRequester
 	private String getResourcesPath()
 	{
 		return RESOURCES_PATH;
-	}
-
-	private int getIdFromResponse(Response<Feed> response)
-	{
-		Collection<String> headerVal = (Collection<String>) response.getHeaders(response.HEADER_FEED_URI);
-		String feedUrlStr = (String) headerVal.toArray()[0];
-		String[] tokens = feedUrlStr.split("/");
-		return Integer.valueOf(tokens[tokens.length - 1]);
 	}
 }

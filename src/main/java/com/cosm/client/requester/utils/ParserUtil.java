@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.cosm.client.CosmClientException;
 import com.cosm.client.model.ConnectedObject;
 import com.cosm.client.model.Datapoint;
+import com.cosm.client.model.Datastream;
 import com.cosm.client.model.Feed;
+import com.cosm.client.model.Trigger;
 import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,62 +25,59 @@ public class ParserUtil
 	 * Get the list of model objects and create json with root name if there's
 	 * more than 1, strip the id node if there's only 1.
 	 * 
-	 * @param isUpdate
-	 *            if true, strip the id node; else add the root node
 	 * @param models
+	 * 
 	 * @return json string suitable for Cosm API consumption
-	 * @throws CosmClientException
-	 *             if unable to completely parse from model to json
+	 * @throws ParseToObjectException
+	 *             if unable to completely parse from model to json or if models
+	 *             is empty or null
 	 */
-	public static <T extends ConnectedObject> String toJson(boolean isUpdate, T... models)
+	public static <T extends ConnectedObject> String toJson(T... models)
 	{
-		// TODO strip nodes that has a null key
+		if (models == null || models.length == 0)
+		{
+			throw new ParseToObjectException("No model to parse to object");
+		}
+
+		// TODO strip nodes that has a null key?
 		String json = null;
 
 		try
 		{
-			if (isUpdate)
+			// update or creating one object, no id or root name needed (except
+			// datastream)
+			if (models.length == 1 && !(models[0] instanceof Datastream))
 			{
-				if (models.length == 1)
+				T model = models[0];
+
+				json = getObjectMapper().writeValueAsString(model);
+				JsonNode nodes = getObjectMapper().readTree(json);
+
+				// FIXME Very dodgy way to strip the node that
+				// represents id because UPDATE doesn't like the full json
+				// object, at least do this with some @Id annotation
+				if (model instanceof Datapoint)
 				{
-					T model = models[0];
-
-					json = getObjectMapper().writeValueAsString(model);
-					JsonNode nodes = getObjectMapper().readTree(json);
-
-					// FIXME Very dodgy way to strip the node that
-					// represents id because UPDATE doesn't like the full json
-					// object, at least do this with some @Id annotation
-					if (model instanceof Datapoint)
-					{
-						((ObjectNode) nodes).remove("at");
-					} else
-					{
-						((ObjectNode) nodes).remove("id");
-					}
-
-					json = getObjectMapper().writeValueAsString(nodes);
+					((ObjectNode) nodes).remove("at");
 				} else
 				{
-					throw new UnsupportedOperationException("Bulk updates are not currently supported");
+					((ObjectNode) nodes).remove("id");
 				}
+
+				json = getObjectMapper().writeValueAsString(nodes);
 			} else
 			{
-				if (!(models[0] instanceof Feed))
+				if ((models[0] instanceof Feed) && (models[0] instanceof Trigger))
 				{
-					// Setting SerializationConfig.Feature.WRAP_ROOT_VALUE at
-					// mapper did not read annotated label properly, use
-					// withRootName
-					String rootName = models[0].getClass().getSimpleName().toLowerCase().concat("s");
-					json = getObjectMapper().writer().withRootName(rootName).writeValueAsString(models);
+					throw new UnsupportedOperationException(String.format("Bulk operation is not currently supported for %s",
+							models[0].getClass().getSimpleName()));
 				}
-				else if (models.length == 1)
-				{
-					// if feed, API does not accept root name and only accept one create at a time.
-					json = getObjectMapper().writeValueAsString(models[0]);
-				}
-			}
 
+				// Setting SerializationConfig.Feature.WRAP_ROOT_VALUE at mapper
+				// did not read annotated label properly, use withRootName
+				String rootName = models[0].getClass().getSimpleName().toLowerCase().concat("s");
+				json = getObjectMapper().writer().withRootName(rootName).writeValueAsString(models);
+			}
 		} catch (IOException e)
 		{
 			throw new ParseToObjectException("Cannot parse model to object", e);

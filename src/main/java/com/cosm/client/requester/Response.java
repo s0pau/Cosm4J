@@ -16,7 +16,7 @@ import com.cosm.client.requester.utils.ParserUtil;
  */
 public class Response<T extends ConnectedObject>
 {
-	public static final String HEADER_FEED_URI = "Location";
+	public static final String HEADER_NEW_OBJ_URI = "Location";
 
 	/**
 	 * Didn't want to import the whole Http library for just the codes.
@@ -117,5 +117,22 @@ public class Response<T extends ConnectedObject>
 	public Collection<T> getBodyAsObjects(Class returnType) throws ParseToObjectException
 	{
 		return ParserUtil.toConnectedObjects(body, returnType);
+	}
+
+	/**
+	 * @return the id of object as indicated in the headers, e.g. for Feed and
+	 *         Trigger; null if no such header is found.
+	 */
+	public Integer getIdFromResponse()
+	{
+		Collection<String> headerVal = (Collection<String>) getHeaders(HEADER_NEW_OBJ_URI);
+		if (headerVal.isEmpty())
+		{
+			return null;
+		}
+
+		String feedUrlStr = (String) headerVal.toArray()[0];
+		String[] tokens = feedUrlStr.split("/");
+		return Integer.valueOf(tokens[tokens.length - 1]);
 	}
 }
