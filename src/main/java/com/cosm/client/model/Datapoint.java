@@ -50,7 +50,8 @@ public class Datapoint implements ConnectedObject
 	{
 		return at;
 	}
-
+	
+	@JsonIgnore
 	@Override
 	public boolean memberEquals(ConnectedObject obj)
 	{

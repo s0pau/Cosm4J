@@ -171,7 +171,8 @@ public class Datastream implements ConnectedObject
 		retval += (id == null ? 0 : id.hashCode() * 37);
 		return retval;
 	}
-
+	
+	@JsonIgnore
 	@Override
 	public boolean memberEquals(ConnectedObject obj)
 	{
