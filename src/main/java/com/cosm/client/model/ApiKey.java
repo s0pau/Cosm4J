@@ -79,7 +79,6 @@ public class ApiKey implements ConnectedObject
 	}
 
 	@JsonIgnore
-	@Override
 	public String getIdString()
 	{
 		return apiKey;

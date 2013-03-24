@@ -1,13 +1,10 @@
 package com.cosm.client.requester;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,12 +12,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
-import com.cosm.client.CosmConfig.AcceptedMediaType;
 import com.cosm.client.model.Trigger;
 import com.cosm.client.requester.Response.HttpStatus;
 import com.cosm.client.requester.exceptions.HttpException;
 import com.cosm.client.requester.exceptions.ParseToObjectException;
-import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -64,7 +59,7 @@ public class TriggerRequesterTest
 		{
 			tearDownFixture(trigger2.getId());
 		}
-		CosmConfig.getInstance().reset();
+		CosmConfig.getInstance().reload();
 		requester = null;
 	}
 
@@ -108,7 +103,6 @@ public class TriggerRequesterTest
 	{
 		try
 		{
-			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.json);
 			Trigger retval = requester.get(trigger1.getId());
 			assertTrue(trigger1.memberEquals(retval));
 		} catch (HttpException e)
@@ -125,20 +119,6 @@ public class TriggerRequesterTest
 	public void testXMLAcceptHeaderAndConverstion()
 	{
 		ObjectMapper mapper = new XmlMapper();
-
-		try
-		{
-			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.xml);
-			Trigger retval = requester.get(trigger1.getId());
-			trigger1.setId(retval.getId());
-			assertTrue(trigger1.memberEquals(retval));
-		} catch (HttpException e)
-		{
-			fail("failed on requesting to get a trigger");
-		} catch (ParseToObjectException e)
-		{
-			fail("response is not a valid xml");
-		}
 	}
 
 	@Ignore("unable to deserialise CSV atm")
@@ -146,20 +126,6 @@ public class TriggerRequesterTest
 	public void testCSVAcceptHeaderAndConverstion()
 	{
 		CsvMapper mapper = new CsvMapper();
-
-		try
-		{
-			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.csv);
-			Trigger retval = requester.get(trigger1.getId());
-			trigger1.setId(retval.getId());
-			assertTrue(trigger1.memberEquals(retval));
-		} catch (HttpException e)
-		{
-			fail("failed on requesting to get a trigger");
-		} catch (ParseToObjectException e)
-		{
-			fail("response is not a valid csv");
-		}
 	}
 
 	@Test

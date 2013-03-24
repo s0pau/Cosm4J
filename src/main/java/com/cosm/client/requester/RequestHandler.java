@@ -83,7 +83,7 @@ public class RequestHandler<T extends ConnectedObject>
 
 	private Response<T> doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params, T... body)
 	{
-		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMedia();
+		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMediaType();
 
 		String apiUri = appPath;
 		if (RequestMethod.GET == requestMethod)

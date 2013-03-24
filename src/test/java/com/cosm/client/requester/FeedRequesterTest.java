@@ -13,7 +13,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
-import com.cosm.client.CosmConfig.AcceptedMediaType;
 import com.cosm.client.model.Feed;
 import com.cosm.client.requester.Response.HttpStatus;
 import com.cosm.client.requester.exceptions.HttpException;
@@ -63,7 +62,7 @@ public class FeedRequesterTest
 		{
 			tearDownFixture(feed2.getId());
 		}
-		CosmConfig.getInstance().reset();
+		CosmConfig.getInstance().reload();
 		requester = null;
 	}
 
@@ -101,7 +100,6 @@ public class FeedRequesterTest
 	{
 		try
 		{
-			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.json);
 			Feed retval = requester.get(feed1.getId());
 			assertTrue(feed1.memberEquals(retval));
 		} catch (HttpException e)
@@ -118,19 +116,6 @@ public class FeedRequesterTest
 	public void testXMLAcceptHeaderAndConverstion()
 	{
 		ObjectMapper mapper = new XmlMapper();
-
-		try
-		{
-			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.xml);
-			Feed retval = requester.get(feed1.getId());
-			assertEquals(feed1, retval);
-		} catch (HttpException e)
-		{
-			fail("failed on requesting to get a feed");
-		} catch (ParseToObjectException e)
-		{
-			fail("response is not a valid xml");
-		}
 	}
 
 	@Ignore("unable to deserialise CSV atm")
@@ -138,19 +123,6 @@ public class FeedRequesterTest
 	public void testCSVAcceptHeaderAndConverstion()
 	{
 		CsvMapper mapper = new CsvMapper();
-
-		try
-		{
-			CosmConfig.getInstance().setResponseMedia(AcceptedMediaType.csv);
-			Feed retval = requester.get(feed1.getId());
-			// assertEqualToFixture(retObj);
-		} catch (HttpException e)
-		{
-			fail("failed on requesting to get a feed");
-		} catch (ParseToObjectException e)
-		{
-			fail("response is not a valid csv");
-		}
 	}
 
 	@Test

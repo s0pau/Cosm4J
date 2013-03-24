@@ -38,8 +38,7 @@ public class TestUtil
 
 	public static void loadDefaultTestConfig()
 	{
-		CosmConfig.getInstance().setApiKey("GKCBPYAlYhrg4tiN7llhFzqChB6SAKxoTlYzdFluNDU0MD0g");
-		CosmConfig.getInstance().setBaseURI("http://api.dds-1537376.192.168.60.179.xip.io/v2/");
+		CosmConfig.getInstance().reload();
 	}
 
 	public static ObjectMapper getObjectMapper()

@@ -1,6 +1,14 @@
 package com.cosm.client;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import javax.ws.rs.core.MediaType;
+
+import com.cosm.client.requester.utils.StringUtil;
 
 /**
  * Config for accessing Cosm API.
@@ -13,18 +21,26 @@ public class CosmConfig
 
 	private static final String DEFAULT_BASE_URI = "http://api.cosm.com/v2/";
 	private static final AcceptedMediaType DEFAULT_ACCEPTED_MEDIA_TYPE = AcceptedMediaType.json;
+	private static final String CONFIG_FILE_NAME = "config.properties";
 
+	/**
+	 * The apiKey used for authenticating API calls.
+	 */
 	private String apiKey;
 
 	/**
-	 * The media type for the body. Defaults to JSON if not specified.
+	 * The base uri for all API calls as defined in properties file, defaults to
+	 * {@link DEFAULT_BASE_URI) if unspecified.
 	 */
-	private AcceptedMediaType responseMedia = DEFAULT_ACCEPTED_MEDIA_TYPE;
+	private String baseUri;
 
 	/**
-	 * Defaults to Cosm V2 Api
+	 * The media type for the body as defined in properties file, defaults to
+	 * {@link DEFAULT_ACCEPTED_MEDIA_TYPE) if unspecified.
 	 */
-	private String baseUri = DEFAULT_BASE_URI;
+	private AcceptedMediaType responseMediaType = DEFAULT_ACCEPTED_MEDIA_TYPE;
+
+	private final Properties prop = new Properties();
 
 	public enum AcceptedMediaType
 	{
@@ -46,6 +62,35 @@ public class CosmConfig
 	private CosmConfig()
 	{
 		// singleton
+		loadProperties();
+	}
+
+	/**
+	 * Load config from properties file.
+	 */
+	private void loadProperties()
+	{
+		try
+		{
+			InputStream in = new FileInputStream(new File(getClass().getProtectionDomain().getCodeSource().getLocation()
+					.toString().substring(6).concat(CONFIG_FILE_NAME)));
+
+			prop.load(in);
+
+			baseUri = prop.getProperty("api.baseUri", DEFAULT_BASE_URI);
+
+			String responseMediaProperty = prop.getProperty("api.responseMedia");
+			if (!StringUtil.isNullOrEmpty(responseMediaProperty))
+			{
+				responseMediaType = AcceptedMediaType.valueOf(responseMediaProperty);
+			}
+			responseMediaType = responseMediaType == null ? DEFAULT_ACCEPTED_MEDIA_TYPE : responseMediaType;
+
+			apiKey = prop.getProperty("api.key");
+		} catch (IOException ex)
+		{
+			throw new CosmClientException("Unable to load config file.");
+		}
 	}
 
 	/**
@@ -65,24 +110,9 @@ public class CosmConfig
 		return apiKey;
 	}
 
-	public void setApiKey(String apiKey)
+	public AcceptedMediaType getResponseMediaType()
 	{
-		this.apiKey = apiKey;
-	}
-
-	public AcceptedMediaType getResponseMedia()
-	{
-		return responseMedia;
-	}
-
-	public void setResponseMedia(AcceptedMediaType responseMedia)
-	{
-		this.responseMedia = responseMedia;
-	}
-
-	public void setBaseURI(String baseUri)
-	{
-		this.baseUri = baseUri;
+		return responseMediaType;
 	}
 
 	public String getBaseURI()
@@ -90,10 +120,11 @@ public class CosmConfig
 		return baseUri;
 	}
 
-	public void reset()
+	/**
+	 * Reloads the properties from config file
+	 */
+	public void reload()
 	{
-		apiKey = null;
-		responseMedia = DEFAULT_ACCEPTED_MEDIA_TYPE;
-		baseUri = DEFAULT_BASE_URI;
+		loadProperties();
 	}
 }
