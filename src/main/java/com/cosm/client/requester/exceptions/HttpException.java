@@ -1,7 +1,8 @@
 package com.cosm.client.requester.exceptions;
 
+import org.apache.http.HttpResponse;
+
 import com.cosm.client.CosmClientException;
-import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Exception condition when making HTTP requests to COSM API
@@ -11,27 +12,38 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 public class HttpException extends CosmClientException
 {
-	private ClientResponse response = null;
+	private HttpResponse response = null;
 
-	public HttpException(String msg, ClientResponse response)
+	public HttpException(String msg, HttpResponse response)
 	{
 		super(msg);
 		this.response = response;
 	}
 
+	public HttpException(String msg, Exception e)
+	{
+		super(msg, e);
+	}
+
 	public String getLocalizedMessage()
 	{
-		StringBuilder sb = new StringBuilder(getMessage());
-		sb.append(" Status code: ").append(response.getStatus()).append(".");
-		if (response != null && response.hasEntity())
+		if (response == null)
 		{
-			sb.append(" Reason: ").append(response.getEntity(String.class)).append(".");
+			return super.getLocalizedMessage();
+		}
+
+		StringBuilder sb = new StringBuilder(getMessage());
+		sb.append(" Status code: ").append(response.getStatusLine().getStatusCode()).append(".");
+		if (response != null && response.getEntity() != null)
+		{
+			sb.append(" Reason: ").append(response.getEntity().toString()).append(".");
 		}
 		return sb.toString();
 	}
 
 	public int getStatusCode()
 	{
-		return response.getStatus();
+		// FIXME
+		return response == null ? 0 : response.getStatusLine().getStatusCode();
 	}
 }

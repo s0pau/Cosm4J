@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -14,7 +15,6 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.model.Feed;
-import com.cosm.client.requester.Response.HttpStatus;
 import com.cosm.client.requester.exceptions.HttpException;
 import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,7 +74,7 @@ public class FeedRequesterTest
 		} catch (HttpException e)
 		{
 			// NOT_FOUND is ok as the test ran could have not created/deleted it
-			if (HttpStatus.NOT_FOUND.getCode() != e.getStatusCode())
+			if (HttpStatus.SC_NOT_FOUND != e.getStatusCode())
 			{
 				throw e;
 			}

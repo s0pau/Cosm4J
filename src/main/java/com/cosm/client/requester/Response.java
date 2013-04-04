@@ -18,66 +18,26 @@ public class Response<T extends ConnectedObject>
 {
 	public static final String HEADER_NEW_OBJ_URI = "Location";
 
-	/**
-	 * Didn't want to import the whole Http library for just the codes.
-	 * 
-	 * @author s0pau
-	 * 
-	 */
-	public enum HttpStatus
-	{
-		NOT_FOUND(404), FORBIDDEN(403);
-
-		private int code;
-
-		private HttpStatus(int errorCode)
-		{
-			this.code = errorCode;
-		}
-
-		public int getCode()
-		{
-			return code;
-		}
-
-		public static HttpStatus valueOf(int code)
-		{
-			for (HttpStatus status : HttpStatus.values())
-			{
-				if (status.code == code)
-				{
-					return status;
-				}
-			}
-			return null;
-		}
-	}
-
-	private HttpStatus statusCode;
-	private Map<String, Object> headers;
+	private int statusCode;
+	private Map<String, String> headers;
 	private String body;
 
-	public HttpStatus getStatusCode()
+	public int getStatusCode()
 	{
 		return statusCode;
 	}
 
 	public void setStatusCode(int statusCode)
 	{
-		this.statusCode = HttpStatus.valueOf(statusCode);
-	}
-
-	public void setStatusCode(HttpStatus statusCode)
-	{
 		this.statusCode = statusCode;
 	}
 
-	public Map<String, Object> getHeaders()
+	public Map<String, String> getHeaders()
 	{
 		return headers;
 	}
 
-	public Object getHeaders(String key)
+	public String getHeaders(String key)
 	{
 		return headers.get(key);
 	}
@@ -125,13 +85,7 @@ public class Response<T extends ConnectedObject>
 	 */
 	public Integer getIdFromResponse()
 	{
-		Collection<String> headerVal = (Collection<String>) getHeaders(HEADER_NEW_OBJ_URI);
-		if (headerVal.isEmpty())
-		{
-			return null;
-		}
-
-		String feedUrlStr = (String) headerVal.toArray()[0];
+		String feedUrlStr = getHeaders(HEADER_NEW_OBJ_URI);
 		String[] tokens = feedUrlStr.split("/");
 		return Integer.valueOf(tokens[tokens.length - 1]);
 	}

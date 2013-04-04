@@ -5,7 +5,9 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Collection;
 
+import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,7 +15,6 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.model.Trigger;
-import com.cosm.client.requester.Response.HttpStatus;
 import com.cosm.client.requester.exceptions.HttpException;
 import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,7 +72,7 @@ public class TriggerRequesterTest
 		} catch (HttpException e)
 		{
 			// NOT_FOUND is ok as the test ran could have not created/deleted it
-			if (HttpStatus.NOT_FOUND.getCode() != e.getStatusCode())
+			if (HttpStatus.SC_NOT_FOUND != e.getStatusCode())
 			{
 				throw e;
 			}
@@ -134,8 +135,23 @@ public class TriggerRequesterTest
 		try
 		{
 			Trigger retval = requester.get(trigger1.getId());
-			trigger1.setId(retval.getId());
 			assertTrue(trigger1.memberEquals(retval));
+		} catch (HttpException e)
+		{
+			fail("failed on requesting to get a trigger");
+		}
+	}
+
+	@Test
+	public void testGetByFeedId()
+	{
+		trigger2 = requester.create(trigger2);
+		try
+		{
+			Collection<Trigger> retval = requester.getByFeedId(TestUtil.TEST_FEED_ID);
+			assertTrue(retval.size() == 2);
+			assertTrue(retval.contains(trigger1));
+			assertTrue(retval.contains(trigger2));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a trigger");
@@ -150,7 +166,6 @@ public class TriggerRequesterTest
 		try
 		{
 			Trigger retval = requester.update(trigger1);
-			trigger1.setId(retval.getId());
 			assertTrue(trigger1.memberEquals(retval));
 		} catch (HttpException e)
 		{

@@ -1,7 +1,7 @@
 { 
-  "threshold_value":"15.0",
+  "threshold_value":"6.6",
   "url":"http:\/\/www.postbin.org\/1ijyltn",
   "trigger_type":"gt",
-  "environment_id":320,
+  "environment_id":929,
   "stream_id":"stream_id0"
 }

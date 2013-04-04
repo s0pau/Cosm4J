@@ -7,13 +7,16 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
+import org.apache.http.HttpStatus;
+
 import com.cosm.client.CosmConfig;
+import com.cosm.client.requester.exceptions.HttpException;
 import com.cosm.client.requester.utils.ParserUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestUtil
 {
-	public static final int TEST_FEED_ID = 320;
+	public static final int TEST_FEED_ID = 929;// 97684;
 
 	public static String getStringFromFile(String filePath)
 	{

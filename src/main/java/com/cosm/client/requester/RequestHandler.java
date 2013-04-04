@@ -1,22 +1,29 @@
 package com.cosm.client.requester;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+
+import com.cosm.client.CosmClientException;
 import com.cosm.client.CosmConfig;
 import com.cosm.client.CosmConfig.AcceptedMediaType;
 import com.cosm.client.model.ConnectedObject;
 import com.cosm.client.requester.exceptions.HttpException;
 import com.cosm.client.requester.utils.ParserUtil;
 import com.cosm.client.requester.utils.StringUtil;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.LoggingFilter;
-import com.sun.jersey.api.json.JSONConfiguration;
 
 /**
  * Handler for building and making requests
@@ -32,7 +39,7 @@ public class RequestHandler<T extends ConnectedObject>
 
 	private String baseURI;
 
-	private Client httpClient;
+	private DefaultHttpClient httpClient;
 
 	public enum RequestMethod
 	{
@@ -54,9 +61,9 @@ public class RequestHandler<T extends ConnectedObject>
 		return doRequest(requestMethod, appPath, (Map<String, Object>) null);
 	}
 
-	public Response<T> doRequest(RequestMethod requestMethod, String appPath, T... objects)
+	public Response<T> doRequest(RequestMethod requestMethod, String appPath, T... bodyObjects)
 	{
-		return doRequest(requestMethod, appPath, null, objects);
+		return doRequest(requestMethod, appPath, null, bodyObjects);
 	}
 
 	public Response<T> doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params)
@@ -73,78 +80,50 @@ public class RequestHandler<T extends ConnectedObject>
 	 *            http request methods
 	 * @param appPath
 	 *            restful app path
-	 * @param body
-	 *            body for api call
+	 * @param bodyObjects
+	 *            objects to be parsed as body for api call
 	 * @param params
 	 *            key-value of params for api call
 	 * 
 	 * @return response string
 	 */
 
-	private Response<T> doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params, T... body)
+	private Response<T> doRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params, T... bodyObjects)
 	{
-		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMediaType();
-
-		String apiUri = appPath;
-		if (RequestMethod.GET == requestMethod)
-		{
-			apiUri = apiUri.concat(".").concat(mediaType.name());
-		}
-		apiUri = concatParams(apiUri, params);
-
-		ClientResponse response = null;
+		Response<T> response = null;
+		HttpRequestBase request = buildRequest(requestMethod, appPath, params, bodyObjects);
 
 		try
 		{
-			WebResource service = getClient().resource(baseURI);
-			WebResource.Builder b = service.path(apiUri).accept(mediaType.getMediaType())
-					.header(HEADER_KEY_API, CosmConfig.getInstance().getApiKey()).header(HEADER_USER_AGENT, COSM_USER_AGENT);
-
-			if (RequestMethod.DELETE == requestMethod)
-			{
-				response = b.delete(ClientResponse.class);
-			} else if (RequestMethod.GET == requestMethod)
-			{
-				response = b.get(ClientResponse.class);
-			} else if (RequestMethod.POST == requestMethod)
-			{
-				String json = ParserUtil.toJson(body);
-				response = b.post(ClientResponse.class, json);
-			} else if (RequestMethod.PUT == requestMethod)
-			{
-				String json = ParserUtil.toJson(body);
-				response = b.put(ClientResponse.class, json);
-			}
-		} catch (UniformInterfaceException e)
+			ResponseHandler<Response> responseHandler = new HttpResponseHandler();
+			response = getClient().execute(request, responseHandler);
+		} catch (HttpException e)
 		{
-			throw new HttpException("Http request did not return successfully.", e.getResponse());
-		}
-
-		if (!isHttpStatusOK(response.getStatus()))
+			throw e;
+		} catch (IOException e)
 		{
-			throw new HttpException("Http response status indicates unsuccessful operation.", response);
+			throw new HttpException("Http request did not return successfully.", e);
+		} catch (RuntimeException e)
+		{
+			// release resources manually on unexpected exceptions
+			request.abort();
+			throw new HttpException("Http request did not return successfully.", e);
 		}
+		// finally
+		// {
+		// getClient().getConnectionManager().shutdown();
+		// }
 
-		return toResponse(requestMethod, appPath, response, body);
+		return response;
 	}
 
-	private Response<T> toResponse(RequestMethod requestMethod, String appPath, ClientResponse response, T... body)
-	{
-		Response<T> retval = new Response<T>();
-		retval.setStatusCode(response.getStatus());
-		retval.setBody(response.getEntity(String.class));
-		retval.setHeaders(response.getHeaders());
-		return retval;
-	}
-
-	private Client getClient()
+	private DefaultHttpClient getClient()
 	{
 		if (httpClient == null)
 		{
-			ClientConfig config = new DefaultClientConfig();
-			config.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-			httpClient = Client.create(config);
-			httpClient.addFilter(new LoggingFilter(System.out));
+			httpClient = new DefaultHttpClient();
+			httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0, false));
+
 		}
 		return httpClient;
 	}
@@ -198,13 +177,75 @@ public class RequestHandler<T extends ConnectedObject>
 		return sb.toString();
 	}
 
-	private boolean isHttpStatusOK(int statusCode)
+	private HttpRequestBase buildRequest(RequestMethod requestMethod, String appPath, Map<String, Object> params,
+			T... bodyObjects)
 	{
-		if (statusCode >= 300)
+		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMediaType();
+
+		HttpRequestBase request = null;
+		switch (requestMethod)
 		{
-			return false;
+			case DELETE:
+				request = new HttpDelete();
+				break;
+
+			case GET:
+				request = new HttpGet();
+				break;
+
+			case POST:
+				request = new HttpPost();
+				StringEntity postEntity = getEntity(false, bodyObjects);
+				((HttpPost) request).setEntity(postEntity);
+				break;
+
+			case PUT:
+				request = new HttpPut();
+				StringEntity putEntity = getEntity(true, bodyObjects);
+				((HttpPut) request).setEntity(putEntity);
+				break;
+
+			default:
+				break;
 		}
 
-		return true;
+		String uriStr = baseURI.concat(appPath);
+		if (RequestMethod.GET == requestMethod)
+		{
+			uriStr = uriStr.concat(".").concat(mediaType.name());
+		}
+		uriStr = concatParams(uriStr, params);
+
+		try
+		{
+			request.setURI(new URI(uriStr));
+		} catch (URISyntaxException e)
+		{
+			throw new HttpException("Invalid URI requested.", e);
+		}
+
+		request.addHeader("accept", mediaType.getMediaType());
+		request.addHeader(HEADER_KEY_API, CosmConfig.getInstance().getApiKey());
+		request.addHeader(HEADER_USER_AGENT, COSM_USER_AGENT);
+
+		return request;
+	}
+
+	private StringEntity getEntity(boolean isUpdate, T... bodyObjects)
+	{
+		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMediaType();
+		String json = ParserUtil.toJson(isUpdate, bodyObjects);
+
+		StringEntity body = null;
+		try
+		{
+			body = new StringEntity(json);
+			body.setContentType(mediaType.getMediaType());
+		} catch (UnsupportedEncodingException e)
+		{
+			throw new CosmClientException("Unable to encode json string for making request.", e);
+		}
+
+		return body;
 	}
 }
