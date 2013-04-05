@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ DatapointRequesterTest.class, DatastreamRequesterTest.class, FeedRequesterTest.class, TriggerRequesterTest.class })
+@SuiteClasses({ DatapointRequesterTest.class, DatastreamRequesterTest.class, FeedRequesterTest.class, TriggerRequesterTest.class,
+		ApiKeyRequesterTest.class })
 public class HttpClientTestSuite
 {
 }

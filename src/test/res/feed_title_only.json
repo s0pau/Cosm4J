@@ -1,1 +1,8 @@
-{"title":"Test Feed - Title 1"}
+{
+  "title":"Minimal Test Feed",
+  "datastreams":[
+    {
+      "minimal_stream":"0"
+    }
+  ]
+}

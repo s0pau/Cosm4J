@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
@@ -21,6 +23,7 @@ public class Datapoint implements ConnectedObject
 	/**
 	 * id of the datapoint
 	 */
+	@JsonInclude(Include.NON_NULL)
 	String at;
 	String value;
 
@@ -44,13 +47,6 @@ public class Datapoint implements ConnectedObject
 		this.value = value;
 	}
 
-	@JsonIgnore
-	@Override
-	public String getIdString()
-	{
-		return at;
-	}
-	
 	@JsonIgnore
 	@Override
 	public boolean memberEquals(ConnectedObject obj)

@@ -35,7 +35,7 @@ public class TriggerRequester
 	public Trigger create(Trigger toCreate) throws HttpException
 	{
 		Response<Trigger> response = requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
-		int triggerId = response.getIdFromResponse();
+		int triggerId = Integer.valueOf(response.getIdFromResponse());
 		return get(triggerId);
 	}
 
@@ -88,6 +88,12 @@ public class TriggerRequester
 		return toUpdate;
 	}
 
+	/**
+	 * @param triggerId
+	 *            the id of the trigger to be deleted over the API
+	 * @throws HttpException
+	 *             if failed to delete the trigger over the API
+	 */
 	public void delete(int triggerId) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(triggerId));

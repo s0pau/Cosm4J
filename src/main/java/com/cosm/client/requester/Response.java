@@ -65,13 +65,7 @@ public class Response<T extends ConnectedObject>
 
 	public T getBodyAsObject(Class returnType) throws ParseToObjectException
 	{
-		Collection<T> models = ParserUtil.toConnectedObjects(body, returnType);
-		if (!models.isEmpty())
-		{
-			return (T) (models.toArray())[0];
-		}
-
-		return null;
+		return ParserUtil.toConnectedObject(body, returnType);
 	}
 
 	public Collection<T> getBodyAsObjects(Class returnType) throws ParseToObjectException
@@ -83,10 +77,10 @@ public class Response<T extends ConnectedObject>
 	 * @return the id of object as indicated in the headers, e.g. for Feed and
 	 *         Trigger; null if no such header is found.
 	 */
-	public Integer getIdFromResponse()
+	public String getIdFromResponse()
 	{
 		String feedUrlStr = getHeaders(HEADER_NEW_OBJ_URI);
 		String[] tokens = feedUrlStr.split("/");
-		return Integer.valueOf(tokens[tokens.length - 1]);
+		return tokens[tokens.length - 1];
 	}
 }

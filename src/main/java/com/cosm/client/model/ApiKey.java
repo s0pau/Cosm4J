@@ -2,8 +2,11 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
+import com.cosm.client.requester.utils.CollectionUtil;
 import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -17,8 +20,9 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 public class ApiKey implements ConnectedObject
 {
 	/**
-	 * Actual string of the api key
+	 * Actual string of the api key. It is also the id.
 	 */
+	@JsonInclude(Include.NON_NULL)
 	@JsonProperty("api_key")
 	private String apiKey;
 
@@ -58,11 +62,13 @@ public class ApiKey implements ConnectedObject
 		this.label = label;
 	}
 
+	@JsonProperty("private_access")
 	public boolean isPrivateAccess()
 	{
 		return isPrivateAccess;
 	}
 
+	@JsonProperty("private_access")
 	public void setPrivateAccess(boolean isPrivateAccess)
 	{
 		this.isPrivateAccess = isPrivateAccess;
@@ -87,8 +93,33 @@ public class ApiKey implements ConnectedObject
 	@Override
 	public boolean memberEquals(ConnectedObject obj)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if (!equals(obj))
+		{
+			return false;
+		}
+
+		ApiKey other = (ApiKey) obj;
+		if (!ObjectUtil.nullCheckEquals(this.apiKey, other.apiKey))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.label, other.label))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.isPrivateAccess, other.isPrivateAccess))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.deepEquals(this.permissions, other.permissions))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

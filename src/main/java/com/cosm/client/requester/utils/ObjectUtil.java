@@ -38,6 +38,11 @@ public class ObjectUtil
 		return matchedCounts == one.size();
 	}
 
+	/**
+	 * @param one
+	 * @param two
+	 * @return true if both objects are null or both equals(); false otherwise
+	 */
 	public static <T extends Object> boolean nullCheckEquals(T one, T two)
 	{
 		if (one == null)

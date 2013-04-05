@@ -22,7 +22,6 @@ public class DatastreamRequester
 	private final RequestHandler requestHandler = RequestHandler.make();
 
 	/**
-	 * 
 	 * @param feedId
 	 *            parent of the datastream
 	 * @param toCreate

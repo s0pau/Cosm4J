@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.internal.matchers.IsCollectionContaining;
-
 import com.cosm.client.model.ApiKey;
 import com.cosm.client.model.ConnectedObject;
 import com.cosm.client.model.Datapoint;
@@ -14,9 +12,8 @@ import com.cosm.client.model.Feed;
 import com.cosm.client.model.Trigger;
 import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
@@ -27,25 +24,27 @@ public class ParserUtil
 	// TODO temp
 	enum ParseArg
 	{
-		feed(Feed.class, null, false, null, false),
-		datastream(Datastream.class, null, true, "datastreams", true),
-		datapoint(Datapoint.class, null, false, "datapoints", true),
-		trigger(Trigger.class, null, false, null, false),
-		apikey(ApiKey.class, "key", false, "key", false);
+		feed(Feed.class, null, false, null, false, "id"),
+		datastream(Datastream.class, null, true, "datastreams", true, "id"),
+		datapoint(Datapoint.class, null, false, "datapoints", true, "at"),
+		trigger(Trigger.class, null, false, null, false, "id"),
+		apikey(ApiKey.class, "key", false, "key", false, "api_key");
 
 		private Class objClass;
 		private String updateRoot;
 		private boolean isUpdateHasId;
 		private String createRoot;
 		private boolean isCreateHasId;
+		private String idName;
 
-		ParseArg(Class objClass, String updateRoot, boolean isUpdateHasId, String createRoot, boolean isCreateHasId)
+		ParseArg(Class objClass, String updateRoot, boolean isUpdateHasId, String createRoot, boolean isCreateHasId, String idName)
 		{
 			this.objClass = objClass;
 			this.updateRoot = updateRoot;
 			this.isUpdateHasId = isUpdateHasId;
 			this.createRoot = createRoot;
 			this.isCreateHasId = isCreateHasId;
+			this.idName = idName;
 		}
 
 		public Class getObjClass()
@@ -73,6 +72,11 @@ public class ParserUtil
 			return isCreateHasId;
 		}
 
+		public String getIdName()
+		{
+			return idName;
+		}
+
 		public static ParseArg valueOf(ConnectedObject obj)
 		{
 			for (ParseArg arg : ParseArg.values())
@@ -88,12 +92,13 @@ public class ParserUtil
 	}
 
 	/**
-	 * Get the list of model objects and create json with root name if there's
-	 * more than 1, strip the id node if there's only 1.
+	 * Get the list of model objects and create json as expected by the API.
 	 * 
 	 * @param isUpdate
-	 *            TODO
+	 *            parse object to body suitable for updates if true; for
+	 *            creates, otherwise
 	 * @param models
+	 *            models to be parsed to body
 	 * 
 	 * @return json string suitable for Cosm API consumption
 	 * @throws ParseToObjectException
@@ -135,23 +140,16 @@ public class ParserUtil
 				json = getObjectMapper().writeValueAsString(model);
 			}
 
-			// STRIP IDs
-			if ((isUpdate && !arg.isUpdateHasId) || (!isUpdate && !arg.isCreateHasId))
+			// ApiKey needs to be wrapped in a root node without the array
+			// container, hack the standards!
+			if (arg.objClass == ApiKey.class)
 			{
-				JsonNode nodes = getObjectMapper().readTree(json);
-
-				// FIXME Very dodgy way to strip the node that
-				// represents id because UPDATE doesn't like the full json
-				// object, at least do this with some @Id annotation
-				if (models[0] instanceof Datapoint)
-				{
-					((ObjectNode) nodes).remove("at");
-				} else
-				{
-					((ObjectNode) nodes).remove("id");
-				}
-
-				json = getObjectMapper().writeValueAsString(nodes);
+				int start = json.indexOf("\"key\":[") + 6;
+				int end = json.lastIndexOf("}") - 1;
+				StringBuilder sb = new StringBuilder(json);
+				sb.setCharAt(start, ' ');
+				sb.setCharAt(end, ' ');
+				json = sb.toString();
 			}
 		} catch (IOException e)
 		{
@@ -173,12 +171,23 @@ public class ParserUtil
 		{
 			throw new ParseToObjectException(String.format("Unable to parse [%s] to %s.", body, elementType), e);
 		}
+
 		return objs;
 	}
 
-	static <T extends ConnectedObject> T toConnectedObject(String body, Class elementType)
+	public static <T extends ConnectedObject> T toConnectedObject(String body, Class elementType)
 	{
 		T obj;
+
+		if (ApiKey.class.equals(elementType))
+		{
+			// ApiKey comes wrapped in a root node without the array container,
+			// hackily remove the hack so it can be parsed by standard parsers
+			int start = body.indexOf("\"key\":") + 6;
+			int end = body.lastIndexOf("}");
+			body = body.substring(start, end);
+		}
+
 		try
 		{
 			obj = (T) getObjectMapper().readValue(body, elementType);
@@ -186,6 +195,7 @@ public class ParserUtil
 		{
 			throw new ParseToObjectException(String.format("Unable to parse [%s] to %s.", body, elementType), e);
 		}
+
 		return obj;
 	}
 
@@ -194,10 +204,10 @@ public class ParserUtil
 		if (objectMapper == null)
 		{
 			ObjectMapper retval = new ObjectMapper();
-			// retval.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-
 			retval.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 			retval.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			retval.configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, false);
+			retval.configure(SerializationFeature.EAGER_SERIALIZER_FETCH, false);
 			objectMapper = retval;
 		}
 		return objectMapper;

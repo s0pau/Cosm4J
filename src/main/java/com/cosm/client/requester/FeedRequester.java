@@ -36,7 +36,7 @@ public class FeedRequester
 	public Feed create(Feed toCreate) throws HttpException
 	{
 		Response<Feed> response = requestHandler.doRequest(RequestMethod.POST, getResourcesPath(), toCreate);
-		int feedId = response.getIdFromResponse();
+		int feedId = Integer.valueOf(response.getIdFromResponse());
 		return get(feedId);
 	}
 

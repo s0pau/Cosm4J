@@ -129,13 +129,6 @@ public class Datastream implements ConnectedObject
 		this.datapoints = datapoints;
 	}
 
-	@JsonIgnore
-	@Override
-	public String getIdString()
-	{
-		return id;
-	}
-
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -171,7 +164,7 @@ public class Datastream implements ConnectedObject
 		retval += (id == null ? 0 : id.hashCode() * 37);
 		return retval;
 	}
-	
+
 	@JsonIgnore
 	@Override
 	public boolean memberEquals(ConnectedObject obj)

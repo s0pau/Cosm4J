@@ -1,38 +1,56 @@
 package com.cosm.client.model;
 
 import java.util.Collection;
+import java.util.Collections;
 
-import com.cosm.client.requester.RequestHandler.RequestMethod;
+import com.cosm.client.requester.utils.CollectionUtil;
+import com.cosm.client.requester.utils.ObjectUtil;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
- * Permission model, accessible from {@link ApiKey}
+ * Permission model, accessible from {@link ApiKey}.
+ * 
+ * Value object.
  * 
  * @author spau
  * 
  */
-public class Permission
+@JsonRootName("permissions")
+public class Permission implements ImmutableObject
 {
-	@JsonProperty("access_methods")
-	private Collection<String> accessMethodIds;
+	public enum AccessMethod
+	{
+		delete, get, post, put;
+	}
 
 	@JsonProperty("source_ip")
 	private String sourceIp;
 	// private String referer;
 	// private Integer minimumInterval;
 	// private String label;
+
+	@JsonProperty("access_methods")
+	private Collection<AccessMethod> accessMethods;
+
+	@JsonProperty("resources")
 	private Collection<Resource> resources;
 
-	private transient Collection<RequestMethod> accessMethods;
-
-	public Collection<String> getAccessMethodIds()
+	@JsonCreator
+	public Permission(@JsonProperty("source_ip") String sourceIp,
+			@JsonProperty("access_methods") Collection<AccessMethod> accessMethods,
+			@JsonProperty("resources") Collection<Resource> resources)
 	{
-		return accessMethodIds;
+		this.sourceIp = sourceIp;
+		this.accessMethods = accessMethods == null ? null : Collections.unmodifiableCollection(accessMethods);
+		this.resources = resources == null ? null : Collections.unmodifiableCollection(resources);
 	}
 
-	public void setAccessMethodIds(Collection<String> accessMethodIds)
+	public Collection<AccessMethod> getAccessMethods()
 	{
-		this.accessMethodIds = accessMethodIds;
+		return accessMethods;
 	}
 
 	public String getSourceIp()
@@ -40,18 +58,58 @@ public class Permission
 		return sourceIp;
 	}
 
-	public void setSourceIp(String sourceIp)
-	{
-		this.sourceIp = sourceIp;
-	}
-
 	public Collection<Resource> getResources()
 	{
 		return resources;
 	}
 
-	public void setResources(Collection<Resource> resources)
+	@JsonIgnore
+	@Override
+	public boolean equals(Object obj)
 	{
-		this.resources = resources;
+		if (obj == null)
+		{
+			return false;
+		}
+
+		if (this == obj)
+		{
+			return true;
+		}
+
+		if (!(obj instanceof Permission))
+		{
+			return false;
+		}
+
+		Permission other = (Permission) obj;
+
+		if (!ObjectUtil.nullCheckEquals(this.sourceIp, other.sourceIp))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.deepEquals(this.accessMethods, other.accessMethods))
+		{
+			return false;
+		}
+
+		if (!CollectionUtil.deepEquals(this.resources, other.resources))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@JsonIgnore
+	@Override
+	public int hashCode()
+	{
+		int retval = 1;
+		retval += sourceIp == null ? 0 : sourceIp.hashCode() * 37;
+		retval += accessMethods == null ? 0 : accessMethods.hashCode() * 37;
+		retval += resources == null ? 0 : resources.hashCode() * 37;
+		return retval;
 	}
 }

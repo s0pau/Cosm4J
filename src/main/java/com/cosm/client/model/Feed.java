@@ -6,6 +6,8 @@ import java.util.Collection;
 import com.cosm.client.requester.utils.CollectionUtil;
 import com.cosm.client.requester.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -23,6 +25,7 @@ public class Feed implements ConnectedObject
 		frozen, live
 	}
 
+	@JsonInclude(Include.NON_NULL)
 	private Integer id;
 	private String title;
 	private String description;
@@ -192,13 +195,6 @@ public class Feed implements ConnectedObject
 	public void setDatastreams(Collection<Datastream> datastreams)
 	{
 		this.datastreams = datastreams;
-	}
-
-	@JsonIgnore
-	@Override
-	public String getIdString()
-	{
-		return String.valueOf(id);
 	}
 
 	@JsonIgnore

@@ -95,7 +95,6 @@ public class DatapointRequester
 	}
 
 	/**
-	 * 
 	 * @param feedId
 	 *            indirect parent of the datapoint
 	 * @param dataStreamId
@@ -112,11 +111,35 @@ public class DatapointRequester
 		return toUpdate;
 	}
 
+	/**
+	 * @param feedId
+	 *            the id of the parent of the datastream that holds the
+	 *            datapoint
+	 * @param dataStreamId
+	 *            the id of the parent of the datapoint
+	 * @param datapointAt
+	 *            the id of the datapoint for the given datastreamId and feedId
+	 *            to be deleted over the API
+	 * @throws HttpException
+	 *             if failed to delete the datapoint over the API
+	 */
 	public void delete(int feedId, String dataStreamId, String datapointAt) throws HttpException
 	{
 		requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
 	}
 
+	/**
+	 * @param feedId
+	 *            the id of the parent of the datastream that holds the
+	 *            datapoints
+	 * @param dataStreamId
+	 *            the id of the parent of the datapoints
+	 * @param startAt
+	 *            any datapoints starting from this date, inclusive will be
+	 *            deleted over the API
+	 * @throws HttpException
+	 *             if failed to delete the datapoints over the API
+	 */
 	public void deleteMultiple(int feedId, String dataStreamId, String startAt) throws HttpException
 	{
 		Map<String, Object> params = new HashMap<>();

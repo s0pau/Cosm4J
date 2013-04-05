@@ -12,8 +12,6 @@ import com.cosm.client.requester.utils.CollectionUtil;
  */
 public interface ConnectedObject
 {
-	String getIdString();
-
 	/**
 	 * @param other
 	 * @return true, if all member fields are equal by equal() method
