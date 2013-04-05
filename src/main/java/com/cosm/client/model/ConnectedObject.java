@@ -1,6 +1,6 @@
 package com.cosm.client.model;
 
-import com.cosm.client.requester.utils.CollectionUtil;
+import com.cosm.client.utils.CollectionUtil;
 
 /**
  * Interface for all resources that can be requested from Cosm API directly.
@@ -12,8 +12,6 @@ import com.cosm.client.requester.utils.CollectionUtil;
  */
 public interface ConnectedObject
 {
-	String getIdString();
-
 	/**
 	 * @param other
 	 * @return true, if all member fields are equal by equal() method

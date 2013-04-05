@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.ws.rs.core.MediaType;
-
-import com.cosm.client.requester.utils.StringUtil;
+import com.cosm.client.utils.StringUtil;
 
 /**
  * Config for accessing Cosm API.
@@ -44,18 +42,18 @@ public class CosmConfig
 
 	public enum AcceptedMediaType
 	{
-		json(MediaType.APPLICATION_JSON_TYPE), xml(MediaType.APPLICATION_XML_TYPE), csv(MediaType.TEXT_HTML_TYPE);
+		json("application/json"), xml("application/json"), csv("text/html");
 
-		private MediaType mediaType;
+		private String contentType;
 
-		private AcceptedMediaType(MediaType mediaType)
+		private AcceptedMediaType(String contentType)
 		{
-			this.mediaType = mediaType;
+			this.contentType = contentType;
 		}
 
-		public MediaType getMediaType()
+		public String getMediaType()
 		{
-			return mediaType;
+			return contentType;
 		}
 	}
 
@@ -72,8 +70,17 @@ public class CosmConfig
 	{
 		try
 		{
-			InputStream in = new FileInputStream(new File(getClass().getProtectionDomain().getCodeSource().getLocation()
-					.toString().substring(6).concat(CONFIG_FILE_NAME)));
+			String fileName = null;
+			if (System.getProperty("os.name").contains("Windows"))
+			{
+				fileName = getClass().getProtectionDomain().getCodeSource().getLocation().toString().substring(6)
+						.concat(CONFIG_FILE_NAME);
+			} else
+			{
+				fileName = getClass().getProtectionDomain().getCodeSource().getLocation().toString().substring(5)
+						.concat(CONFIG_FILE_NAME);
+			}
+			InputStream in = new FileInputStream(new File(fileName));
 
 			prop.load(in);
 
@@ -89,7 +96,7 @@ public class CosmConfig
 			apiKey = prop.getProperty("api.key");
 		} catch (IOException ex)
 		{
-			throw new CosmClientException("Unable to load config file.");
+			throw new CosmClientException("Unable to load config propoerties", ex);
 		}
 	}
 

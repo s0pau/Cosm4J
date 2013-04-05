@@ -1,11 +1,21 @@
-package com.cosm.client.requester.utils;
+package com.cosm.client.utils;
 
 import java.util.List;
 
-import com.cosm.client.requester.exceptions.ParseToObjectException;
+import com.cosm.client.CosmClientException;
 
+/**
+ * Utility class for String
+ * 
+ * @author s0pau
+ * 
+ */
 public class StringUtil
 {
+	/**
+	 * @param toCheck
+	 * @return true if the given string is null or empty
+	 */
 	public static boolean isNullOrEmpty(String toCheck)
 	{
 		if (toCheck == null || toCheck.length() == 0)
@@ -16,7 +26,6 @@ public class StringUtil
 	}
 
 	/**
-	 * 
 	 * @param list
 	 * @return comma delimited string of elements in list, {@see toString} which
 	 *         is used to convert each element
@@ -77,7 +86,7 @@ public class StringUtil
 			return toCommaDelimitedString((List) o);
 		} else
 		{
-			throw new ParseToObjectException(String.format("Cannot create comma delimited string for %s", o.getClass()));
+			throw new CosmClientException(String.format("Cannot create comma delimited string for %s", o.getClass()));
 		}
 	}
 }

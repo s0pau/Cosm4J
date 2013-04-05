@@ -1,14 +1,17 @@
-package com.cosm.client.requester;
+package com.cosm.client.http.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.cosm.client.http.DefaultRequestHandler;
+import com.cosm.client.http.Response;
+import com.cosm.client.http.DefaultRequestHandler.HttpMethod;
+import com.cosm.client.http.api.DatapointResource;
+import com.cosm.client.http.exception.HttpException;
+import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
-import com.cosm.client.requester.RequestHandler.RequestMethod;
-import com.cosm.client.requester.exceptions.HttpException;
-import com.cosm.client.requester.exceptions.ParseToObjectException;
 
 /**
  * Class for making requests for datapoint(s) from COSM API
@@ -18,69 +21,45 @@ import com.cosm.client.requester.exceptions.ParseToObjectException;
  * @author s0pau
  * 
  */
-public class DatapointRequester
+public class DatapointRequester implements DatapointResource
 {
-	private final RequestHandler<Datapoint> requestHandler = RequestHandler.make();
+	private final DefaultRequestHandler<Datapoint> requestHandler = DefaultRequestHandler.make();
 
-	/**
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
-	 * @param toCreate
-	 *            datapoint to be created over the API
-	 * @return the datapoint that was passed in, on successful operation
-	 * @throws HttpException
-	 *             if failed to create datapoint over the API
+	/* (non-Javadoc)
+	 * @see com.cosm.client.http.DatapointResource#create(int, java.lang.String, com.cosm.client.model.Datapoint)
 	 */
+	@Override
 	public Datapoint create(int feedId, String dataStreamId, Datapoint toCreate) throws HttpException
 	{
-		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
+		requestHandler.doRequest(HttpMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
 		return toCreate;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cosm.client.http.DatapointResource#create(int, java.lang.String, com.cosm.client.model.Datapoint)
+	 */
+	@Override
 	public Collection<Datapoint> create(int feedId, String dataStreamId, Datapoint... toCreate) throws HttpException
 	{
-		requestHandler.doRequest(RequestMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
+		requestHandler.doRequest(HttpMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
 		return Arrays.asList(toCreate);
 	}
 
-	/**
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
-	 * @param datapointAt
-	 *            the id of the datapoint to be retrieved
-	 * @return a datapoint object parsed from the json returned from the API
-	 * @throws HttpException
-	 *             if failed to get datapoint over the API
-	 * @throws ParseToObjectException
-	 *             if failed to parse the returned json to datapoint
+	/* (non-Javadoc)
+	 * @see com.cosm.client.http.DatapointResource#get(int, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException, ParseToObjectException
 	{
-		Response<Datapoint> response = requestHandler.doRequest(RequestMethod.GET,
+		Response<Datapoint> response = requestHandler.doRequest(HttpMethod.GET,
 				getResourcePath(feedId, dataStreamId, datapointAt));
 		return response.getBodyAsObject(Datapoint.class);
 	}
 
-	/**
-	 * 
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
-	 * @param startAt
-	 * @param endAt
-	 * @param samplingInterval
-	 * @return a collection of datapoint objects matching the params, parsed
-	 *         from the json returned from the API
-	 * @throws HttpException
-	 *             if failed to get datapoint over the API
-	 * @throws ParseToObjectException
-	 *             if failed to parse the returned json to datapoint
+	/* (non-Javadoc)
+	 * @see com.cosm.client.http.DatapointResource#get(int, java.lang.String, java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	public Collection<Datapoint> get(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
 			throws HttpException, ParseToObjectException
 	{
@@ -89,40 +68,40 @@ public class DatapointRequester
 		params.put("end", endAt);
 		params.put("interval", samplingInterval);
 
-		Response<Datapoint> response = requestHandler.doRequest(RequestMethod.GET, getParentResourcePath(feedId, dataStreamId),
+		Response<Datapoint> response = requestHandler.doRequest(HttpMethod.GET, getParentResourcePath(feedId, dataStreamId),
 				params);
 		return response.getBodyAsObjects(Datapoint.class);
 	}
 
-	/**
-	 * 
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
-	 * @param toUpdate
-	 *            datapoint to be updated over the API
-	 * @return the datapoint that was passed in, on successful operation
-	 * @throws HttpException
-	 *             if failed to create datapoint over the API
+	/* (non-Javadoc)
+	 * @see com.cosm.client.http.DatapointResource#update(int, java.lang.String, com.cosm.client.model.Datapoint)
 	 */
+	@Override
 	public Datapoint update(int feedId, String dataStreamId, Datapoint toUpdate) throws HttpException
 	{
-		requestHandler.doRequest(RequestMethod.PUT, getResourcePath(feedId, dataStreamId, toUpdate.getAt()), toUpdate);
+		requestHandler.doRequest(HttpMethod.PUT, getResourcePath(feedId, dataStreamId, toUpdate.getAt()), toUpdate);
 		return toUpdate;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cosm.client.http.DatapointResource#delete(int, java.lang.String, java.lang.String)
+	 */
+	@Override
 	public void delete(int feedId, String dataStreamId, String datapointAt) throws HttpException
 	{
-		requestHandler.doRequest(RequestMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
+		requestHandler.doRequest(HttpMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
 	}
 
+	/* (non-Javadoc)
+	 * @see com.cosm.client.http.DatapointResource#deleteMultiple(int, java.lang.String, java.lang.String)
+	 */
+	@Override
 	public void deleteMultiple(int feedId, String dataStreamId, String startAt) throws HttpException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("start", startAt);
 
-		requestHandler.doRequest(RequestMethod.DELETE, getResourcesPath(feedId, dataStreamId), params);
+		requestHandler.doRequest(HttpMethod.DELETE, getResourcesPath(feedId, dataStreamId), params);
 	}
 
 	/**

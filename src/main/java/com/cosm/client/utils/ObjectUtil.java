@@ -1,11 +1,24 @@
-package com.cosm.client.requester.utils;
+package com.cosm.client.utils;
 
 import java.util.Collection;
 
 import com.cosm.client.model.ConnectedObject;
 
+/**
+ * Utility class to supplement Object
+ * 
+ * @author s0pau
+ * 
+ */
 public class ObjectUtil
 {
+	/**
+	 * @param one
+	 * @param two
+	 * @return if both collection are deeply equal - i.e. when both collection
+	 *         is the same size and all objects in the collecion is equal by the
+	 *         equal() method.
+	 */
 	public static <T extends ConnectedObject> boolean deepEquals(Collection<T> one, Collection<T> two)
 	{
 		if (!CollectionUtil.deepEquals(one, two))
@@ -38,6 +51,11 @@ public class ObjectUtil
 		return matchedCounts == one.size();
 	}
 
+	/**
+	 * @param one
+	 * @param two
+	 * @return true if both objects are null or both equals(); false otherwise
+	 */
 	public static <T extends Object> boolean nullCheckEquals(T one, T two)
 	{
 		if (one == null)

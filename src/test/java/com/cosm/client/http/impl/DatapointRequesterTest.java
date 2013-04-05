@@ -1,4 +1,4 @@
-package com.cosm.client.requester;
+package com.cosm.client.http.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -8,16 +8,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Collection;
 
+import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
+import com.cosm.client.http.TestUtil;
+import com.cosm.client.http.api.DatapointResource;
+import com.cosm.client.http.exception.HttpException;
+import com.cosm.client.http.impl.DatapointRequester;
+import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
-import com.cosm.client.requester.Response.HttpStatus;
-import com.cosm.client.requester.exceptions.HttpException;
-import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -29,7 +32,7 @@ public class DatapointRequesterTest
 	private static final String datapointId1 = "2013-01-01T00:00:00.000000Z";
 	private static final String datapointId2 = "2013-02-02T00:00:00.000000Z";
 
-	private DatapointRequester requester;
+	private DatapointResource requester;
 	private ObjectMapper mapper;
 	private Datapoint datapoint1;
 	private Datapoint datapoint2;
@@ -66,11 +69,11 @@ public class DatapointRequesterTest
 	{
 		try
 		{
-			// requester.delete(feedId, datastreamId, fixtureId);
+			requester.delete(feedId, datastreamId, fixtureId);
 		} catch (HttpException e)
 		{
 			// NOT_FOUND is ok as the test ran could have not created/deleted it
-			if (HttpStatus.NOT_FOUND.getCode() != e.getStatusCode())
+			if (HttpStatus.SC_NOT_FOUND != e.getStatusCode())
 			{
 				throw e;
 			}

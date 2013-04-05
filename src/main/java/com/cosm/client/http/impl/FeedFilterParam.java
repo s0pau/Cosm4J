@@ -1,4 +1,4 @@
-package com.cosm.client.requester;
+package com.cosm.client.http.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ import com.cosm.client.model.Feed;
  * 
  * @author s0pau
  */
-class FeedFilterParam
+class FeedFilterParam extends HashMap
 {
 	enum OrderBy
 	{

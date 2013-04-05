@@ -1,33 +1,42 @@
 package com.cosm.client.model;
 
+import com.cosm.client.utils.ObjectUtil;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * Resource - is the {@link Feed} and/or {@link Datastream} that a
  * {@link Permission} maps to.
  * 
+ * Value Object.
+ * 
  * @author s0pau
  * 
  */
-public class Resource
+@JsonInclude(Include.NON_NULL)
+@JsonRootName("resources")
+public class Resource implements ImmutableObject
 {
 	@JsonProperty("feed_id")
-	private String feedId;
+	private int feedId;
 
 	@JsonProperty("datastream_id")
 	private String datastreamId;
 
-	private transient Feed feed;
-	private transient Datastream datastream;
-
-	public String getFeedId()
-	{
-		return feedId;
-	}
-
-	public void setFeedId(String feedId)
+	@JsonCreator
+	public Resource(@JsonProperty("feed_id") int feedId, @JsonProperty("datastream_id") String datastreamId)
 	{
 		this.feedId = feedId;
+		this.datastreamId = datastreamId;
+	}
+
+	public int getFeedId()
+	{
+		return feedId;
 	}
 
 	public String getDatastreamId()
@@ -35,9 +44,47 @@ public class Resource
 		return datastreamId;
 	}
 
-	public void setDatastreamId(String datastreamId)
+	@JsonIgnore
+	@Override
+	public boolean equals(Object obj)
 	{
-		this.datastreamId = datastreamId;
+		if (obj == null)
+		{
+			return false;
+		}
+
+		if (this == obj)
+		{
+			return true;
+		}
+
+		if (!(obj instanceof Resource))
+		{
+			return false;
+		}
+
+		Resource other = (Resource) obj;
+
+		if (this.feedId != other.feedId)
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.datastreamId, other.datastreamId))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
+	@JsonIgnore
+	@Override
+	public int hashCode()
+	{
+		int retval = 1;
+		retval += feedId * 37;
+		retval += datastreamId == null ? 0 : datastreamId.hashCode() * 37;
+		return retval;
+	}
 }

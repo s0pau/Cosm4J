@@ -1,36 +1,35 @@
-package com.cosm.client.requester;
+package com.cosm.client.http;
 
 import java.util.Collection;
 import java.util.Map;
 
+import com.cosm.client.http.DefaultRequestHandler.HttpMethod;
 import com.cosm.client.model.ConnectedObject;
-import com.cosm.client.requester.RequestHandler.RequestMethod;
 
+/**
+ * Wrapper to encapsulating headers, params and body needed for building a
+ * request for T
+ * 
+ * @param <T>
+ *            T extends ConnectedObject
+ * 
+ * @author s0pau
+ * 
+ */
 public class Request<T extends ConnectedObject>
 {
-	RequestMethod requestMethod;
-	String app;
+	HttpMethod httpMethod;
 	Map<String, Object> params;
 	Collection<T> body;
 
-	public RequestMethod getRequestMethod()
+	public HttpMethod getHttpMethod()
 	{
-		return requestMethod;
+		return httpMethod;
 	}
 
-	public void setRequestMethod(RequestMethod requestMethod)
+	public void setHttpMethod(HttpMethod httpMethod)
 	{
-		this.requestMethod = requestMethod;
-	}
-
-	public String getApp()
-	{
-		return app;
-	}
-
-	public void setApp(String app)
-	{
-		this.app = app;
+		this.httpMethod = httpMethod;
 	}
 
 	public Map<String, Object> getParams()

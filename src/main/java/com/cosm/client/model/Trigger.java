@@ -2,8 +2,10 @@ package com.cosm.client.model;
 
 import java.net.URI;
 
-import com.cosm.client.requester.utils.ObjectUtil;
+import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -48,6 +50,7 @@ public class Trigger implements ConnectedObject
 		}
 	}
 
+	@JsonInclude(Include.NON_NULL)
 	private Integer id;
 
 	@JsonProperty("trigger_type")
@@ -159,13 +162,6 @@ public class Trigger implements ConnectedObject
 	public void setNotifiedAt(String notifiedAt)
 	{
 		this.notifiedAt = notifiedAt;
-	}
-
-	@JsonIgnore
-	@Override
-	public String getIdString()
-	{
-		return String.valueOf(id);
 	}
 
 	@Override

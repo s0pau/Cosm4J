@@ -2,8 +2,8 @@ package com.cosm.client.model;
 
 import java.util.Collection;
 
-import com.cosm.client.requester.utils.CollectionUtil;
-import com.cosm.client.requester.utils.ObjectUtil;
+import com.cosm.client.utils.CollectionUtil;
+import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -129,13 +129,6 @@ public class Datastream implements ConnectedObject
 		this.datapoints = datapoints;
 	}
 
-	@JsonIgnore
-	@Override
-	public String getIdString()
-	{
-		return id;
-	}
-
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -171,7 +164,7 @@ public class Datastream implements ConnectedObject
 		retval += (id == null ? 0 : id.hashCode() * 37);
 		return retval;
 	}
-	
+
 	@JsonIgnore
 	@Override
 	public boolean memberEquals(ConnectedObject obj)

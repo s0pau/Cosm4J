@@ -1,4 +1,4 @@
-package com.cosm.client.requester;
+package com.cosm.client.http.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -7,23 +7,26 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
+import com.cosm.client.http.TestUtil;
+import com.cosm.client.http.api.FeedResource;
+import com.cosm.client.http.exception.HttpException;
+import com.cosm.client.http.impl.FeedRequester;
+import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Feed;
-import com.cosm.client.requester.Response.HttpStatus;
-import com.cosm.client.requester.exceptions.HttpException;
-import com.cosm.client.requester.exceptions.ParseToObjectException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class FeedRequesterTest
 {
-	private FeedRequester requester;
+	private FeedResource requester;
 	private ObjectMapper mapper;
 	private Feed feed1;
 	private Feed feed2;
@@ -74,7 +77,7 @@ public class FeedRequesterTest
 		} catch (HttpException e)
 		{
 			// NOT_FOUND is ok as the test ran could have not created/deleted it
-			if (HttpStatus.NOT_FOUND.getCode() != e.getStatusCode())
+			if (HttpStatus.SC_NOT_FOUND != e.getStatusCode())
 			{
 				throw e;
 			}
@@ -87,7 +90,10 @@ public class FeedRequesterTest
 		try
 		{
 			Feed retval = requester.create(feed2);
+
+			// update fields returned from creation before comparing all fields
 			feed2.setId(retval.getId());
+
 			assertEquals(retval, feed2);
 		} catch (HttpException e)
 		{
