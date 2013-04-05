@@ -1,6 +1,6 @@
 package com.cosm.client.model;
 
-import com.cosm.client.requester.utils.ObjectUtil;
+import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

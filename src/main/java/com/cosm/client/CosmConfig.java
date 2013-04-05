@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import com.cosm.client.requester.utils.StringUtil;
+import com.cosm.client.utils.StringUtil;
 
 /**
  * Config for accessing Cosm API.

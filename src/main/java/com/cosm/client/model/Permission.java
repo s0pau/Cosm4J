@@ -3,8 +3,8 @@ package com.cosm.client.model;
 import java.util.Collection;
 import java.util.Collections;
 
-import com.cosm.client.requester.utils.CollectionUtil;
-import com.cosm.client.requester.utils.ObjectUtil;
+import com.cosm.client.utils.CollectionUtil;
+import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
