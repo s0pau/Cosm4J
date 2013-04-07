@@ -3,13 +3,12 @@ package com.cosm.client.http.api;
 import java.util.Collection;
 
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.DatapointRequester;
+import com.cosm.client.http.impl.DatapointRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
 
-public interface DatapointResource
+public interface DatapointRequester
 {
-
 	/**
 	 * @param feedId
 	 *            indirect parent of the datapoint
@@ -22,7 +21,7 @@ public interface DatapointResource
 	 * @throws HttpException
 	 *             if failed to create datapoint over the API
 	 */
-	public  Datapoint create(int feedId, String dataStreamId, Datapoint toCreate) throws HttpException;
+	public Datapoint create(int feedId, String dataStreamId, Datapoint toCreate) throws HttpException;
 
 	/**
 	 * @param feedId
@@ -35,10 +34,10 @@ public interface DatapointResource
 	 *         successful operation
 	 * @throws HttpException
 	 *             if failed to create datapoint over the API
-	 * @see DatapointRequester#create(int, String, Datapoint) for creating and
-	 *      returning one datapoint
+	 * @see DatapointRequesterImpl#create(int, String, Datapoint) for creating
+	 *      and returning one datapoint
 	 */
-	public  Collection<Datapoint> create(int feedId, String dataStreamId, Datapoint... toCreate) throws HttpException;
+	public Collection<Datapoint> create(int feedId, String dataStreamId, Datapoint... toCreate) throws HttpException;
 
 	/**
 	 * @param feedId
@@ -53,11 +52,9 @@ public interface DatapointResource
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to datapoint
 	 */
-	public  Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException,
-			ParseToObjectException;
+	public Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException, ParseToObjectException;
 
 	/**
-	 * 
 	 * @param feedId
 	 *            indirect parent of the datapoint
 	 * @param dataStreamId
@@ -72,7 +69,7 @@ public interface DatapointResource
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to datapoint
 	 */
-	public  Collection<Datapoint> get(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
+	public Collection<Datapoint> get(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
 			throws HttpException, ParseToObjectException;
 
 	/**
@@ -86,7 +83,7 @@ public interface DatapointResource
 	 * @throws HttpException
 	 *             if failed to create datapoint over the API
 	 */
-	public  Datapoint update(int feedId, String dataStreamId, Datapoint toUpdate) throws HttpException;
+	public Datapoint update(int feedId, String dataStreamId, Datapoint toUpdate) throws HttpException;
 
 	/**
 	 * @param feedId
@@ -100,7 +97,7 @@ public interface DatapointResource
 	 * @throws HttpException
 	 *             if failed to delete the datapoint over the API
 	 */
-	public  void delete(int feedId, String dataStreamId, String datapointAt) throws HttpException;
+	public void delete(int feedId, String dataStreamId, String datapointAt) throws HttpException;
 
 	/**
 	 * @param feedId
@@ -114,6 +111,5 @@ public interface DatapointResource
 	 * @throws HttpException
 	 *             if failed to delete the datapoints over the API
 	 */
-	public  void deleteMultiple(int feedId, String dataStreamId, String startAt) throws HttpException;
-
+	public void deleteMultiple(int feedId, String dataStreamId, String startAt) throws HttpException;
 }

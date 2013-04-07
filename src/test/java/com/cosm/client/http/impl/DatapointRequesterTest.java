@@ -16,9 +16,9 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
-import com.cosm.client.http.api.DatapointResource;
+import com.cosm.client.http.api.DatapointRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.DatapointRequester;
+import com.cosm.client.http.impl.DatapointRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +32,7 @@ public class DatapointRequesterTest
 	private static final String datapointId1 = "2013-01-01T00:00:00.000000Z";
 	private static final String datapointId2 = "2013-02-02T00:00:00.000000Z";
 
-	private DatapointResource requester;
+	private DatapointRequester requester;
 	private ObjectMapper mapper;
 	private Datapoint datapoint1;
 	private Datapoint datapoint2;
@@ -52,7 +52,7 @@ public class DatapointRequesterTest
 		datapoint1_JSON = TestUtil.getStringFromFile(fixtureUri + "/datapoint1.json");
 		datapoint2_JSON = TestUtil.getStringFromFile(fixtureUri + "/datapoint2.json");
 
-		requester = new DatapointRequester();
+		requester = new DatapointRequesterImpl();
 		requester.create(feedId, datastreamId, datapoint1);
 	}
 

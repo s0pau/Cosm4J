@@ -5,7 +5,7 @@ import org.apache.http.HttpResponse;
 import com.cosm.client.CosmClientException;
 
 /**
- * Exception condition when making HTTP requests to API
+ * Exception condition when executing HTTP requests to API
  * 
  * @author s0pau
  * 
@@ -43,7 +43,6 @@ public class HttpException extends CosmClientException
 
 	public int getStatusCode()
 	{
-		// FIXME
 		return response == null ? 0 : response.getStatusLine().getStatusCode();
 	}
 }

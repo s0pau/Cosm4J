@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -15,12 +14,11 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 
-import com.cosm.client.CosmClientException;
 import com.cosm.client.CosmConfig;
 import com.cosm.client.CosmConfig.AcceptedMediaType;
 import com.cosm.client.http.exception.HttpException;
+import com.cosm.client.http.exception.RequestInvalidException;
 import com.cosm.client.http.util.ParserUtil;
 import com.cosm.client.model.ConnectedObject;
 import com.cosm.client.utils.StringUtil;
@@ -31,7 +29,7 @@ import com.cosm.client.utils.StringUtil;
  * 
  * @author s0pau
  */
-public class DefaultRequestHandler<T extends ConnectedObject>
+public class DefaultRequestHandler
 {
 	private static final String HEADER_KEY_API = "X-ApiKey";
 	private static final String HEADER_USER_AGENT = "User Agent";
@@ -41,32 +39,43 @@ public class DefaultRequestHandler<T extends ConnectedObject>
 
 	private DefaultHttpClient httpClient;
 
+	private static DefaultRequestHandler instance;
+
 	public enum HttpMethod
 	{
 		DELETE, GET, POST, PUT;
 	}
 
-	public DefaultRequestHandler(String baseURI)
+	private DefaultRequestHandler()
+	{
+		// singleton
+	}
+
+	private DefaultRequestHandler(String baseURI)
 	{
 		this.baseURI = baseURI;
 	}
 
-	public static DefaultRequestHandler make()
+	public static DefaultRequestHandler getInstance()
 	{
-		return new DefaultRequestHandler(CosmConfig.getInstance().getBaseURI());
+		if (instance == null)
+		{
+			instance = new DefaultRequestHandler(CosmConfig.getInstance().getBaseURI());
+		}
+		return instance;
 	}
 
-	public Response<T> doRequest(HttpMethod requestMethod, String appPath)
+	public <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath)
 	{
 		return doRequest(requestMethod, appPath, (Map<String, Object>) null);
 	}
 
-	public Response<T> doRequest(HttpMethod requestMethod, String appPath, T... bodyObjects)
+	public <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath, T... bodyObjects)
 	{
 		return doRequest(requestMethod, appPath, null, bodyObjects);
 	}
 
-	public Response<T> doRequest(HttpMethod requestMethod, String appPath, Map<String, Object> params)
+	public <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath, Map<String, Object> params)
 	{
 		return doRequest(requestMethod, appPath, params, null);
 	}
@@ -88,14 +97,15 @@ public class DefaultRequestHandler<T extends ConnectedObject>
 	 * @return response string
 	 */
 
-	private Response<T> doRequest(HttpMethod requestMethod, String appPath, Map<String, Object> params, T... bodyObjects)
+	private <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath,
+			Map<String, Object> params, T... bodyObjects)
 	{
 		Response<T> response = null;
 		HttpRequestBase request = buildRequest(requestMethod, appPath, params, bodyObjects);
 
 		try
 		{
-			ResponseHandler<Response> responseHandler = new DefaultResponseHandler();
+			DefaultResponseHandler<T> responseHandler = new DefaultResponseHandler<>();
 			response = getClient().execute(request, responseHandler);
 		} catch (HttpException e)
 		{
@@ -109,10 +119,6 @@ public class DefaultRequestHandler<T extends ConnectedObject>
 			request.abort();
 			throw new HttpException("Http request did not return successfully.", e);
 		}
-		// finally
-		// {
-		// getClient().getConnectionManager().shutdown();
-		// }
 
 		return response;
 	}
@@ -121,9 +127,7 @@ public class DefaultRequestHandler<T extends ConnectedObject>
 	{
 		if (httpClient == null)
 		{
-			httpClient = new DefaultHttpClient();
-			httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0, false));
-
+			httpClient = HttpClientBuilder.getInstance().getHttpClient();
 		}
 		return httpClient;
 	}
@@ -177,35 +181,36 @@ public class DefaultRequestHandler<T extends ConnectedObject>
 		return sb.toString();
 	}
 
-	private HttpRequestBase buildRequest(HttpMethod requestMethod, String appPath, Map<String, Object> params, T... bodyObjects)
+	private <T extends ConnectedObject> HttpRequestBase buildRequest(HttpMethod requestMethod, String appPath,
+			Map<String, Object> params, T... bodyObjects)
 	{
 		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMediaType();
 
 		HttpRequestBase request = null;
 		switch (requestMethod)
 		{
-			case DELETE:
-				request = new HttpDelete();
-				break;
+		case DELETE:
+			request = new HttpDelete();
+			break;
 
-			case GET:
-				request = new HttpGet();
-				break;
+		case GET:
+			request = new HttpGet();
+			break;
 
-			case POST:
-				request = new HttpPost();
-				StringEntity postEntity = getEntity(false, bodyObjects);
-				((HttpPost) request).setEntity(postEntity);
-				break;
+		case POST:
+			request = new HttpPost();
+			StringEntity postEntity = getEntity(false, bodyObjects);
+			((HttpPost) request).setEntity(postEntity);
+			break;
 
-			case PUT:
-				request = new HttpPut();
-				StringEntity putEntity = getEntity(true, bodyObjects);
-				((HttpPut) request).setEntity(putEntity);
-				break;
+		case PUT:
+			request = new HttpPut();
+			StringEntity putEntity = getEntity(true, bodyObjects);
+			((HttpPut) request).setEntity(putEntity);
+			break;
 
-			default:
-				return null;
+		default:
+			return null;
 		}
 
 		String uriStr = baseURI.concat(appPath);
@@ -220,7 +225,7 @@ public class DefaultRequestHandler<T extends ConnectedObject>
 			request.setURI(new URI(uriStr));
 		} catch (URISyntaxException e)
 		{
-			throw new HttpException("Invalid URI requested.", e);
+			throw new RequestInvalidException("Invalid URI requested.", e);
 		}
 
 		request.addHeader("accept", mediaType.getMediaType());
@@ -230,7 +235,7 @@ public class DefaultRequestHandler<T extends ConnectedObject>
 		return request;
 	}
 
-	private StringEntity getEntity(boolean isUpdate, T... bodyObjects)
+	private <T extends ConnectedObject> StringEntity getEntity(boolean isUpdate, T... bodyObjects)
 	{
 		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMediaType();
 		String json = ParserUtil.toJson(isUpdate, bodyObjects);
@@ -242,7 +247,7 @@ public class DefaultRequestHandler<T extends ConnectedObject>
 			body.setContentType(mediaType.getMediaType());
 		} catch (UnsupportedEncodingException e)
 		{
-			throw new CosmClientException("Unable to encode json string for making request.", e);
+			throw new RequestInvalidException("Unable to encode json string for making request.", e);
 		}
 
 		return body;

@@ -15,9 +15,9 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
-import com.cosm.client.http.api.TriggerResource;
+import com.cosm.client.http.api.TriggerRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.TriggerRequester;
+import com.cosm.client.http.impl.TriggerRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Trigger;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class TriggerRequesterTest
 {
-	private TriggerResource requester;
+	private TriggerRequester requester;
 	private ObjectMapper mapper;
 	private Trigger trigger1;
 	private Trigger trigger2;
@@ -47,7 +47,7 @@ public class TriggerRequesterTest
 		trigger1_JSON = TestUtil.getStringFromFile(fixtureUri + "/trigger1.json");
 		trigger2_JSON = TestUtil.getStringFromFile(fixtureUri + "/trigger2.json");
 
-		requester = new TriggerRequester();
+		requester = new TriggerRequesterImpl();
 		trigger1 = requester.create(trigger1);
 	}
 

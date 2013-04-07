@@ -3,13 +3,12 @@ package com.cosm.client.http.api;
 import java.util.Collection;
 
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.DatastreamRequester;
+import com.cosm.client.http.impl.DatastreamRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datastream;
 
-public interface DatastreamResource
+public interface DatastreamRequester
 {
-
 	/**
 	 * @param feedId
 	 *            parent of the datastream
@@ -20,7 +19,7 @@ public interface DatastreamResource
 	 * @throws HttpException
 	 *             if failed to create datastream over the API
 	 */
-	public  Datastream create(int feedId, Datastream toCreate) throws HttpException;
+	public Datastream create(int feedId, Datastream toCreate) throws HttpException;
 
 	/**
 	 * @param feedId
@@ -32,10 +31,10 @@ public interface DatastreamResource
 	 *         successful operation
 	 * @throws HttpException
 	 *             if failed to create datastream over the API
-	 * @see DatastreamRequester#create(int, Datastream) for creating and
+	 * @see DatastreamRequesterImpl#create(int, Datastream) for creating and
 	 *      returning one datastream
 	 */
-	public  Collection<Datastream> create(int feedId, Datastream... toCreate) throws HttpException;
+	public Collection<Datastream> create(int feedId, Datastream... toCreate) throws HttpException;
 
 	/**
 	 * @param feedId
@@ -48,10 +47,9 @@ public interface DatastreamResource
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to datastream
 	 */
-	public  Datastream get(int feedId, String dataStreamId) throws HttpException, ParseToObjectException;
+	public Datastream get(int feedId, String dataStreamId) throws HttpException, ParseToObjectException;
 
 	/**
-	 * 
 	 * @param feedId
 	 *            parent of the datastream
 	 * @param toUpdate
@@ -60,7 +58,7 @@ public interface DatastreamResource
 	 * @throws HttpException
 	 *             if failed to create datastream over the API
 	 */
-	public  Datastream update(int feedId, Datastream toUpdate) throws HttpException;
+	public Datastream update(int feedId, Datastream toUpdate) throws HttpException;
 
 	/**
 	 * @param feedId
@@ -70,6 +68,5 @@ public interface DatastreamResource
 	 * @throws HttpException
 	 *             if failed to delete the datastream over the API
 	 */
-	public  void delete(int feedId, String dataStreamId) throws HttpException;
-
+	public void delete(int feedId, String dataStreamId) throws HttpException;
 }

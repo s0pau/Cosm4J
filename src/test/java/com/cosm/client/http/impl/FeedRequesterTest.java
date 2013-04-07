@@ -15,9 +15,9 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
-import com.cosm.client.http.api.FeedResource;
+import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.FeedRequester;
+import com.cosm.client.http.impl.FeedRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Feed;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class FeedRequesterTest
 {
-	private FeedResource requester;
+	private FeedRequester requester;
 	private ObjectMapper mapper;
 	private Feed feed1;
 	private Feed feed2;
@@ -48,7 +48,7 @@ public class FeedRequesterTest
 		feed1_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed1.json");
 		feed2_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed2.json");
 
-		requester = new FeedRequester();
+		requester = new FeedRequesterImpl();
 		feed1 = requester.create(feed1);
 	}
 

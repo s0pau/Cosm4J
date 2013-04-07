@@ -14,25 +14,28 @@ import org.apache.http.client.ResponseHandler;
 
 import com.cosm.client.CosmClientException;
 import com.cosm.client.http.exception.HttpException;
+import com.cosm.client.model.ConnectedObject;
 
 /**
  * Class for handing the http response
  * 
  * @author s0pau
+ * @param <T>
+ * @param <T>
  * 
  */
-public class DefaultResponseHandler implements ResponseHandler<Response>
+public class DefaultResponseHandler<T extends ConnectedObject> implements ResponseHandler<Response<T>>
 {
 	@Override
-	public Response handleResponse(HttpResponse response) throws ClientProtocolException, IOException
+	public Response<T> handleResponse(HttpResponse response) throws ClientProtocolException, IOException
 	{
 		if (!isHttpStatusOK(response.getStatusLine().getStatusCode()))
 		{
 			// skip operation on parsing response unless success
-			throw new HttpException("Http response status indicates unsuccessful operation.", response);
+			throw new HttpException("Http response status [%s] indicates unsuccessful operation.", response);
 		}
 
-		Response retval = new Response();
+		Response<T> retval = new Response<>();
 
 		StringBuilder bodyBuilder = null;
 		try (InputStream contentStream = response.getEntity().getContent();
@@ -44,8 +47,6 @@ public class DefaultResponseHandler implements ResponseHandler<Response>
 			{
 				bodyBuilder.append(line + "\n");
 			}
-
-			// EntityUtils.consume(response.getEntity());
 		} catch (IOException e)
 		{
 			throw new CosmClientException("Unable to parse response", e);

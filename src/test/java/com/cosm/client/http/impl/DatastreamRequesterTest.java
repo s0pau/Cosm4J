@@ -16,9 +16,9 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
-import com.cosm.client.http.api.DatastreamResource;
+import com.cosm.client.http.api.DatastreamRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.DatastreamRequester;
+import com.cosm.client.http.impl.DatastreamRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datastream;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +34,7 @@ public class DatastreamRequesterTest
 	private static final String datastreamId3 = "test_stream_3";
 	private static final String datastreamId_bad = "stream - bogus";
 
-	private DatastreamResource requester;
+	private DatastreamRequester requester;
 	private ObjectMapper mapper;
 	private Datastream datastream1;
 	private Datastream datastream2;
@@ -54,7 +54,7 @@ public class DatastreamRequesterTest
 		datastream1_JSON = TestUtil.getStringFromFile(fixtureUri + "/datastream1.json");
 		datastream2_JSON = TestUtil.getStringFromFile(fixtureUri + "/datastream2.json");
 
-		requester = new DatastreamRequester();
+		requester = new DatastreamRequesterImpl();
 		requester.create(feedId, datastream1);
 	}
 

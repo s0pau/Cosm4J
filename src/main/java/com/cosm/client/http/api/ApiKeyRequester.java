@@ -6,7 +6,7 @@ import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.ApiKey;
 
-public interface ApiKeyResource
+public interface ApiKeyRequester
 {
 	/**
 	 * @param toCreate
@@ -15,7 +15,7 @@ public interface ApiKeyResource
 	 * @throws HttpException
 	 *             if failed to create apikey over the API
 	 */
-	public  ApiKey create(ApiKey toCreate) throws HttpException;
+	public ApiKey create(ApiKey toCreate) throws HttpException;
 
 	/**
 	 * @param apiKey
@@ -26,10 +26,9 @@ public interface ApiKeyResource
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to apiKey
 	 */
-	public  ApiKey get(String apiKey) throws HttpException, ParseToObjectException;
+	public ApiKey get(String apiKey) throws HttpException, ParseToObjectException;
 
 	/**
-	 * 
 	 * @param triggerId
 	 *            the id of the trigger to be retrieved
 	 * @param feedId
@@ -40,7 +39,7 @@ public interface ApiKeyResource
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to trigger
 	 */
-	public  Collection<ApiKey> getByFeedId(int feedId) throws HttpException, ParseToObjectException;
+	public Collection<ApiKey> getByFeedId(int feedId) throws HttpException, ParseToObjectException;
 
 	/**
 	 * @param apiKey
@@ -48,6 +47,5 @@ public interface ApiKeyResource
 	 * @throws HttpException
 	 *             if failed to delete the apikey over the API
 	 */
-	public  void delete(String apiKey) throws HttpException;
-
+	public void delete(String apiKey) throws HttpException;
 }

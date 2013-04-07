@@ -6,9 +6,8 @@ import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Trigger;
 
-public interface TriggerResource
+public interface TriggerRequester
 {
-
 	/**
 	 * @param toCreate
 	 *            the trigger to be created over the API
@@ -19,7 +18,7 @@ public interface TriggerResource
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to trigger
 	 */
-	public  Trigger create(Trigger toCreate) throws HttpException;
+	public Trigger create(Trigger toCreate) throws HttpException;
 
 	/**
 	 * @param triggerId
@@ -30,7 +29,7 @@ public interface TriggerResource
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to trigger
 	 */
-	public  Trigger get(int triggerId) throws HttpException, ParseToObjectException;
+	public Trigger get(int triggerId) throws HttpException, ParseToObjectException;
 
 	/**
 	 * 
@@ -44,7 +43,7 @@ public interface TriggerResource
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to trigger
 	 */
-	public  Collection<Trigger> getByFeedId(int feedId) throws HttpException, ParseToObjectException;
+	public Collection<Trigger> getByFeedId(int feedId) throws HttpException, ParseToObjectException;
 
 	/**
 	 * @param toUpdate
@@ -53,7 +52,7 @@ public interface TriggerResource
 	 * @throws HttpException
 	 *             if failed to get trigger over the API
 	 */
-	public  Trigger update(Trigger toUpdate) throws HttpException;
+	public Trigger update(Trigger toUpdate) throws HttpException;
 
 	/**
 	 * @param triggerId
@@ -61,6 +60,5 @@ public interface TriggerResource
 	 * @throws HttpException
 	 *             if failed to delete the trigger over the API
 	 */
-	public  void delete(int triggerId) throws HttpException;
-
+	public void delete(int triggerId) throws HttpException;
 }

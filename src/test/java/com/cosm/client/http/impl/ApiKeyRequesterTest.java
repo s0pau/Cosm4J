@@ -15,9 +15,8 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
-import com.cosm.client.http.api.ApiKeyResource;
+import com.cosm.client.http.api.ApiKeyRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.ApiKeyRequester;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.ApiKey;
 import com.cosm.client.model.Permission;
@@ -29,7 +28,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class ApiKeyRequesterTest
 {
-	private ApiKeyResource requester;
+	private ApiKeyRequester requester;
 	private ObjectMapper mapper;
 	private ApiKey apiKey1;
 	private ApiKey apiKey2;
@@ -47,10 +46,10 @@ public class ApiKeyRequesterTest
 		apiKey1.setLabel("Simple Test Key");
 		apiKey1.setPrivateAccess(true);
 
-		List<AccessMethod> am1 = new ArrayList<AccessMethod>();
+		List<AccessMethod> am1 = new ArrayList<>();
 		am1.add(AccessMethod.get);
 		Permission p1 = new Permission(null, am1, null);
-		List permissions1 = new ArrayList<Permission>();
+		List<Permission> permissions1 = new ArrayList<>();
 		permissions1.add(p1);
 		apiKey1.setPermissions(permissions1);
 
@@ -72,12 +71,12 @@ public class ApiKeyRequesterTest
 		am3.add(AccessMethod.delete);
 		Permission p3 = new Permission(null, am3, null);
 
-		List permissions2 = new ArrayList<Permission>();
+		List<Permission> permissions2 = new ArrayList<>();
 		permissions2.add(p2);
 		permissions2.add(p3);
 		apiKey2.setPermissions(permissions2);
 
-		requester = new ApiKeyRequester();
+		requester = new ApiKeyRequesterImpl();
 		apiKey1 = requester.create(apiKey1);
 	}
 
