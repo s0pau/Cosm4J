@@ -11,21 +11,23 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.log4j.Logger;
 
 import com.cosm.client.CosmClientException;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.model.ConnectedObject;
 
 /**
- * Class for handing the http response
+ * Class for handling the http response
  * 
  * @author s0pau
- * @param <T>
  * @param <T>
  * 
  */
 public class DefaultResponseHandler<T extends ConnectedObject> implements ResponseHandler<Response<T>>
 {
+	private static Logger log = Logger.getLogger(DefaultResponseHandler.class);
+
 	@Override
 	public Response<T> handleResponse(HttpResponse response) throws ClientProtocolException, IOException
 	{
@@ -34,6 +36,8 @@ public class DefaultResponseHandler<T extends ConnectedObject> implements Respon
 			// skip operation on parsing response unless success
 			throw new HttpException("Http response status [%s] indicates unsuccessful operation.", response);
 		}
+
+		log.info(String.format("Handling response [%s]", response.getStatusLine().getStatusCode()));
 
 		Response<T> retval = new Response<>();
 

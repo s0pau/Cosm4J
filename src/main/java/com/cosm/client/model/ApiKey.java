@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * ApiKey resource/model
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * @author s0pau
  * 
  */
-@JsonRootName("key")
 public class ApiKey implements ConnectedObject
 {
 	/**

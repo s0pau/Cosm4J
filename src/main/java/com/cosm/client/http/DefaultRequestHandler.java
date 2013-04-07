@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.http.Header;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -14,6 +15,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.CosmConfig.AcceptedMediaType;
@@ -31,6 +33,8 @@ import com.cosm.client.utils.StringUtil;
  */
 public class DefaultRequestHandler
 {
+	private static Logger log = Logger.getLogger(DefaultRequestHandler.class);
+
 	private static final String HEADER_KEY_API = "X-ApiKey";
 	private static final String HEADER_USER_AGENT = "User Agent";
 	private static final String COSM_USER_AGENT = "Cosm-Java-Lib/1.0";
@@ -100,8 +104,11 @@ public class DefaultRequestHandler
 	private <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath,
 			Map<String, Object> params, T... bodyObjects)
 	{
+
 		Response<T> response = null;
 		HttpRequestBase request = buildRequest(requestMethod, appPath, params, bodyObjects);
+
+		log.info(String.format("Making request to %s", request.getURI()));
 
 		try
 		{
@@ -219,7 +226,6 @@ public class DefaultRequestHandler
 			uriStr = uriStr.concat(".").concat(mediaType.name());
 		}
 		uriStr = concatParams(uriStr, params);
-
 		try
 		{
 			request.setURI(new URI(uriStr));
@@ -231,6 +237,16 @@ public class DefaultRequestHandler
 		request.addHeader("accept", mediaType.getMediaType());
 		request.addHeader(HEADER_KEY_API, CosmConfig.getInstance().getApiKey());
 		request.addHeader(HEADER_USER_AGENT, COSM_USER_AGENT);
+
+		if (log.isDebugEnabled())
+		{
+			StringBuilder sb = new StringBuilder();
+			for (Header header : request.getAllHeaders())
+			{
+				sb.append(header.getName()).append(",").append(header.getValue()).append(";");
+			}
+			log.debug(String.format("Constructed request with uri with params [%s], header [%s]", uriStr, request.getAllHeaders()));
+		}
 
 		return request;
 	}

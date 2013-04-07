@@ -55,10 +55,11 @@ Method calls takes ConnectedObject(s) as parameters and return ConnectedObject(s
 
 <br/>On faliure, the Requester implementation will throw:
 <ul>
+<li>InvalidRequestException, if the request is invalid</li>
 <li>HttpException, if the response status is not 2xx</li>
 </ul> 
 
-<b>Actual implementation details:</b>
+<b>Actual implementation details:</b><br/>
 RESTful requests to Cosm's API are managed by DefaultRequestHandler; DefaultResponseHandler handles the response. Request and Response decouples this client from the HTTP client implementation.   
 Parsing to and from ConnectedObjects to HTTP request/response body are encapsulated in com.cosm.client.http.util.ParseUtil. 
 <ul>
@@ -70,15 +71,13 @@ Parsing to and from ConnectedObjects to HTTP request/response body are encapsula
 
 CosmClientException - any exception thrown out of the cosm-java library is a subclass of this exception.
 
-## Formats (JSON)
+## Formats
 
 Currently only JSON format is supported.
 
-## Mobile Feeds
-// TODO 
+## Configuring HTTPClient
 
-## TODO General - Coming soon:
-<br/>- move docs to gh_pages
-<br/>- use github maven
-<br/>- use slf4j to log 
-<br/>- use maven properties on build
+Retries and timeouts can be configured via HttpClientBuilder, e.g:
+	HttpClientBuilder.getInstance().setConnectionTimeout(5000); 
+
+Configuration must be carried out before making the first requester call.

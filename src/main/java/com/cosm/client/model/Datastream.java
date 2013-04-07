@@ -6,7 +6,6 @@ import com.cosm.client.utils.CollectionUtil;
 import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * Datastream resource/model
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * @author s0pau
  * 
  */
-@JsonRootName(value = "datastream")
 public class Datastream implements ConnectedObject
 {
 	private String id;

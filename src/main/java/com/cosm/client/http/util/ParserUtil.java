@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 import com.cosm.client.http.util.exception.ParseFromObjectException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.ApiKey;
@@ -25,6 +27,8 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
  */
 public class ParserUtil
 {
+	private static Logger log = Logger.getLogger(ParserUtil.class);
+
 	private static ObjectMapper objectMapper;
 
 	// TODO use annotations to metaprogram the parsing behaviour instead
@@ -113,6 +117,8 @@ public class ParserUtil
 	 */
 	public static <T extends ConnectedObject> String toJson(boolean isUpdate, T... models)
 	{
+		log.debug("Parsing models to json");
+
 		if (models == null || models.length == 0)
 		{
 			throw new ParseToObjectException("No model to parse to object");
@@ -162,11 +168,14 @@ public class ParserUtil
 			throw new ParseFromObjectException("Cannot parse model to object", e);
 		}
 
+		log.debug(String.format("Parsed json from models: %s", json));
 		return json;
 	}
 
 	public static <T extends ConnectedObject> Collection<T> toConnectedObjects(String body, Class elementType)
 	{
+		log.debug(String.format("Parsing string to objects: %s", body));
+
 		Collection<T> objs;
 
 		try
@@ -183,6 +192,8 @@ public class ParserUtil
 
 	public static <T extends ConnectedObject> T toConnectedObject(String body, Class elementType)
 	{
+		log.debug(String.format("Parsing string to object: %s", body));
+
 		T obj;
 
 		if (ApiKey.class.equals(elementType))

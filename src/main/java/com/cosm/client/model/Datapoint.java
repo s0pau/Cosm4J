@@ -1,12 +1,9 @@
 package com.cosm.client.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * Datapoint resource/model
@@ -16,8 +13,6 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * @author s0pau
  * 
  */
-@JsonRootName(value = "datapoint")
-@XmlRootElement(name = "datapoints")
 public class Datapoint implements ConnectedObject
 {
 	/**
