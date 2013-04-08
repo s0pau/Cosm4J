@@ -17,7 +17,6 @@ import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.TriggerRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.TriggerRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Trigger;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,8 +29,6 @@ public class TriggerRequesterTest
 	private ObjectMapper mapper;
 	private Trigger trigger1;
 	private Trigger trigger2;
-	private String trigger1_JSON;
-	private String trigger2_JSON;
 
 	@Before
 	public void setUp() throws Exception
@@ -43,9 +40,6 @@ public class TriggerRequesterTest
 
 		trigger1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/trigger1.json")), Trigger.class);
 		trigger2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/trigger2.json")), Trigger.class);
-
-		trigger1_JSON = TestUtil.getStringFromFile(fixtureUri + "/trigger1.json");
-		trigger2_JSON = TestUtil.getStringFromFile(fixtureUri + "/trigger2.json");
 
 		requester = new TriggerRequesterImpl();
 		trigger1 = requester.create(trigger1);
@@ -88,15 +82,16 @@ public class TriggerRequesterTest
 		try
 		{
 			Trigger retval = requester.create(trigger2);
-			
-			// update fields that returned after creation before comparing every other field
+
+			// update fields that returned after creation before comparing every
+			// other field
 			assertTrue(retval.getId() != null);
 			trigger2.setId(retval.getId());
 			assertTrue(retval.getLogin() != null);
 			trigger2.setLogin(retval.getLogin());
 			assertTrue(retval.getNotifiedAt() != null);
 			trigger2.setNotifiedAt(retval.getNotifiedAt());
-			
+
 			assertTrue(trigger2.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -187,6 +182,15 @@ public class TriggerRequesterTest
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a trigger");
+		}
+
+		try
+		{
+			requester.get(trigger1.getId());
+			fail("should not be able to get deleted trigger");
+		} catch (HttpException e)
+		{
+			// pass
 		}
 	}
 }

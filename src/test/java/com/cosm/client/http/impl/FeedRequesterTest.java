@@ -17,7 +17,6 @@ import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.FeedRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Feed;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,9 +29,6 @@ public class FeedRequesterTest
 	private ObjectMapper mapper;
 	private Feed feed1;
 	private Feed feed2;
-	private Feed feedTooMinimal;
-	private String feed1_JSON;
-	private String feed2_JSON;
 
 	@Before
 	public void setUp() throws Exception
@@ -44,9 +40,6 @@ public class FeedRequesterTest
 
 		feed1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed1.json")), Feed.class);
 		feed2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed2.json")), Feed.class);
-
-		feed1_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed1.json");
-		feed2_JSON = TestUtil.getStringFromFile(fixtureUri + "/feed2.json");
 
 		requester = new FeedRequesterImpl();
 		feed1 = requester.create(feed1);
@@ -170,6 +163,15 @@ public class FeedRequesterTest
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a feed");
+		}
+
+		try
+		{
+			requester.get(feed1.getId());
+			fail("should not be able to get deleted feed");
+		} catch (HttpException e)
+		{
+			// pass
 		}
 	}
 }

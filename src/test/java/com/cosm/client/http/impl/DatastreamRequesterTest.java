@@ -18,7 +18,6 @@ import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatastreamRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.DatastreamRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datastream;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,8 +37,6 @@ public class DatastreamRequesterTest
 	private ObjectMapper mapper;
 	private Datastream datastream1;
 	private Datastream datastream2;
-	private String datastream1_JSON;
-	private String datastream2_JSON;
 
 	@Before
 	public void setUp() throws Exception
@@ -51,11 +48,8 @@ public class DatastreamRequesterTest
 		datastream1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datastream1.json")), Datastream.class);
 		datastream2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datastream2.json")), Datastream.class);
 
-		datastream1_JSON = TestUtil.getStringFromFile(fixtureUri + "/datastream1.json");
-		datastream2_JSON = TestUtil.getStringFromFile(fixtureUri + "/datastream2.json");
-
 		requester = new DatastreamRequesterImpl();
-		requester.create(feedId, datastream1);
+		datastream1 = requester.create(feedId, datastream1);
 	}
 
 	@After
@@ -89,7 +83,7 @@ public class DatastreamRequesterTest
 		try
 		{
 			Datastream retval = requester.create(feedId, datastream2);
-			assertEquals(retval, datastream2);
+			assertTrue(datastream2.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to create a datastream");
@@ -121,7 +115,7 @@ public class DatastreamRequesterTest
 		try
 		{
 			Datastream retval = requester.get(feedId, datastreamId1);
-			assertEquals(datastream1, retval);
+			assertTrue(datastream1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a datastream");
@@ -151,7 +145,7 @@ public class DatastreamRequesterTest
 		try
 		{
 			Datastream retval = requester.get(feedId, datastreamId1);
-			assertEquals(datastream1, retval);
+			assertTrue(datastream1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a datastream");
@@ -166,7 +160,7 @@ public class DatastreamRequesterTest
 		try
 		{
 			Datastream retval = requester.update(feedId, datastream1);
-			assertEquals(datastream1, retval);
+			assertTrue(datastream1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to update a datastream");
@@ -182,6 +176,15 @@ public class DatastreamRequesterTest
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a datastream");
+		}
+
+		try
+		{
+			requester.get(feedId, datastreamId1);
+			fail("should not be able to get deleted datasteram");
+		} catch (HttpException e)
+		{
+			// pass
 		}
 	}
 }

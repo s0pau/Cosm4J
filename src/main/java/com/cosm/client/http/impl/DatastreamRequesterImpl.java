@@ -32,7 +32,8 @@ public class DatastreamRequesterImpl implements DatastreamRequester
 	public Datastream create(int feedId, Datastream toCreate) throws HttpException
 	{
 		DefaultRequestHandler.getInstance().doRequest(HttpMethod.POST, getResourcesPath(feedId), toCreate);
-		return toCreate;
+		// get params generated at server, e.g. timestamp
+		return get(feedId, toCreate.getId());
 	}
 
 	/*
@@ -56,7 +57,8 @@ public class DatastreamRequesterImpl implements DatastreamRequester
 	@Override
 	public Datastream get(int feedId, String dataStreamId) throws HttpException, ParseToObjectException
 	{
-		Response<Datastream> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcePath(feedId, dataStreamId));
+		Response<Datastream> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET,
+				getResourcePath(feedId, dataStreamId));
 		return response.getBodyAsObject(Datastream.class);
 	}
 

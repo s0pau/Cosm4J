@@ -32,8 +32,6 @@ public class ApiKeyRequesterTest
 	private ObjectMapper mapper;
 	private ApiKey apiKey1;
 	private ApiKey apiKey2;
-	private String apiKey1_JSON;
-	private String apiKey2_JSON;
 
 	@Before
 	public void setUp() throws Exception
@@ -178,7 +176,9 @@ public class ApiKeyRequesterTest
 		try
 		{
 			Collection<ApiKey> retval = requester.getByFeedId(TestUtil.TEST_FEED_ID);
-			// assertTrue(apiKey1.memberEquals(retval));
+			assertTrue(retval.size() == 2);
+			assertTrue(retval.contains(apiKey1));
+			assertTrue(retval.contains(apiKey2));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a apiKey");
@@ -194,6 +194,15 @@ public class ApiKeyRequesterTest
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a apiKey");
+		}
+
+		try
+		{
+			requester.get(apiKey1.getApiKey());
+			fail("should not have been able to retrieve deleted apiKey");
+		} catch (HttpException e)
+		{
+			// pass
 		}
 	}
 }

@@ -18,7 +18,6 @@ import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatapointRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.impl.DatapointRequesterImpl;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,8 +35,6 @@ public class DatapointRequesterTest
 	private ObjectMapper mapper;
 	private Datapoint datapoint1;
 	private Datapoint datapoint2;
-	private String datapoint1_JSON;
-	private String datapoint2_JSON;
 
 	@Before
 	public void setUp() throws Exception
@@ -48,9 +45,6 @@ public class DatapointRequesterTest
 		String fixtureUri = "src/test/res";
 		datapoint1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint1.json")), Datapoint.class);
 		datapoint2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint2.json")), Datapoint.class);
-
-		datapoint1_JSON = TestUtil.getStringFromFile(fixtureUri + "/datapoint1.json");
-		datapoint2_JSON = TestUtil.getStringFromFile(fixtureUri + "/datapoint2.json");
 
 		requester = new DatapointRequesterImpl();
 		requester.create(feedId, datastreamId, datapoint1);
@@ -86,7 +80,7 @@ public class DatapointRequesterTest
 		try
 		{
 			Datapoint retval = requester.create(feedId, datastreamId, datapoint2);
-			assertEquals(retval, datapoint2);
+			assertTrue(datapoint2.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to create a datapoint");
@@ -115,7 +109,7 @@ public class DatapointRequesterTest
 		try
 		{
 			Datapoint retval = requester.get(feedId, datastreamId, datapointId1);
-			assertEquals(datapoint1, retval);
+			assertTrue(datapoint1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a datapoint");
@@ -145,7 +139,7 @@ public class DatapointRequesterTest
 		try
 		{
 			Datapoint retval = requester.get(feedId, datastreamId, datapointId1);
-			assertEquals(datapoint1, retval);
+			assertTrue(datapoint1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a datapoint");
@@ -178,7 +172,7 @@ public class DatapointRequesterTest
 		{
 			requester.update(feedId, datastreamId, datapoint1);
 			Datapoint retval = requester.update(feedId, datastreamId, datapoint1);
-			assertEquals(datapoint1, retval);
+			assertTrue(datapoint1.memberEquals(retval));
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to update a datapoint");
@@ -194,6 +188,15 @@ public class DatapointRequesterTest
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a datapoint");
+		}
+
+		try
+		{
+			requester.get(feedId, datastreamId, datapointId1);
+			fail("should not be able to get deleted datapoint");
+		} catch (HttpException e)
+		{
+			// pass
 		}
 	}
 }

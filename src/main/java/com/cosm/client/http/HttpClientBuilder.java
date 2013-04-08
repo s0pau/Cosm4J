@@ -16,7 +16,7 @@ import org.apache.http.params.CoreConnectionPNames;
 public class HttpClientBuilder
 {
 	private static final int DEFAULT_CONNECTION_TIMEOUT_IN_MS = 3000;
-	private static final int DEFAULT_SOCKET_TIMEOUT_IN_MS = 3000;
+	private static final int DEFAULT_SOCKET_TIMEOUT_IN_MS = 10000;
 
 	private HttpRequestRetryHandler retryHandler;
 	private DefaultHttpClient httpClient;
