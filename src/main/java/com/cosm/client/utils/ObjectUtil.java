@@ -24,6 +24,10 @@ public class ObjectUtil
 		if (!CollectionUtil.deepEquals(one, two))
 		{
 			return false;
+		} else if (one == null)
+		{
+			// if deep equal is true and one of them is null, they are both null
+			return true;
 		}
 
 		int matchedCounts = 0;
