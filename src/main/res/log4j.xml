@@ -8,6 +8,9 @@
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5r %-5p [%F: %L] (%t:%x) %m%n" />
 		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="DEBUG" />
+		</filter>
 	</appender>
 
 	<appender name="errorFile" class="org.apache.log4j.RollingFileAppender">
