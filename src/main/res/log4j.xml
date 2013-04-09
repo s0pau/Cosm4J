@@ -8,9 +8,6 @@
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5r %-5p [%F: %L] (%t:%x) %m%n" />
 		</layout>
-		<filter class="org.apache.log4j.varia.LevelRangeFilter">
-			<param name="LevelMin" value="DEBUG" />
-		</filter>
 	</appender>
 
 	<appender name="errorFile" class="org.apache.log4j.RollingFileAppender">
@@ -32,14 +29,17 @@
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5r %-5p [%F: %L] (%t:%x) %m%n" />
 		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="INFO" />
+		</filter>
 	</appender>
 
 	<logger name="com.cosm.client">
-		<level value="INFO" />
+		<level value="DEBUG" />
 	</logger>
 
-	<logger name="org.apache.httpcomponents">
-		<level value="INFO" />
+	<logger name="org.apache.http">
+		<level value="DEBUG" />
 	</logger>
 
 	<logger name="com.fasterxml.jackson">
