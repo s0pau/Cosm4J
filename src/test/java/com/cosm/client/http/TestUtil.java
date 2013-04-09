@@ -14,15 +14,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TestUtil
 {
 	public static final int TEST_FEED_ID = 929; // 97684
+	public static final String fixtureUri = "src/test/res/";
 
-	public static String getStringFromFile(String filePath)
+	public static String getStringFromFile(String fileName)
 	{
 		try
 		{
 			FileInputStream fileStream = null;
 			try
 			{
-				fileStream = new FileInputStream(new File(filePath));
+				fileStream = new FileInputStream(new File(fixtureUri + fileName));
 				FileChannel fileChannel = fileStream.getChannel();
 				MappedByteBuffer bb = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
 				return Charset.defaultCharset().decode(bb).toString();

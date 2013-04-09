@@ -141,7 +141,6 @@ public class FeedRequesterTest
 	}
 
 	@Test
-	@Ignore
 	public void testGetByDatastreams()
 	{
 		try

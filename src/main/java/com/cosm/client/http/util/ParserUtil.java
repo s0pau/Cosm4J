@@ -15,6 +15,7 @@ import com.cosm.client.model.Datastream;
 import com.cosm.client.model.Feed;
 import com.cosm.client.model.Trigger;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -92,6 +93,19 @@ public class ParserUtil
 			for (ParseArg arg : ParseArg.values())
 			{
 				if (obj.getClass() == arg.objClass)
+				{
+					return arg;
+				}
+			}
+
+			return null;
+		}
+
+		public static ParseArg valueOf(Class objClass)
+		{
+			for (ParseArg arg : ParseArg.values())
+			{
+				if (objClass == arg.objClass)
 				{
 					return arg;
 				}
@@ -180,8 +194,14 @@ public class ParserUtil
 
 		try
 		{
+			JsonNode node = getObjectMapper().reader().readTree(body);
+			JsonNode total = node.get("totalResults");
+			JsonNode results = node.get("results");
+
 			CollectionType collectionType = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, elementType);
-			objs = getObjectMapper().readValue(body, collectionType);
+			objs = getObjectMapper().readValue(results.toString(), collectionType);
+
+			log.debug(String.format("Parsed string to %s objects", total));
 		} catch (IOException e)
 		{
 			throw new ParseToObjectException(String.format("Unable to parse [%s] to %s.", body, elementType), e);

@@ -133,7 +133,7 @@ public class Location
 			return true;
 		}
 
-		if (!(obj instanceof Permission))
+		if (!(obj instanceof Location))
 		{
 			return false;
 		}
@@ -149,22 +149,22 @@ public class Location
 		{
 			return false;
 		}
-		
+
 		if (!ObjectUtil.nullCheckEquals(this.elevation, other.getElevation()))
 		{
 			return false;
 		}
-		
+
 		if (!ObjectUtil.nullCheckEquals(this.latitiude, other.getLatitiude()))
 		{
 			return false;
 		}
-		
+
 		if (!ObjectUtil.nullCheckEquals(this.longitute, other.getLongitute()))
 		{
 			return false;
 		}
-		
+
 		if (!ObjectUtil.nullCheckEquals(this.name, other.getName()))
 		{
 			return false;
