@@ -6,6 +6,8 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Collection;
+import java.util.Map;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
@@ -136,6 +138,55 @@ public class FeedRequesterTest
 		{
 			fail("failed on requesting to get a feed");
 		}
+	}
+
+	@Test
+	@Ignore
+	public void testGetByDatastreams()
+	{
+		try
+		{
+			Collection<Feed> retval = requester.get(true, "test_feed-stream10");
+			assertTrue(retval.size() == 1);
+			assertTrue(retval.contains(feed1));
+		} catch (HttpException e)
+		{
+			fail("failed on requesting to get a feed");
+		}
+
+	}
+
+	@Test
+	@Ignore
+	public void testGetByLocation()
+	{
+		try
+		{
+			Collection<Feed> retval = requester.getByLocation(feed2.getLocation().getLatitiude(), feed2.getLocation()
+					.getLongitute(), null, null);
+			assertTrue(retval.size() == 1);
+			assertTrue(retval.contains(feed2));
+		} catch (HttpException e)
+		{
+			fail("failed on requesting to get a feed");
+		}
+	}
+
+	@Test
+	@Ignore
+	public void testGetByParams()
+	{
+		try
+		{
+			Map<String, Object> params = null; // TODO
+			Collection<Feed> retval = requester.get(params);
+			assertTrue(retval.size() == 1);
+			assertTrue(retval.contains(feed2));
+		} catch (HttpException e)
+		{
+			fail("failed on requesting to get a feed");
+		}
+
 	}
 
 	@Test

@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName("permissions")
-public class Permission implements ImmutableObject
+public class Permission
 {
 	public enum AccessMethod
 	{

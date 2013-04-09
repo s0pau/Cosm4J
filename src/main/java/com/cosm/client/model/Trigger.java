@@ -5,6 +5,7 @@ import java.net.URI;
 import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @author s0pau
  * 
  */
+@JsonRootName(value="triggers")
 public class Trigger implements ConnectedObject
 {
 	/**

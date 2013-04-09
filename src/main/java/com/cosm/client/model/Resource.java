@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  */
 @JsonInclude(Include.NON_NULL)
 @JsonRootName("resources")
-public class Resource implements ImmutableObject
+public class Resource
 {
 	@JsonProperty("feed_id")
 	private int feedId;

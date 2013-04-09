@@ -171,6 +171,7 @@ public class ApiKeyRequesterTest
 	}
 
 	@Test
+	@Ignore
 	public void testGetByFeedId()
 	{
 		try

@@ -31,8 +31,6 @@ public class DefaultResponseHandler<T extends ConnectedObject> implements Respon
 	@Override
 	public Response<T> handleResponse(HttpResponse response) throws ClientProtocolException, IOException
 	{
-		log.debug("Handling response");
-
 		if (!isHttpStatusOK(response.getStatusLine().getStatusCode()))
 		{
 			// skip operation on parsing response unless success

@@ -4,6 +4,7 @@ import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * Datapoint resource/model
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * @author s0pau
  * 
  */
+@JsonRootName(value = "datapoints")
 public class Datapoint implements ConnectedObject
 {
 	/**

@@ -2,7 +2,6 @@ package com.cosm.client.http;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,6 +12,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
@@ -108,7 +108,7 @@ public class DefaultRequestHandler
 		Response<T> response = null;
 		HttpRequestBase request = buildRequest(requestMethod, appPath, params, bodyObjects);
 
-		log.info(String.format("Making request to %s", request.getURI()));
+		log.info(String.format("Requesting %s", request.getURI()));
 
 		try
 		{
@@ -139,55 +139,6 @@ public class DefaultRequestHandler
 		return httpClient;
 	}
 
-	private String concatParams(String apiCall, Map<String, Object> params)
-	{
-		StringBuilder retval = new StringBuilder(apiCall);
-		if (params != null && !params.isEmpty())
-		{
-			String paramStr = toParamString(params);
-			if (paramStr != null)
-			{
-				retval.append('?').append(toParamString(params));
-			}
-		}
-		return retval.toString();
-	}
-
-	/**
-	 * @param params
-	 *            parameters where if the value is a list, the values will be
-	 *            turned into a comma delimited string
-	 * @return comma delimited param string containing the key-value pair of the
-	 *         map given, any entry with null value is going to be dropped;
-	 *         empty string if no params has valid values
-	 */
-	private String toParamString(Map<String, Object> params)
-	{
-		if (params == null || params.isEmpty())
-		{
-			return null;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		boolean isFirstToken = true;
-		for (Entry<String, Object> entry : params.entrySet())
-		{
-			Object value = entry.getValue();
-
-			String delimited = StringUtil.toString(value);
-			if (delimited != null)
-			{
-				if (!isFirstToken)
-				{
-					sb.append("&");
-				}
-				sb.append(entry.getKey()).append("=").append(delimited);
-			}
-		}
-
-		return sb.toString();
-	}
-
 	private <T extends ConnectedObject> HttpRequestBase buildRequest(HttpMethod requestMethod, String appPath,
 			Map<String, Object> params, T... bodyObjects)
 	{
@@ -196,39 +147,34 @@ public class DefaultRequestHandler
 		HttpRequestBase request = null;
 		switch (requestMethod)
 		{
-		case DELETE:
-			request = new HttpDelete();
-			break;
+			case DELETE:
+				request = new HttpDelete();
+				break;
 
-		case GET:
-			request = new HttpGet();
-			break;
+			case GET:
+				request = new HttpGet();
+				break;
 
-		case POST:
-			request = new HttpPost();
-			StringEntity postEntity = getEntity(false, bodyObjects);
-			((HttpPost) request).setEntity(postEntity);
-			break;
+			case POST:
+				request = new HttpPost();
+				StringEntity postEntity = getEntity(false, bodyObjects);
+				((HttpPost) request).setEntity(postEntity);
+				break;
 
-		case PUT:
-			request = new HttpPut();
-			StringEntity putEntity = getEntity(true, bodyObjects);
-			((HttpPut) request).setEntity(putEntity);
-			break;
+			case PUT:
+				request = new HttpPut();
+				StringEntity putEntity = getEntity(true, bodyObjects);
+				((HttpPut) request).setEntity(putEntity);
+				break;
 
-		default:
-			return null;
+			default:
+				return null;
 		}
 
-		String uriStr = baseURI.concat(appPath);
-		if (HttpMethod.GET == requestMethod)
-		{
-			uriStr = uriStr.concat(".").concat(mediaType.name());
-		}
-		uriStr = concatParams(uriStr, params);
+		URIBuilder uriBuilder = buildUri(requestMethod, appPath, params, mediaType);
 		try
 		{
-			request.setURI(new URI(uriStr));
+			request.setURI(uriBuilder.build());
 		} catch (URISyntaxException e)
 		{
 			throw new RequestInvalidException("Invalid URI requested.", e);
@@ -245,10 +191,29 @@ public class DefaultRequestHandler
 			{
 				sb.append(header.getName()).append(",").append(header.getValue()).append(";");
 			}
-			log.debug(String.format("Constructed request with uri with params [%s], header [%s]", uriStr, request.getAllHeaders()));
+			log.debug(String.format("Constructed request with uri [%s], header [%s]", uriBuilder.toString(), sb.toString()));
 		}
 
 		return request;
+	}
+
+	private URIBuilder buildUri(HttpMethod requestMethod, String appPath, Map<String, Object> params, AcceptedMediaType mediaType)
+	{
+		URIBuilder uriBuilder = new URIBuilder();
+		String path = appPath;
+		if (HttpMethod.GET == requestMethod)
+		{
+			path = appPath.concat(".").concat(mediaType.name());
+		}
+		uriBuilder.setScheme("http").setHost(baseURI).setPath(path);
+		if (params != null && !params.isEmpty())
+		{
+			for (Entry<String, Object> param : params.entrySet())
+			{
+				uriBuilder.addParameter(param.getKey(), StringUtil.toString(param.getValue()));
+			}
+		}
+		return uriBuilder;
 	}
 
 	private <T extends ConnectedObject> StringEntity getEntity(boolean isUpdate, T... bodyObjects)

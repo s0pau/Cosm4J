@@ -24,6 +24,7 @@ import com.cosm.client.model.Feed;
 public class FeedRequesterImpl implements FeedRequester
 {
 	private static final String RESOURCES_PATH = "feeds";
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -53,18 +54,17 @@ public class FeedRequesterImpl implements FeedRequester
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.cosm.client.http.FeedResource#get(int, java.lang.String,
+	 * @see com.cosm.client.http.FeedResource#get(java.lang.Boolean,
 	 * java.lang.String)
 	 */
 	@Override
-	public Collection<Feed> get(int feedId, String isShowUser, String... dataStreamIds) throws HttpException,
-			ParseToObjectException
+	public Collection<Feed> get(Boolean isShowUser, String... dataStreamIds) throws HttpException, ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("datastreams", Arrays.asList(dataStreamIds));
-		params.put("show_user", isShowUser);
+		params.put("show_user", isShowUser == null ? false : isShowUser);
 
-		Response<Feed> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcePath(feedId), params);
+		Response<Feed> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcesPath(), params);
 		return response.getBodyAsObjects(Feed.class);
 	}
 
@@ -72,11 +72,11 @@ public class FeedRequesterImpl implements FeedRequester
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.cosm.client.http.FeedResource#getByLocation(int,
-	 * java.lang.String, java.lang.String, java.lang.Double, java.lang.String)
+	 * @see com.cosm.client.http.FeedResource#getByLocation(java.lang.Double,
+	 * java.lang.Double, java.lang.Double, java.lang.String)
 	 */
 	@Override
-	public Collection<Feed> getByLocation(int feedId, String latitude, String longitude, Double distance, String distanceUnits)
+	public Collection<Feed> getByLocation(Double latitude, Double longitude, Double distance, String distanceUnits)
 			throws HttpException, ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
@@ -85,7 +85,7 @@ public class FeedRequesterImpl implements FeedRequester
 		params.put("distance", distance);
 		params.put("distance_unit", distanceUnits);
 
-		Response<Feed> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcePath(feedId), params);
+		Response<Feed> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcesPath(), params);
 		return response.getBodyAsObjects(Feed.class);
 	}
 

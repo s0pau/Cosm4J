@@ -1,5 +1,7 @@
 package com.cosm.client.model;
 
+import com.cosm.client.utils.ObjectUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -84,5 +86,55 @@ public class Unit
 	public void setUnitType(IFCClassification unitType)
 	{
 		this.unitType = unitType;
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null)
+		{
+			return false;
+		}
+
+		if (this == obj)
+		{
+			return true;
+		}
+
+		if (!(obj instanceof Unit))
+		{
+			return false;
+		}
+
+		Unit other = (Unit) obj;
+
+		if (!ObjectUtil.nullCheckEquals(this.label, other.label))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.label, other.label))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.unitType, other.unitType))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@JsonIgnore
+	@Override
+	public int hashCode()
+	{
+		int retval = 1;
+		retval += label == null ? 0 : label.hashCode() * 37;
+		retval += symbol == null ? 0 : symbol.hashCode() * 37;
+		retval += unitType == null ? 0 : unitType.hashCode() * 37;
+		return retval;
 	}
 }

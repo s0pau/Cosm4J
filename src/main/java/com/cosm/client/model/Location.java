@@ -1,5 +1,7 @@
 package com.cosm.client.model;
 
+import com.cosm.client.utils.ObjectUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -10,22 +12,22 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName("location")
-class Location
+public class Location
 {
 	@JsonRootName("exposure")
-	enum Exposure
+	public enum Exposure
 	{
 		indoor, outdoor
 	}
 
 	@JsonRootName("disposition")
-	enum Disposition
+	public enum Disposition
 	{
 		fixed, mobile
 	}
 
 	@JsonRootName("domain")
-	enum Domain
+	public enum Domain
 	{
 		physical, virtual
 	}
@@ -115,5 +117,75 @@ class Location
 	public void setDisposition(Disposition disposition)
 	{
 		this.disposition = disposition;
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null)
+		{
+			return false;
+		}
+
+		if (this == obj)
+		{
+			return true;
+		}
+
+		if (!(obj instanceof Permission))
+		{
+			return false;
+		}
+
+		Location other = (Location) obj;
+
+		if (!ObjectUtil.nullCheckEquals(this.disposition, other.getDisposition()))
+		{
+			return false;
+		}
+
+		if (!ObjectUtil.nullCheckEquals(this.domain, other.getDomain()))
+		{
+			return false;
+		}
+		
+		if (!ObjectUtil.nullCheckEquals(this.elevation, other.getElevation()))
+		{
+			return false;
+		}
+		
+		if (!ObjectUtil.nullCheckEquals(this.latitiude, other.getLatitiude()))
+		{
+			return false;
+		}
+		
+		if (!ObjectUtil.nullCheckEquals(this.longitute, other.getLongitute()))
+		{
+			return false;
+		}
+		
+		if (!ObjectUtil.nullCheckEquals(this.name, other.getName()))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@JsonIgnore
+	@Override
+	public int hashCode()
+	{
+		int retval = 1;
+		retval += disposition == null ? 0 : disposition.hashCode() * 37;
+		retval += domain == null ? 0 : domain.hashCode() * 37;
+		retval += elevation * 37;
+		retval += exposure == null ? 0 : exposure.hashCode() * 37;
+		retval += latitiude * 37;
+		retval += longitute * 37;
+		retval += name == null ? 0 : name.hashCode() * 37;
+
+		return retval;
 	}
 }

@@ -147,6 +147,7 @@ public class DatapointRequesterTest
 	}
 
 	@Test
+	@Ignore
 	public void testGetWithParams()
 	{
 		try

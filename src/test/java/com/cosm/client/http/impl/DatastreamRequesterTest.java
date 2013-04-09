@@ -83,6 +83,11 @@ public class DatastreamRequesterTest
 		try
 		{
 			Datastream retval = requester.create(feedId, datastream2);
+
+			// set fields updated by create so we can compare all other fields
+			assertTrue(retval.getUpdatedAt() != null);
+			datastream2.setUpdatedAt(retval.getUpdatedAt());
+
 			assertTrue(datastream2.memberEquals(retval));
 		} catch (HttpException e)
 		{

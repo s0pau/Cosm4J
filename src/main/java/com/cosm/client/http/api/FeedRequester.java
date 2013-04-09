@@ -32,8 +32,6 @@ public interface FeedRequester
 	public Feed get(int feedId) throws HttpException, ParseToObjectException;
 
 	/**
-	 * @param feedId
-	 *            the id of the feed to be retrieved
 	 * @param isShowUser
 	 * @param dataStreamIds
 	 * @return a collection of feed objects matching the params, parsed from the
@@ -43,11 +41,9 @@ public interface FeedRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to feed
 	 */
-	public Collection<Feed> get(int feedId, String isShowUser, String... dataStreamIds) throws HttpException,
-			ParseToObjectException;
+	public Collection<Feed> get(Boolean isShowUser, String... dataStreamIds) throws HttpException, ParseToObjectException;
 
 	/**
-	 * @param feedId
 	 * @param latitude
 	 * @param longitude
 	 * @param distance
@@ -59,7 +55,7 @@ public interface FeedRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to feed
 	 */
-	public Collection<Feed> getByLocation(int feedId, String latitude, String longitude, Double distance, String distanceUnits)
+	public Collection<Feed> getByLocation(Double latitude, Double longitude, Double distance, String distanceUnits)
 			throws HttpException, ParseToObjectException;
 
 	/**

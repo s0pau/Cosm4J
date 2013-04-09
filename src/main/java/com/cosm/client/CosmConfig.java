@@ -17,7 +17,7 @@ public class CosmConfig
 {
 	private static CosmConfig instance;
 
-	private static final String DEFAULT_BASE_URI = "http://api.cosm.com/v2/";
+	private static final String DEFAULT_BASE_URI = "api.cosm.com/v2/";
 	private static final AcceptedMediaType DEFAULT_ACCEPTED_MEDIA_TYPE = AcceptedMediaType.json;
 	private static final String CONFIG_FILE_NAME = "config.properties";
 
