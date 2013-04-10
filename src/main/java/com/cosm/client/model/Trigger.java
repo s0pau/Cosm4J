@@ -5,9 +5,9 @@ import java.net.URI;
 import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * @author s0pau
  * 
  */
-@JsonRootName(value="triggers")
+@JsonRootName(value = "triggers")
 public class Trigger implements ConnectedObject
 {
 	/**
@@ -62,7 +62,7 @@ public class Trigger implements ConnectedObject
 	private String datastreamId;
 
 	@JsonProperty("environment_id")
-	private String feedId;
+	private Integer feedId;
 
 	@JsonProperty("user")
 	private String login;
@@ -106,14 +106,14 @@ public class Trigger implements ConnectedObject
 		this.datastreamId = datastreamId;
 	}
 
-	public String getFeedId()
+	public Integer getFeedId()
 	{
 		return feedId;
 	}
 
-	public void setFeedId(String feedId)
+	public void setFeedId(int testFeedId)
 	{
-		this.feedId = feedId;
+		this.feedId = testFeedId;
 	}
 
 	public Double getThresholdValue()
@@ -234,7 +234,7 @@ public class Trigger implements ConnectedObject
 
 		Trigger other = (Trigger) obj;
 
-		if (this.id != other.id)
+		if (!ObjectUtil.nullCheckEquals(this.id, other.id))
 		{
 			return false;
 		}

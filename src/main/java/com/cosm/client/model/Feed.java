@@ -7,9 +7,9 @@ import com.cosm.client.utils.CollectionUtil;
 import com.cosm.client.utils.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
  * Feed resource/model
@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author s0pau
  * 
  */
-@JsonRootName(value="feeds")
+@JsonRootName(value = "feeds")
 public class Feed implements ConnectedObject
 {
 	public enum Status
@@ -294,7 +294,7 @@ public class Feed implements ConnectedObject
 
 		Feed other = (Feed) obj;
 
-		if (!id.equals(other.id))
+		if (!ObjectUtil.nullCheckEquals(this.id, other.id))
 		{
 			return false;
 		}
