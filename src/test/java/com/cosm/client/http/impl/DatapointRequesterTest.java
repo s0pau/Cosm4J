@@ -32,7 +32,6 @@ public class DatapointRequesterTest
 	private static final String datapointId2 = "2013-02-02T00:00:00.000000Z";
 
 	private DatapointRequester requester;
-	private ObjectMapper mapper;
 	private Datapoint datapoint1;
 	private Datapoint datapoint2;
 
@@ -40,11 +39,10 @@ public class DatapointRequesterTest
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-		mapper = TestUtil.getObjectMapper();
+		ObjectMapper mapper = TestUtil.getObjectMapper();
 
-		String fixtureUri = "src/test/res";
-		datapoint1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint1.json")), Datapoint.class);
-		datapoint2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datapoint2.json")), Datapoint.class);
+		datapoint1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datapoint1.json")), Datapoint.class);
+		datapoint2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datapoint2.json")), Datapoint.class);
 
 		requester = new DatapointRequesterImpl();
 		requester.create(feedId, datastreamId, datapoint1);
@@ -147,7 +145,6 @@ public class DatapointRequesterTest
 	}
 
 	@Test
-	@Ignore
 	public void testGetWithParams()
 	{
 		try

@@ -26,7 +26,6 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public class TriggerRequesterTest
 {
 	private TriggerRequester requester;
-	private ObjectMapper mapper;
 	private Trigger trigger1;
 	private Trigger trigger2;
 
@@ -34,12 +33,13 @@ public class TriggerRequesterTest
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-		mapper = TestUtil.getObjectMapper();
+		ObjectMapper mapper = TestUtil.getObjectMapper();
 
-		String fixtureUri = "src/test/res";
+		trigger1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "trigger1.json")), Trigger.class);
+		trigger1.setFeedId(TestUtil.TEST_FEED_ID);
 
-		trigger1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/trigger1.json")), Trigger.class);
-		trigger2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/trigger2.json")), Trigger.class);
+		trigger2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "trigger2.json")), Trigger.class);
+		trigger2.setFeedId(TestUtil.TEST_FEED_ID);
 
 		requester = new TriggerRequesterImpl();
 		trigger1 = requester.create(trigger1);

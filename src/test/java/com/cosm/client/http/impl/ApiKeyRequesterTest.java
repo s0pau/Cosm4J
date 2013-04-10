@@ -29,7 +29,6 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public class ApiKeyRequesterTest
 {
 	private ApiKeyRequester requester;
-	private ObjectMapper mapper;
 	private ApiKey apiKey1;
 	private ApiKey apiKey2;
 
@@ -37,7 +36,6 @@ public class ApiKeyRequesterTest
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-		mapper = TestUtil.getObjectMapper();
 
 		// apiKey1 fixture
 		apiKey1 = new ApiKey();
@@ -171,7 +169,6 @@ public class ApiKeyRequesterTest
 	}
 
 	@Test
-	@Ignore
 	public void testGetByFeedId()
 	{
 		try

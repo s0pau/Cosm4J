@@ -27,14 +27,11 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public class DatastreamRequesterTest
 {
 	private static final int feedId = TestUtil.TEST_FEED_ID;
-
 	private static final String datastreamId1 = "test_stream_1";
 	private static final String datastreamId2 = "test_stream_2";
 	private static final String datastreamId3 = "test_stream_3";
-	private static final String datastreamId_bad = "stream - bogus";
 
 	private DatastreamRequester requester;
-	private ObjectMapper mapper;
 	private Datastream datastream1;
 	private Datastream datastream2;
 
@@ -42,11 +39,10 @@ public class DatastreamRequesterTest
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-		mapper = TestUtil.getObjectMapper();
+		ObjectMapper mapper = TestUtil.getObjectMapper();
 
-		String fixtureUri = "src/test/res";
-		datastream1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datastream1.json")), Datastream.class);
-		datastream2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/datastream2.json")), Datastream.class);
+		datastream1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datastream1.json")), Datastream.class);
+		datastream2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datastream2.json")), Datastream.class);
 
 		requester = new DatastreamRequesterImpl();
 		datastream1 = requester.create(feedId, datastream1);

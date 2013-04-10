@@ -28,7 +28,6 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 public class FeedRequesterTest
 {
 	private FeedRequester requester;
-	private ObjectMapper mapper;
 	private Feed feed1;
 	private Feed feed2;
 
@@ -36,12 +35,10 @@ public class FeedRequesterTest
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-		mapper = TestUtil.getObjectMapper();
+		ObjectMapper mapper = TestUtil.getObjectMapper();
 
-		String fixtureUri = "src/test/res";
-
-		feed1 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed1.json")), Feed.class);
-		feed2 = mapper.readValue(new FileInputStream(new File(fixtureUri + "/feed2.json")), Feed.class);
+		feed1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")), Feed.class);
+		feed2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed2.json")), Feed.class);
 
 		requester = new FeedRequesterImpl();
 		feed1 = requester.create(feed1);

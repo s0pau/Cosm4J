@@ -20,19 +20,19 @@ import com.cosm.client.model.Location.Domain;
 public class ParserUtilTest
 {
 	@Test
-	public void testToConnectedObject()
+	public void testSimpleParseToConnectedObject()
 	{
-		String datapoint2 = TestUtil.getStringFromFile("datapoint2.json");
-		Datapoint retval = ParserUtil.toConnectedObject(datapoint2, Datapoint.class);
+		String json = TestUtil.getStringFromFile("datapoint2.json");
+		Datapoint retval = ParserUtil.toConnectedObject(json, Datapoint.class);
 		assertEquals("2013-02-02T00:00:00.000000Z", retval.getAt());
 		assertEquals("222", retval.getValue());
 	}
 
 	@Test
-	public void testListFeedsToConnectedObjects()
+	public void testParseListFeedsToConnectedObjects()
 	{
-		String feeds = TestUtil.getStringFromFile("listFeeds.json");
-		Collection<Feed> retval = ParserUtil.toConnectedObjects(feeds, Feed.class);
+		String json = TestUtil.getStringFromFile("listFeeds.json");
+		Collection<Feed> retval = ParserUtil.toConnectedObjects(json, Feed.class);
 		try
 		{
 			assertEquals(2, retval.size());
@@ -48,7 +48,7 @@ public class ParserUtilTest
 			assertEquals(new URI("https://testsite.com/users/JohnDoe"), feed1.getCreatorUri());
 			assertEquals("2010-06-08T09:30:21.472927Z", feed1.getUpdatedAt());
 			assertEquals("2010-05-03T23:43:01.238734Z", feed1.getCreatedAt());
-			
+
 			Location location = new Location();
 			location.setDomain(Domain.physical);
 			assertEquals(location, feed1.getLocation());
@@ -63,7 +63,7 @@ public class ParserUtilTest
 			ds1.setMinValue("-10.0");
 			ds1.setUpdatedAt("2010-07-02T10:21:57.101496Z");
 			assertEquals(ds1, dsList[0]);
-			
+
 			Datastream ds2 = new Datastream();
 			ds2.setId("test_feed-stream11");
 			ds2.setMaxValue("10000.0");
@@ -86,5 +86,55 @@ public class ParserUtilTest
 		{
 			fail("Error while comparing response");
 		}
+	}
+
+	@Test
+	public void testParseDatastreamHistoryToConnectedObjects()
+	{
+		String json = TestUtil.getStringFromFile("getDatastreamHistory.json");
+		Collection<Datastream> retval = ParserUtil.toConnectedObjects(json, Datastream.class);
+		assertEquals(1, retval.size());
+
+		Datastream ds = (Datastream) retval.toArray()[0];
+		assertEquals("random5", ds.getId());
+		assertEquals("1.0", ds.getMaxValue());
+		assertEquals("2013-01-04T10:30:00.119435Z", ds.getUpdatedAt());
+		assertEquals("0.00334173", ds.getValue());
+
+		assertEquals(8, ds.getDatapoints().size());
+		Datapoint[] dpList = (Datapoint[]) ds.getDatapoints().toArray();
+
+		Datapoint dp = new Datapoint();
+		dp.setAt("2013-01-01T14:14:55.118845Z");
+		dp.setValue("0.25741970");
+		assertEquals(dp, dpList[0]);
+
+		dp.setAt("2013-01-01T14:29:55.123420Z");
+		dp.setValue("0.86826886");
+		assertEquals(dp, dpList[1]);
+
+		dp.setAt("2013-01-01T14:44:55.111267Z");
+		dp.setValue("0.28586252");
+		assertEquals(dp, dpList[2]);
+
+		dp.setAt("2013-01-01T14:59:55.126180Z");
+		dp.setValue("0.48122377");
+		assertEquals(dp, dpList[3]);
+
+		dp.setAt("2013-01-01T15:14:55.121795Z");
+		dp.setValue("0.60897230");
+		assertEquals(dp, dpList[4]);
+
+		dp.setAt("2013-01-01T15:29:55.105327Z");
+		dp.setValue("0.52898451");
+		assertEquals(dp, dpList[5]);
+
+		dp.setAt("2013-01-01T15:44:55.115502Z");
+		dp.setValue("0.36369879");
+		assertEquals(dp, dpList[6]);
+
+		dp.setAt("2013-01-01T15:59:55.111692Z");
+		dp.setValue("0.54204623");
+		assertEquals(dp, dpList[7]);
 	}
 }
