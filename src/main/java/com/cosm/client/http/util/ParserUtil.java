@@ -191,17 +191,21 @@ public class ParserUtil
 		log.debug(String.format("Parsing string to objects: %s", body));
 
 		Collection<T> objs;
+		CollectionType collectionType = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, elementType);
 
 		try
 		{
 			JsonNode node = getObjectMapper().reader().readTree(body);
 			JsonNode total = node.get("totalResults");
-			JsonNode results = node.get("results");
-
-			CollectionType collectionType = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, elementType);
-			objs = getObjectMapper().readValue(results.toString(), collectionType);
-
-			log.debug(String.format("Parsed string to %s objects", total));
+			if (total != null)
+			{
+				JsonNode results = node.get("results");
+				objs = getObjectMapper().readValue(results.toString(), collectionType);
+				log.debug(String.format("Parsed string to %s objects", total));
+			} else
+			{
+				objs = getObjectMapper().readValue(body, collectionType);
+			}
 		} catch (IOException e)
 		{
 			throw new ParseToObjectException(String.format("Unable to parse [%s] to %s.", body, elementType), e);
