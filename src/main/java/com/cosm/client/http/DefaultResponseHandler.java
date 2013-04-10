@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.log4j.Logger;
 
-import com.cosm.client.CosmClientException;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.model.ConnectedObject;
 
@@ -31,33 +31,34 @@ public class DefaultResponseHandler<T extends ConnectedObject> implements Respon
 	@Override
 	public Response<T> handleResponse(HttpResponse response) throws ClientProtocolException, IOException
 	{
+		int statusCode = response.getStatusLine().getStatusCode();
+		log.info(String.format("Handling response [%s]", statusCode));
+
 		if (!isHttpStatusOK(response.getStatusLine().getStatusCode()))
 		{
-			// skip operation on parsing response unless success
-			throw new HttpException("Http response status indicates unsuccessful operation", response);
-		}
+			String errorDetail = null;
+			try
+			{
+				errorDetail = parseHttpEntity(response.getEntity());
+			} catch (IOException swallow)
+			{
+				log.warn("Unable to parse response error detail");
+			}
 
-		log.info(String.format("Handling response [%s]", response.getStatusLine().getStatusCode()));
+			throw new HttpException("Http response status indicates unsuccessful operation", statusCode, errorDetail);
+		}
 
 		Response<T> retval = new Response<>();
 
-		StringBuilder bodyBuilder = null;
-		try (InputStream contentStream = response.getEntity().getContent();
-				BufferedReader reader = new BufferedReader(new InputStreamReader(contentStream)))
+		retval.setStatusCode(statusCode);
+
+		try
 		{
-			bodyBuilder = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null)
-			{
-				bodyBuilder.append(line + "\n");
-			}
+			retval.setBody(parseHttpEntity(response.getEntity()));
 		} catch (IOException e)
 		{
-			throw new CosmClientException("Unable to parse response", e);
+			throw new HttpException("Http response [%s] but body cannot be parsed.", e);
 		}
-
-		retval.setStatusCode(response.getStatusLine().getStatusCode());
-		retval.setBody(bodyBuilder.toString());
 
 		Map<String, Object> headers = new HashMap<>();
 		for (Header header : response.getAllHeaders())
@@ -67,6 +68,22 @@ public class DefaultResponseHandler<T extends ConnectedObject> implements Respon
 		retval.setHeaders(headers);
 
 		return retval;
+	}
+
+	private String parseHttpEntity(HttpEntity entity) throws IOException
+	{
+		StringBuilder bodyBuilder = null;
+		try (InputStream contentStream = entity.getContent();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(contentStream)))
+		{
+			bodyBuilder = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null)
+			{
+				bodyBuilder.append(line + "\n");
+			}
+		}
+		return bodyBuilder.toString();
 	}
 
 	private boolean isHttpStatusOK(int statusCode)
