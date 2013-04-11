@@ -4,7 +4,7 @@ cosm-java
 <p>
 Java Cosm Client <i>(formerly Pachube)</i> - wrapper for Cosm Api. 
 # Overview
-This is a RESTful java client for accessing Cosm Api. It uses Jersey Client (implementation of JAX-RS) for handling HTTP requests, while the response is decoupled from the implementation of the HTTP client implementation.   
+This is a RESTful java client for accessing Cosm Api. It uses Apache HttpComponent for handling HTTP requests. 
 
 # Status
 
@@ -48,10 +48,12 @@ Each ConnectedObject (model) has a corresponding interface for accessing the API
 Method calls takes ConnectedObject(s) as parameters and return ConnectedObject(s), therefore user of this library/downstream application does not need to be concerned about parsing or the underlying HTTP request/response details.
 
 <br/>On success, the Requester implementation will return the object post CRUD operation:
-+*create* - returns the ConnectedObject(s) created, fully populated with fields generated post API call
-+*get (read)* - returns the ConnectedObject(s) retrieved
-+*update* - returns the updated ConnectedObject
-+*delete* - returns an empty ConnectedObject with the id only
+<ul>
+<li>create - returns the ConnectedObject(s) created, fully populated with fields generated post API call</li>
+<li>get (read) - returns the ConnectedObject(s) retrieved</li>
+<li>update - returns the updated ConnectedObject</li>
+<li>delete - returns an empty ConnectedObject with the id only</li>
+</ul>
 
 <br/>On failure, the Requester implementation will throw:
 <ul>
@@ -59,14 +61,13 @@ Method calls takes ConnectedObject(s) as parameters and return ConnectedObject(s
 <li>HttpException, if the response status is not 2xx</li>
 </ul> 
 
-<br/><br/>
-<b><i>Actual implementation details:</i></b><br/>
+<br/><b><i>Actual implementation details:</i></b><br/>
 RESTful requests to Cosm's API are managed by DefaultRequestHandler; DefaultResponseHandler handles the response. Request and Response decouples this client from the HTTP client implementation.   
 Parsing to and from ConnectedObjects to HTTP request/response body are encapsulated in com.cosm.client.http.util.ParseUtil. 
 * ParseToObjectException, if the returned response cannot be parse into ConnectedObject implementations
 * ParseFromObjectException, if the ConnectedObject implementation cannot be parse into specified format (e.g. json)
 
-## Exception
+## Exception Hierarchy
 
 CosmClientException - any exception thrown out of the cosm-java library is a subclass of this exception.
 
@@ -76,9 +77,16 @@ Currently only JSON format is supported.
 
 ## Configuring HTTPClient
 
-Retries and timeouts can be configured via HttpClientBuilder, e.g: <br/>
-	HttpClientBuilder.getInstance().setConnectionTimeout(5000); <br/>
+Simeple timeouts can be configured via config.properties, which configures the HTTPClient via HttpClientBuilder. 
+For example, setting the http.connectionTimeout=5000 at properties is actually the same as writing the following code:
 
+	HttpClientBuilder.getInstance().setConnectionTimeout(5000);
+	
+Configuring retries can be done as follow:
+
+	HttpClientBuilder.getInstance().setRetryHandler(youRetryHandlerInstance);
+	* yourRetryHandlerInstance must implement org.apache.http.client.HttpRequestRetryHandler.
+	
 Configuration must be carried out before making the first requester call.
 
 
