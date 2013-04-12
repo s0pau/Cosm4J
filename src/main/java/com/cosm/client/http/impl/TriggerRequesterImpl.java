@@ -24,13 +24,6 @@ public class TriggerRequesterImpl implements TriggerRequester
 {
 	private static final String RESOURCES_PATH = "triggers";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.cosm.client.http.TriggerResource#create(com.cosm.client.model.Trigger
-	 * )
-	 */
 	@Override
 	public Trigger create(Trigger toCreate) throws HttpException
 	{
@@ -39,11 +32,6 @@ public class TriggerRequesterImpl implements TriggerRequester
 		return get(triggerId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.TriggerResource#get(int)
-	 */
 	@Override
 	public Trigger get(int triggerId) throws HttpException, ParseToObjectException
 	{
@@ -51,11 +39,6 @@ public class TriggerRequesterImpl implements TriggerRequester
 		return response.getBodyAsObject(Trigger.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.TriggerResource#getByFeedId(int)
-	 */
 	@Override
 	public Collection<Trigger> getByFeedId(int feedId) throws HttpException, ParseToObjectException
 	{
@@ -66,13 +49,6 @@ public class TriggerRequesterImpl implements TriggerRequester
 		return response.getBodyAsObjects(Trigger.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.cosm.client.http.TriggerResource#update(com.cosm.client.model.Trigger
-	 * )
-	 */
 	@Override
 	public Trigger update(Trigger toUpdate) throws HttpException
 	{
@@ -80,11 +56,6 @@ public class TriggerRequesterImpl implements TriggerRequester
 		return toUpdate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.TriggerResource#delete(int)
-	 */
 	@Override
 	public void delete(int triggerId) throws HttpException
 	{

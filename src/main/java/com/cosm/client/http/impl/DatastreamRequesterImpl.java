@@ -24,12 +24,6 @@ import com.cosm.client.model.Datastream;
  */
 public class DatastreamRequesterImpl implements DatastreamRequester
 {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatastreamResource#create(int,
-	 * com.cosm.client.model.Datastream)
-	 */
 	@Override
 	public Datastream create(int feedId, Datastream toCreate) throws HttpException
 	{
@@ -38,12 +32,6 @@ public class DatastreamRequesterImpl implements DatastreamRequester
 		return get(feedId, toCreate.getId());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatastreamResource#create(int,
-	 * com.cosm.client.model.Datastream)
-	 */
 	@Override
 	public Collection<Datastream> create(int feedId, Datastream... toCreate) throws HttpException
 	{
@@ -51,11 +39,6 @@ public class DatastreamRequesterImpl implements DatastreamRequester
 		return Arrays.asList(toCreate);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatastreamResource#get(int, java.lang.String)
-	 */
 	@Override
 	public Datastream get(int feedId, String dataStreamId) throws HttpException, ParseToObjectException
 	{
@@ -85,12 +68,6 @@ public class DatastreamRequesterImpl implements DatastreamRequester
 		return toUpdate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatastreamResource#delete(int,
-	 * java.lang.String)
-	 */
 	@Override
 	public void delete(int feedId, String dataStreamId) throws HttpException
 	{

@@ -25,11 +25,6 @@ public class FeedRequesterImpl implements FeedRequester
 {
 	private static final String RESOURCES_PATH = "feeds";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.FeedResource#create(com.cosm.client.model.Feed)
-	 */
 	@Override
 	public Feed create(Feed toCreate) throws HttpException
 	{
@@ -38,11 +33,6 @@ public class FeedRequesterImpl implements FeedRequester
 		return get(feedId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.FeedResource#get(int)
-	 */
 	@Override
 	public Feed get(int feedId) throws HttpException, ParseToObjectException
 
@@ -51,30 +41,17 @@ public class FeedRequesterImpl implements FeedRequester
 		return response.getBodyAsObject(Feed.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.FeedResource#get(java.lang.Boolean,
-	 * java.lang.String)
-	 */
 	@Override
-	public Collection<Feed> get(Boolean isShowUser, String... dataStreamIds) throws HttpException, ParseToObjectException
+	public Feed getHistoryWithDatastreams(Boolean isShowUser, String... dataStreamIds) throws HttpException, ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("datastreams", Arrays.asList(dataStreamIds));
 		params.put("show_user", isShowUser == null ? false : isShowUser);
 
 		Response<Feed> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcesPath(), params);
-		return response.getBodyAsObjects(Feed.class);
+		return response.getBodyAsObject(Feed.class);
 	}
 
-	// TODO can this location based params be also in filterParam?
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.FeedResource#getByLocation(java.lang.Double,
-	 * java.lang.Double, java.lang.Double, java.lang.String)
-	 */
 	@Override
 	public Collection<Feed> getByLocation(Double latitude, Double longitude, Double distance, String distanceUnits)
 			throws HttpException, ParseToObjectException
@@ -89,13 +66,6 @@ public class FeedRequesterImpl implements FeedRequester
 		return response.getBodyAsObjects(Feed.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.cosm.client.http.FeedResource#get(com.cosm.client.http.FeedFilterParam
-	 * )
-	 */
 	@Override
 	public Collection<Feed> get(Map<String, Object> filterParam) throws HttpException, ParseToObjectException
 	{
@@ -103,12 +73,6 @@ public class FeedRequesterImpl implements FeedRequester
 		return response.getBodyAsObjects(Feed.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.FeedResource#getHistory(int, java.lang.String,
-	 * java.lang.String, int)
-	 */
 	@Override
 	public Feed getHistory(int feedId, String startAt, String endAt, int samplingInterval) throws HttpException,
 			ParseToObjectException
@@ -123,13 +87,6 @@ public class FeedRequesterImpl implements FeedRequester
 		return response.getBodyAsObject(Feed.class);
 	}
 
-	// TODO getMobileFeed(), "waypoints" etc
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.FeedResource#update(com.cosm.client.model.Feed)
-	 */
 	@Override
 	public Feed update(Feed toUpdate) throws HttpException
 	{
@@ -137,11 +94,6 @@ public class FeedRequesterImpl implements FeedRequester
 		return toUpdate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.FeedResource#delete(int)
-	 */
 	@Override
 	public void delete(int feedId) throws HttpException
 	{

@@ -23,12 +23,6 @@ import com.cosm.client.model.Datapoint;
  */
 public class DatapointRequesterImpl implements DatapointRequester
 {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatapointResource#create(int, java.lang.String,
-	 * com.cosm.client.model.Datapoint)
-	 */
 	@Override
 	public Datapoint create(int feedId, String dataStreamId, Datapoint toCreate) throws HttpException
 	{
@@ -36,12 +30,6 @@ public class DatapointRequesterImpl implements DatapointRequester
 		return toCreate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatapointResource#create(int, java.lang.String,
-	 * com.cosm.client.model.Datapoint)
-	 */
 	@Override
 	public Collection<Datapoint> create(int feedId, String dataStreamId, Datapoint... toCreate) throws HttpException
 	{
@@ -49,12 +37,6 @@ public class DatapointRequesterImpl implements DatapointRequester
 		return Arrays.asList(toCreate);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatapointResource#get(int, java.lang.String,
-	 * java.lang.String)
-	 */
 	@Override
 	public Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException, ParseToObjectException
 	{
@@ -70,24 +52,12 @@ public class DatapointRequesterImpl implements DatapointRequester
 		return toUpdate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatapointResource#delete(int, java.lang.String,
-	 * java.lang.String)
-	 */
 	@Override
 	public void delete(int feedId, String dataStreamId, String datapointAt) throws HttpException
 	{
 		DefaultRequestHandler.getInstance().doRequest(HttpMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatapointResource#deleteMultiple(int,
-	 * java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void deleteMultiple(int feedId, String dataStreamId, String startAt) throws HttpException
 	{

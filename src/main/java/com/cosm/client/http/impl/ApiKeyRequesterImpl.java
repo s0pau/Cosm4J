@@ -25,12 +25,6 @@ public class ApiKeyRequesterImpl implements ApiKeyRequester
 {
 	private static final String RESOURCES_PATH = "keys";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.cosm.client.http.ApiKeyResource1#create(com.cosm.client.model.ApiKey)
-	 */
 	@Override
 	public ApiKey create(ApiKey toCreate) throws HttpException
 	{
@@ -39,11 +33,6 @@ public class ApiKeyRequesterImpl implements ApiKeyRequester
 		return get(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.ApiKeyResource1#get(java.lang.String)
-	 */
 	@Override
 	public ApiKey get(String apiKey) throws HttpException, ParseToObjectException
 	{
@@ -51,11 +40,6 @@ public class ApiKeyRequesterImpl implements ApiKeyRequester
 		return response.getBodyAsObject(ApiKey.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.ApiKeyResource1#getByFeedId(int)
-	 */
 	@Override
 	public Collection<ApiKey> getByFeedId(int feedId) throws HttpException, ParseToObjectException
 	{
@@ -66,11 +50,6 @@ public class ApiKeyRequesterImpl implements ApiKeyRequester
 		return response.getBodyAsObjects(ApiKey.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.ApiKeyResource1#delete(java.lang.String)
-	 */
 	@Override
 	public void delete(String apiKey) throws HttpException
 	{
