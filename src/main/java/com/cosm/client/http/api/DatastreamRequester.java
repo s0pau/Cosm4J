@@ -52,6 +52,23 @@ public interface DatastreamRequester
 	/**
 	 * @param feedId
 	 *            parent of the datastream
+	 * @param dataStreamId
+	 * @param startAt
+	 * @param endAt
+	 * @param samplingInterval
+	 * @return datastream with dataStreamId contain a collection of datapoints
+	 *         that has an at value between the startAt and endAt
+	 * @throws HttpException
+	 *             if failed to get datastream over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to datastream
+	 */
+	public Datastream getHistoryWithDatapoints(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
+			throws HttpException, ParseToObjectException;
+
+	/**
+	 * @param feedId
+	 *            parent of the datastream
 	 * @param toUpdate
 	 *            datastream to be updated over the API
 	 * @return the datastream that was passed in, on successful operation

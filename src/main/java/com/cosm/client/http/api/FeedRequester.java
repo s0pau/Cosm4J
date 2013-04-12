@@ -41,7 +41,7 @@ public interface FeedRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to feed
 	 */
-	public Collection<Feed> get(Boolean isShowUser, String... dataStreamIds) throws HttpException, ParseToObjectException;
+	public Feed getHistoryWithDatastreams(Boolean isShowUser, String... dataStreamIds) throws HttpException, ParseToObjectException;
 
 	/**
 	 * @param latitude

@@ -45,7 +45,6 @@ public class DatapointRequesterTest
 		datapoint2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datapoint2.json")), Datapoint.class);
 
 		requester = new DatapointRequesterImpl();
-		requester.create(feedId, datastreamId, datapoint1);
 	}
 
 	@After
@@ -104,6 +103,8 @@ public class DatapointRequesterTest
 	@Test
 	public void testJSONAcceptHeaderAndConverstion()
 	{
+		requester.create(feedId, datastreamId, datapoint1);
+
 		try
 		{
 			Datapoint retval = requester.get(feedId, datastreamId, datapointId1);
@@ -134,6 +135,8 @@ public class DatapointRequesterTest
 	@Test
 	public void testGet()
 	{
+		requester.create(feedId, datastreamId, datapoint1);
+
 		try
 		{
 			Datapoint retval = requester.get(feedId, datastreamId, datapointId1);
@@ -145,25 +148,9 @@ public class DatapointRequesterTest
 	}
 
 	@Test
-	public void testGetWithParams()
-	{
-		try
-		{
-			Collection<Datapoint> retval = requester.get(feedId, datastreamId, "2012-04-01T00:00:00.000000Z",
-					"2013-01-02T00:00:00.000000Z", 86400);
-
-			assertEquals(1, retval.size());
-			assertTrue(retval.contains(datapoint1));
-			assertTrue(!retval.contains(datapoint2));
-		} catch (HttpException e)
-		{
-			fail("failed on requesting to get datapoints with parameters");
-		}
-	}
-
-	@Test
 	public void testUpdate()
 	{
+		requester.create(feedId, datastreamId, datapoint1);
 		datapoint1.setValue("555");
 
 		try
@@ -180,6 +167,8 @@ public class DatapointRequesterTest
 	@Test
 	public void testDelete()
 	{
+		requester.create(feedId, datastreamId, datapoint1);
+
 		try
 		{
 			requester.delete(feedId, datastreamId, datapointId1);

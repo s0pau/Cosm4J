@@ -17,9 +17,11 @@ import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
+import com.cosm.client.http.api.DatastreamRequester;
 import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
+import com.cosm.client.model.Datastream;
 import com.cosm.client.model.Feed;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -30,18 +32,18 @@ public class FeedRequesterTest
 	private FeedRequester requester;
 	private Feed feed1;
 	private Feed feed2;
+	private ObjectMapper mapper;
 
 	@Before
 	public void setUp() throws Exception
 	{
 		TestUtil.loadDefaultTestConfig();
-		ObjectMapper mapper = TestUtil.getObjectMapper();
+		mapper = TestUtil.getObjectMapper();
 
 		feed1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")), Feed.class);
 		feed2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed2.json")), Feed.class);
 
 		requester = new FeedRequesterImpl();
-		feed1 = requester.create(feed1);
 	}
 
 	@After
@@ -52,7 +54,6 @@ public class FeedRequesterTest
 		{
 			tearDownFixture(feed1.getId());
 		}
-
 		if (feed2.getId() != null)
 		{
 			tearDownFixture(feed2.getId());
@@ -82,7 +83,6 @@ public class FeedRequesterTest
 		try
 		{
 			Feed retval = requester.create(feed2);
-
 			// update fields returned from creation before comparing all fields
 			feed2.setId(retval.getId());
 
@@ -126,6 +126,8 @@ public class FeedRequesterTest
 	@Test
 	public void testGet()
 	{
+		feed1 = requester.create(feed1);
+
 		try
 		{
 			Feed retval = requester.get(feed1.getId());
@@ -138,13 +140,32 @@ public class FeedRequesterTest
 	}
 
 	@Test
-	public void testGetByDatastreams()
+	public void testGetHistoryWithDatastreams()
 	{
+		Datastream datastream1 = null;
+		Datastream datastream2 = null;
 		try
 		{
-			Collection<Feed> retval = requester.get(true, "test_feed-stream10");
-			assertTrue(retval.size() == 1);
-			assertTrue(retval.contains(feed1));
+			datastream1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datastream1.json")),
+					Datastream.class);
+			datastream2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datastream2.json")),
+					Datastream.class);
+
+			feed1 = requester.create(feed1);
+			DatastreamRequester dpRequester = new DatastreamRequesterImpl();
+			dpRequester.create(feed1.getId(), datastream1, datastream2);
+		} catch (Exception e)
+		{
+			fail(String.format("fail to set up test, %s", e.getLocalizedMessage()));
+		}
+
+		try
+		{
+			Feed retval = requester.getHistoryWithDatastreams(false, datastream1.getId());
+			assertEquals(feed1.getId(), retval.getId());
+
+			assertEquals(1, retval.getDatastreams().size());
+			assertEquals(datastream1.getId(), retval.getId());
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to get a feed");
@@ -156,6 +177,8 @@ public class FeedRequesterTest
 	@Ignore
 	public void testGetByLocation()
 	{
+		feed2 = requester.create(feed2);
+
 		try
 		{
 			Collection<Feed> retval = requester.getByLocation(feed2.getLocation().getLatitiude(), feed2.getLocation()
@@ -188,6 +211,7 @@ public class FeedRequesterTest
 	@Test
 	public void testUpdate()
 	{
+		feed1 = requester.create(feed1);
 		feed1.setDescription("unit test feed description");
 
 		try
@@ -204,6 +228,8 @@ public class FeedRequesterTest
 	@Test
 	public void testDelete()
 	{
+		feed1 = requester.create(feed1);
+
 		try
 		{
 			requester.delete(feed1.getId());

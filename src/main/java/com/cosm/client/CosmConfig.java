@@ -141,12 +141,12 @@ public class CosmConfig
 		return baseUri;
 	}
 
-	public int getSocketTimeout()
+	public Integer getSocketTimeout()
 	{
 		return socketTimeout;
 	}
 
-	public int getConnectionTimeout()
+	public Integer getConnectionTimeout()
 	{
 		return connectionTimeout;
 	}

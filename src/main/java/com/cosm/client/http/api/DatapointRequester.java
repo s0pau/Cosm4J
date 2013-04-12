@@ -59,24 +59,6 @@ public interface DatapointRequester
 	 *            indirect parent of the datapoint
 	 * @param dataStreamId
 	 *            parent of the datapoint
-	 * @param startAt
-	 * @param endAt
-	 * @param samplingInterval
-	 * @return a collection of datapoint objects matching the params, parsed
-	 *         from the json returned from the API
-	 * @throws HttpException
-	 *             if failed to get datapoint over the API
-	 * @throws ParseToObjectException
-	 *             if failed to parse the returned json to datapoint
-	 */
-	public Collection<Datapoint> get(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
-			throws HttpException, ParseToObjectException;
-
-	/**
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
 	 * @param toUpdate
 	 *            datapoint to be updated over the API
 	 * @return the datapoint that was passed in, on successful operation

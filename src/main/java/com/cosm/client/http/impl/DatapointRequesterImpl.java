@@ -63,32 +63,6 @@ public class DatapointRequesterImpl implements DatapointRequester
 		return response.getBodyAsObject(Datapoint.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatapointResource#get(int, java.lang.String,
-	 * java.lang.String, java.lang.String, int)
-	 */
-	@Override
-	public Collection<Datapoint> get(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
-			throws HttpException, ParseToObjectException
-	{
-		Map<String, Object> params = new HashMap<>();
-		params.put("start", startAt);
-		params.put("end", endAt);
-		params.put("interval", samplingInterval);
-
-		Response<Datapoint> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getParentResourcePath(feedId, dataStreamId),
-				params);
-		return response.getBodyAsObjects(Datapoint.class);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatapointResource#update(int, java.lang.String,
-	 * com.cosm.client.model.Datapoint)
-	 */
 	@Override
 	public Datapoint update(int feedId, String dataStreamId, Datapoint toUpdate) throws HttpException
 	{

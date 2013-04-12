@@ -2,6 +2,8 @@ package com.cosm.client.http.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.cosm.client.http.DefaultRequestHandler;
 import com.cosm.client.http.DefaultRequestHandler.HttpMethod;
@@ -62,12 +64,20 @@ public class DatastreamRequesterImpl implements DatastreamRequester
 		return response.getBodyAsObject(Datastream.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.cosm.client.http.DatastreamResource#update(int,
-	 * com.cosm.client.model.Datastream)
-	 */
+	@Override
+	public Datastream getHistoryWithDatapoints(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
+			throws HttpException, ParseToObjectException
+	{
+		Map<String, Object> params = new HashMap<>();
+		params.put("start", startAt);
+		params.put("end", endAt);
+		params.put("interval", samplingInterval);
+
+		Response<Datastream> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET,
+				getResourcePath(feedId, dataStreamId), params);
+		return response.getBodyAsObject(Datastream.class);
+	}
+
 	@Override
 	public Datastream update(int feedId, Datastream toUpdate) throws HttpException
 	{
