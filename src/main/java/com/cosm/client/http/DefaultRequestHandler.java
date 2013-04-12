@@ -104,7 +104,6 @@ public class DefaultRequestHandler
 	private <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath,
 			Map<String, Object> params, T... bodyObjects)
 	{
-
 		Response<T> response = null;
 		HttpRequestBase request = buildRequest(requestMethod, appPath, params, bodyObjects);
 

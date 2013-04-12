@@ -38,6 +38,10 @@ public class CosmConfig
 	 */
 	private AcceptedMediaType responseMediaType = DEFAULT_ACCEPTED_MEDIA_TYPE;
 
+	private Integer connectionTimeout;
+
+	private Integer socketTimeout;
+
 	private final Properties prop = new Properties();
 
 	public enum AcceptedMediaType
@@ -94,6 +98,16 @@ public class CosmConfig
 			responseMediaType = responseMediaType == null ? DEFAULT_ACCEPTED_MEDIA_TYPE : responseMediaType;
 
 			apiKey = prop.getProperty("api.key");
+
+			if (prop.getProperty("http.connectionTimeout") != null)
+			{
+				connectionTimeout = Integer.valueOf(prop.getProperty("http.connectionTimeout"));
+			}
+
+			if (prop.getProperty("http.socketTimeout") != null)
+			{
+				socketTimeout = Integer.valueOf(prop.getProperty("http.socketTimeout"));
+			}
 		} catch (IOException ex)
 		{
 			throw new CosmClientException("Unable to load config propoerties", ex);
@@ -125,6 +139,16 @@ public class CosmConfig
 	public String getBaseURI()
 	{
 		return baseUri;
+	}
+
+	public int getSocketTimeout()
+	{
+		return socketTimeout;
+	}
+
+	public int getConnectionTimeout()
+	{
+		return connectionTimeout;
 	}
 
 	/**
