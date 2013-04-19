@@ -28,6 +28,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class ApiKeyRequesterTest
 {
+	private static int FEED_ID = 123;
+
 	private ApiKeyRequester requester;
 	private ApiKey apiKey1;
 	private ApiKey apiKey2;
@@ -57,7 +59,7 @@ public class ApiKeyRequesterTest
 		List<AccessMethod> am2 = new ArrayList<>();
 		am2.add(AccessMethod.get);
 		List<Resource> resources = new ArrayList<>();
-		Resource r2 = new Resource(TestUtil.TEST_FEED_ID, null);
+		Resource r2 = new Resource(FEED_ID, null);
 		resources.add(r2);
 		Permission p2 = new Permission("66.66.66.66", am2, resources);
 
@@ -141,20 +143,6 @@ public class ApiKeyRequesterTest
 		}
 	}
 
-	@Ignore("unable to deserialise EEML atm")
-	@Test
-	public void testXMLAcceptHeaderAndConverstion()
-	{
-		ObjectMapper mapper = new XmlMapper();
-	}
-
-	@Ignore("unable to deserialise CSV atm")
-	@Test
-	public void testCSVAcceptHeaderAndConverstion()
-	{
-		CsvMapper mapper = new CsvMapper();
-	}
-
 	@Test
 	public void testGet()
 	{
@@ -173,7 +161,7 @@ public class ApiKeyRequesterTest
 	{
 		try
 		{
-			Collection<ApiKey> retval = requester.getByFeedId(TestUtil.TEST_FEED_ID);
+			Collection<ApiKey> retval = requester.getByFeedId(FEED_ID);
 			assertTrue(retval.size() == 2);
 			assertTrue(retval.contains(apiKey1));
 			assertTrue(retval.contains(apiKey2));

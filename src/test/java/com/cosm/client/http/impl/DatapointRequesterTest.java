@@ -10,30 +10,59 @@ import java.util.Collection;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatapointRequester;
+import com.cosm.client.http.api.DatastreamRequester;
+import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
+import com.cosm.client.model.Datastream;
+import com.cosm.client.model.Feed;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class DatapointRequesterTest
 {
-	private static final int feedId = TestUtil.TEST_FEED_ID;
-	private static final String datastreamId = "stream_id2";
-	private static final String datapointId1 = "2013-01-01T00:00:00.000000Z";
-	private static final String datapointId2 = "2013-02-02T00:00:00.000000Z";
+	private static int feedId;
+	private static String datastreamId;
 
 	private DatapointRequester requester;
 	private Datapoint datapoint1;
 	private Datapoint datapoint2;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception
+	{
+		// setup a general purpose feed set up for testing all it's children
+		Feed feed = TestUtil.getObjectMapper().readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")),
+				Feed.class);
+		FeedRequester fRequester = new FeedRequesterImpl();
+		feed = fRequester.create(feed);
+
+		Datastream datastream = TestUtil.getObjectMapper().readValue(
+				new FileInputStream(new File(TestUtil.fixtureUri + "datastream1.json")), Datastream.class);
+		DatastreamRequester dsRequester = new DatastreamRequesterImpl();
+		dsRequester.create(feed.getId(), datastream);
+
+		feedId = feed.getId();
+		datastreamId = datastream.getId();
+	}
+
+	@AfterClass
+	public static void tearDownClass()
+	{
+		FeedRequester fRequester = new FeedRequesterImpl();
+		fRequester.delete(feedId);
+
+		// DatastreamRequester dsRequester = new DatastreamRequesterImpl();
+		// dsRequester.delete(feedId, datastreamId);
+	}
 
 	@Before
 	public void setUp() throws Exception
@@ -50,8 +79,8 @@ public class DatapointRequesterTest
 	@After
 	public void tearDown() throws Exception
 	{
-		tearDownFixture(datapointId1);
-		tearDownFixture(datapointId2);
+		tearDownFixture(datapoint1.getAt());
+		tearDownFixture(datapoint2.getAt());
 		CosmConfig.getInstance().reload();
 		requester = null;
 	}
@@ -87,7 +116,6 @@ public class DatapointRequesterTest
 	@Test
 	public void testCreateMultiple()
 	{
-		// covered in setup... perhaps not needed here
 		try
 		{
 			Collection<Datapoint> retval = requester.create(feedId, datastreamId, datapoint1, datapoint2);
@@ -107,7 +135,7 @@ public class DatapointRequesterTest
 
 		try
 		{
-			Datapoint retval = requester.get(feedId, datastreamId, datapointId1);
+			Datapoint retval = requester.get(feedId, datastreamId, datapoint1.getAt());
 			assertTrue(datapoint1.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -118,20 +146,6 @@ public class DatapointRequesterTest
 		}
 	}
 
-	@Ignore("unable to deserialise EEML atm")
-	@Test
-	public void testXMLAcceptHeaderAndConverstion()
-	{
-		ObjectMapper mapper = new XmlMapper();
-	}
-
-	@Ignore("unable to deserialise CSV atm")
-	@Test
-	public void testCSVAcceptHeaderAndConverstion()
-	{
-		CsvMapper mapper = new CsvMapper();
-	}
-
 	@Test
 	public void testGet()
 	{
@@ -139,7 +153,7 @@ public class DatapointRequesterTest
 
 		try
 		{
-			Datapoint retval = requester.get(feedId, datastreamId, datapointId1);
+			Datapoint retval = requester.get(feedId, datastreamId, datapoint1.getAt());
 			assertTrue(datapoint1.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -171,7 +185,7 @@ public class DatapointRequesterTest
 
 		try
 		{
-			requester.delete(feedId, datastreamId, datapointId1);
+			requester.delete(feedId, datastreamId, datapoint1.getAt());
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a datapoint");
@@ -179,7 +193,7 @@ public class DatapointRequesterTest
 
 		try
 		{
-			requester.get(feedId, datastreamId, datapointId1);
+			requester.get(feedId, datastreamId, datapoint1.getAt());
 			fail("should not be able to get deleted datapoint");
 		} catch (HttpException e)
 		{

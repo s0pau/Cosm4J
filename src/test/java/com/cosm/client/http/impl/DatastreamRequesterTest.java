@@ -10,7 +10,9 @@ import java.util.Collection;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -18,24 +20,43 @@ import com.cosm.client.CosmConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatapointRequester;
 import com.cosm.client.http.api.DatastreamRequester;
+import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
 import com.cosm.client.model.Datastream;
+import com.cosm.client.model.Feed;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class DatastreamRequesterTest
 {
-	private static final int feedId = TestUtil.TEST_FEED_ID;
+	private static int feedId;
+
 	private static final String datastreamId1 = "test_stream_1";
 	private static final String datastreamId2 = "test_stream_2";
 
 	private DatastreamRequester requester;
 	private Datastream datastream1;
 	private Datastream datastream2;
-	private ObjectMapper mapper;
+	private static ObjectMapper mapper;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception
+	{
+		// setup a general purpose feed set up for testing all it's children
+		Feed feed = TestUtil.getObjectMapper().readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")),
+				Feed.class);
+		FeedRequester requester = new FeedRequesterImpl();
+		feed = requester.create(feed);
+		feedId = feed.getId();
+	}
+
+	@AfterClass
+	public static void tearDownClass()
+	{
+		FeedRequester requester = new FeedRequesterImpl();
+		requester.delete(feedId);
+	}
 
 	@Before
 	public void setUp() throws Exception
@@ -124,20 +145,6 @@ public class DatastreamRequesterTest
 		}
 	}
 
-	@Ignore("unable to deserialise EEML atm")
-	@Test
-	public void testXMLAcceptHeaderAndConverstion()
-	{
-		ObjectMapper mapper = new XmlMapper();
-	}
-
-	@Ignore("unable to deserialise CSV atm")
-	@Test
-	public void testCSVAcceptHeaderAndConverstion()
-	{
-		CsvMapper mapper = new CsvMapper();
-	}
-
 	@Test
 	public void testGet()
 	{
@@ -154,6 +161,7 @@ public class DatastreamRequesterTest
 	}
 
 	@Test
+	@Ignore
 	public void testGetHistoryWithDatapoints()
 	{
 		Datapoint datapoint1 = null;

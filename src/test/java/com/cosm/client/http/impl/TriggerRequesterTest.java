@@ -25,6 +25,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class TriggerRequesterTest
 {
+	private static int FEED_ID = 123;
+
 	private TriggerRequester requester;
 	private Trigger trigger1;
 	private Trigger trigger2;
@@ -36,10 +38,10 @@ public class TriggerRequesterTest
 		ObjectMapper mapper = TestUtil.getObjectMapper();
 
 		trigger1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "trigger1.json")), Trigger.class);
-		trigger1.setFeedId(TestUtil.TEST_FEED_ID);
+		trigger1.setFeedId(FEED_ID);
 
 		trigger2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "trigger2.json")), Trigger.class);
-		trigger2.setFeedId(TestUtil.TEST_FEED_ID);
+		trigger2.setFeedId(FEED_ID);
 
 		requester = new TriggerRequesterImpl();
 		trigger1 = requester.create(trigger1);
@@ -148,7 +150,7 @@ public class TriggerRequesterTest
 		trigger2 = requester.create(trigger2);
 		try
 		{
-			Collection<Trigger> retval = requester.getByFeedId(TestUtil.TEST_FEED_ID);
+			Collection<Trigger> retval = requester.getByFeedId(FEED_ID);
 			assertTrue(retval.size() == 2);
 			assertTrue(retval.contains(trigger1));
 			assertTrue(retval.contains(trigger2));

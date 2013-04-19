@@ -96,6 +96,8 @@ public class FeedRequesterTest
 	@Test
 	public void testJSONAcceptHeaderAndConverstion()
 	{
+		feed1 = requester.create(feed1);
+
 		try
 		{
 			Feed retval = requester.get(feed1.getId());
@@ -140,6 +142,7 @@ public class FeedRequesterTest
 	}
 
 	@Test
+	@Ignore
 	public void testGetHistoryWithDatastreams()
 	{
 		Datastream datastream1 = null;

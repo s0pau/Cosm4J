@@ -14,5 +14,5 @@ import com.cosm.client.http.impl.TriggerRequesterTest;
 @SuiteClasses({ DatapointRequesterTest.class, DatastreamRequesterTest.class, FeedRequesterTest.class, TriggerRequesterTest.class,
 		ApiKeyRequesterTest.class })
 public class HttpClientTestSuite
-{
+{	
 }

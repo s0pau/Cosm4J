@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestUtil
 {
-	public static final int TEST_FEED_ID = 97684; // 929
 	public static final String fixtureUri = "src/test/res/";
 
 	public static String getStringFromFile(String fileName)
