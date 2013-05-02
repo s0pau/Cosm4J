@@ -54,18 +54,6 @@ public class HttpClientBuilder
 	}
 
 	/**
-	 * Use this method to set a custom retry handler, otherwise use
-	 * {@link HttpClientBuilder#setRetryCount(int)} to remain abstracted from
-	 * the underlying implementation.
-	 * 
-	 * @param httpRequestRetryHandler
-	 */
-	public void setRetryHandler(HttpRequestRetryHandler httpRequestRetryHandler)
-	{
-		retryHandler = httpRequestRetryHandler;
-	}
-
-	/**
 	 * @param connectionTimeout
 	 *            number of milliseconds before timeout when establising
 	 *            connection, default is DEFAULT_CONNECTION_TIMEOUT_IN_MS
