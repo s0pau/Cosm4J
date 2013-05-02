@@ -15,7 +15,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.log4j.Logger;
 
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.model.ConnectedObject;
+import com.cosm.client.model.DomainObject;
 
 /**
  * Class for handling the http response
@@ -24,7 +24,7 @@ import com.cosm.client.model.ConnectedObject;
  * @param <T>
  * 
  */
-public class DefaultResponseHandler<T extends ConnectedObject> implements ResponseHandler<Response<T>>
+public class DefaultResponseHandler<T extends DomainObject> implements ResponseHandler<Response<T>>
 {
 	private static Logger log = Logger.getLogger(DefaultResponseHandler.class);
 

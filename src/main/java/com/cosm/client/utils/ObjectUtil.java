@@ -2,7 +2,7 @@ package com.cosm.client.utils;
 
 import java.util.Collection;
 
-import com.cosm.client.model.ConnectedObject;
+import com.cosm.client.model.DomainObject;
 
 /**
  * Utility class to supplement Object
@@ -19,7 +19,7 @@ public class ObjectUtil
 	 *         is the same size and all objects in the collecion is equal by the
 	 *         equal() method.
 	 */
-	public static <T extends ConnectedObject> boolean deepEquals(Collection<T> one, Collection<T> two)
+	public static <T extends DomainObject> boolean deepEquals(Collection<T> one, Collection<T> two)
 	{
 		if (!CollectionUtil.deepEquals(one, two))
 		{
@@ -44,7 +44,7 @@ public class ObjectUtil
 
 			for (T obj2 : two)
 			{
-				if (obj1.memberEquals((ConnectedObject) two))
+				if (obj1.memberEquals((DomainObject) two))
 				{
 					matchedCounts++;
 				}

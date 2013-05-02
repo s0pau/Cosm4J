@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value = "datastream")
-public class Datastream implements ConnectedObject
+public class Datastream implements DomainObject
 {
 	private String id;
 
@@ -167,7 +167,7 @@ public class Datastream implements ConnectedObject
 
 	@JsonIgnore
 	@Override
-	public boolean memberEquals(ConnectedObject obj)
+	public boolean memberEquals(DomainObject obj)
 	{
 		if (!equals(obj))
 		{

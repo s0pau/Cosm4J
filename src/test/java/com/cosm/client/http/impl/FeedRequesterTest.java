@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.cosm.client.CosmConfig;
+import com.cosm.client.AppConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatastreamRequester;
 import com.cosm.client.http.api.FeedRequester;
@@ -58,7 +58,7 @@ public class FeedRequesterTest
 		{
 			tearDownFixture(feed2.getId());
 		}
-		CosmConfig.getInstance().reload();
+		AppConfig.getInstance().reload();
 		requester = null;
 	}
 

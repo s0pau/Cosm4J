@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import com.cosm.client.http.util.exception.ParseFromObjectException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.ApiKey;
-import com.cosm.client.model.ConnectedObject;
+import com.cosm.client.model.DomainObject;
 import com.cosm.client.model.Datapoint;
 import com.cosm.client.model.Datastream;
 import com.cosm.client.model.Feed;
@@ -88,7 +88,7 @@ public class ParserUtil
 			return idName;
 		}
 
-		public static ParseArg valueOf(ConnectedObject obj)
+		public static ParseArg valueOf(DomainObject obj)
 		{
 			for (ParseArg arg : ParseArg.values())
 			{
@@ -129,7 +129,7 @@ public class ParserUtil
 	 *             if unable to completely parse from model to json or if models
 	 *             is empty or null
 	 */
-	public static <T extends ConnectedObject> String toJson(boolean isUpdate, T... models)
+	public static <T extends DomainObject> String toJson(boolean isUpdate, T... models)
 	{
 		log.debug("Parsing models to json");
 
@@ -186,7 +186,7 @@ public class ParserUtil
 		return json;
 	}
 
-	public static <T extends ConnectedObject> Collection<T> toConnectedObjects(String body, Class elementType)
+	public static <T extends DomainObject> Collection<T> toConnectedObjects(String body, Class elementType)
 	{
 		log.debug(String.format("Parsing string to objects: %s", body));
 
@@ -214,7 +214,7 @@ public class ParserUtil
 		return objs;
 	}
 
-	public static <T extends ConnectedObject> T toConnectedObject(String body, Class elementType)
+	public static <T extends DomainObject> T toConnectedObject(String body, Class elementType)
 	{
 		log.debug(String.format("Parsing string to object: %s", body));
 

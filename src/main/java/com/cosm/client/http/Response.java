@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.cosm.client.http.util.ParserUtil;
 import com.cosm.client.http.util.exception.ParseToObjectException;
-import com.cosm.client.model.ConnectedObject;
+import com.cosm.client.model.DomainObject;
 
 /**
  * Wrapper to decouple response implementation from the rest of the library
@@ -14,7 +14,7 @@ import com.cosm.client.model.ConnectedObject;
  * @author s0pau
  * 
  */
-public class Response<T extends ConnectedObject>
+public class Response<T extends DomainObject>
 {
 	public static final String HEADER_NEW_OBJ_URI = "Location";
 

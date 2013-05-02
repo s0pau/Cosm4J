@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.cosm.client.CosmConfig;
+import com.cosm.client.AppConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatapointRequester;
 import com.cosm.client.http.api.DatastreamRequester;
@@ -81,7 +81,7 @@ public class DatapointRequesterTest
 	{
 		tearDownFixture(datapoint1.getAt());
 		tearDownFixture(datapoint2.getAt());
-		CosmConfig.getInstance().reload();
+		AppConfig.getInstance().reload();
 		requester = null;
 	}
 

@@ -1,10 +1,10 @@
 package com.cosm.client.http.util.exception;
 
 import com.cosm.client.CosmClientException;
-import com.cosm.client.model.ConnectedObject;
+import com.cosm.client.model.DomainObject;
 
 /**
- * Exception condition when parsing from {@link ConnectedObject}
+ * Exception condition when parsing from {@link DomainObject}
  * 
  * @author s0pau
  * 
