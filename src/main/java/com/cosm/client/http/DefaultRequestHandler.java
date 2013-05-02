@@ -17,12 +17,12 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 
-import com.cosm.client.CosmConfig;
-import com.cosm.client.CosmConfig.AcceptedMediaType;
+import com.cosm.client.AppConfig;
+import com.cosm.client.AppConfig.AcceptedMediaType;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.exception.RequestInvalidException;
 import com.cosm.client.http.util.ParserUtil;
-import com.cosm.client.model.ConnectedObject;
+import com.cosm.client.model.DomainObject;
 import com.cosm.client.utils.StringUtil;
 
 /**
@@ -64,22 +64,22 @@ public class DefaultRequestHandler
 	{
 		if (instance == null)
 		{
-			instance = new DefaultRequestHandler(CosmConfig.getInstance().getBaseURI());
+			instance = new DefaultRequestHandler(AppConfig.getInstance().getBaseURI());
 		}
 		return instance;
 	}
 
-	public <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath)
+	public <T extends DomainObject> Response<T> doRequest(HttpMethod requestMethod, String appPath)
 	{
 		return doRequest(requestMethod, appPath, (Map<String, Object>) null);
 	}
 
-	public <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath, T... bodyObjects)
+	public <T extends DomainObject> Response<T> doRequest(HttpMethod requestMethod, String appPath, T... bodyObjects)
 	{
 		return doRequest(requestMethod, appPath, null, bodyObjects);
 	}
 
-	public <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath, Map<String, Object> params)
+	public <T extends DomainObject> Response<T> doRequest(HttpMethod requestMethod, String appPath, Map<String, Object> params)
 	{
 		return doRequest(requestMethod, appPath, params, null);
 	}
@@ -101,7 +101,7 @@ public class DefaultRequestHandler
 	 * @return response string
 	 */
 
-	private <T extends ConnectedObject> Response<T> doRequest(HttpMethod requestMethod, String appPath,
+	private <T extends DomainObject> Response<T> doRequest(HttpMethod requestMethod, String appPath,
 			Map<String, Object> params, T... bodyObjects)
 	{
 		Response<T> response = null;
@@ -138,10 +138,10 @@ public class DefaultRequestHandler
 		return httpClient;
 	}
 
-	private <T extends ConnectedObject> HttpRequestBase buildRequest(HttpMethod requestMethod, String appPath,
+	private <T extends DomainObject> HttpRequestBase buildRequest(HttpMethod requestMethod, String appPath,
 			Map<String, Object> params, T... bodyObjects)
 	{
-		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMediaType();
+		AcceptedMediaType mediaType = AppConfig.getInstance().getResponseMediaType();
 
 		HttpRequestBase request = null;
 		switch (requestMethod)
@@ -180,7 +180,7 @@ public class DefaultRequestHandler
 		}
 
 		request.addHeader("accept", mediaType.getMediaType());
-		request.addHeader(HEADER_KEY_API, CosmConfig.getInstance().getApiKey());
+		request.addHeader(HEADER_KEY_API, AppConfig.getInstance().getApiKey());
 		request.addHeader(HEADER_USER_AGENT, COSM_USER_AGENT);
 
 		if (log.isDebugEnabled())
@@ -215,9 +215,9 @@ public class DefaultRequestHandler
 		return uriBuilder;
 	}
 
-	private <T extends ConnectedObject> StringEntity getEntity(boolean isUpdate, T... bodyObjects)
+	private <T extends DomainObject> StringEntity getEntity(boolean isUpdate, T... bodyObjects)
 	{
-		AcceptedMediaType mediaType = CosmConfig.getInstance().getResponseMediaType();
+		AcceptedMediaType mediaType = AppConfig.getInstance().getResponseMediaType();
 		String json = ParserUtil.toJson(isUpdate, bodyObjects);
 
 		StringEntity body = null;

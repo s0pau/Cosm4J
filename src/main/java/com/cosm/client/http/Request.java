@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.cosm.client.http.DefaultRequestHandler.HttpMethod;
-import com.cosm.client.model.ConnectedObject;
+import com.cosm.client.model.DomainObject;
 
 /**
  * Wrapper to encapsulating headers, params and body needed for building a
@@ -16,7 +16,7 @@ import com.cosm.client.model.ConnectedObject;
  * @author s0pau
  * 
  */
-public class Request<T extends ConnectedObject>
+public class Request<T extends DomainObject>
 {
 	HttpMethod httpMethod;
 	Map<String, Object> params;

@@ -16,7 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.cosm.client.CosmConfig;
+import com.cosm.client.AppConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatapointRequester;
 import com.cosm.client.http.api.DatastreamRequester;
@@ -75,7 +75,7 @@ public class DatastreamRequesterTest
 	{
 		tearDownFixture(datastreamId1);
 		tearDownFixture(datastreamId2);
-		CosmConfig.getInstance().reload();
+		AppConfig.getInstance().reload();
 		requester = null;
 	}
 

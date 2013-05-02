@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value = "feeds")
-public class Feed implements ConnectedObject
+public class Feed implements DomainObject
 {
 	public enum Status
 	{
@@ -201,7 +201,7 @@ public class Feed implements ConnectedObject
 
 	@JsonIgnore
 	@Override
-	public boolean memberEquals(ConnectedObject obj)
+	public boolean memberEquals(DomainObject obj)
 	{
 		if (!equals(obj))
 		{

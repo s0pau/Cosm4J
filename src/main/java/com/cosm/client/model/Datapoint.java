@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value = "datapoints")
-public class Datapoint implements ConnectedObject
+public class Datapoint implements DomainObject
 {
 	/**
 	 * id of the datapoint
@@ -46,7 +46,7 @@ public class Datapoint implements ConnectedObject
 
 	@JsonIgnore
 	@Override
-	public boolean memberEquals(ConnectedObject obj)
+	public boolean memberEquals(DomainObject obj)
 	{
 		if (!equals(obj))
 		{

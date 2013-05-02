@@ -5,7 +5,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.params.CoreConnectionPNames;
 
-import com.cosm.client.CosmConfig;
+import com.cosm.client.AppConfig;
 
 /**
  * Class for creating HttpClient and allowing downstream application to
@@ -29,9 +29,9 @@ public class HttpClientBuilder
 
 	private HttpClientBuilder()
 	{
-		Integer userConnectionTimeout = CosmConfig.getInstance().getConnectionTimeout();
+		Integer userConnectionTimeout = AppConfig.getInstance().getConnectionTimeout();
 		connectionTimeout = userConnectionTimeout == null ? DEFAULT_CONNECTION_TIMEOUT_IN_MS : userConnectionTimeout;
-		Integer userSocketTimeout = CosmConfig.getInstance().getSocketTimeout();
+		Integer userSocketTimeout = AppConfig.getInstance().getSocketTimeout();
 		socketTimeout = userSocketTimeout == null ? DEFAULT_SOCKET_TIMEOUT_IN_MS : userSocketTimeout;
 	}
 

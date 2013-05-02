@@ -9,13 +9,13 @@ import java.util.Properties;
 import com.cosm.client.utils.StringUtil;
 
 /**
- * Config for accessing Cosm API.
+ * Config for application behaviour and accessing Cosm API.
  * 
  * @author s0pau
  */
-public class CosmConfig
+public class AppConfig
 {
-	private static CosmConfig instance;
+	private static AppConfig instance;
 
 	private static final String DEFAULT_BASE_URI = "api.cosm.com/v2/";
 	private static final AcceptedMediaType DEFAULT_ACCEPTED_MEDIA_TYPE = AcceptedMediaType.json;
@@ -61,7 +61,7 @@ public class CosmConfig
 		}
 	}
 
-	private CosmConfig()
+	private AppConfig()
 	{
 		// singleton
 		loadProperties();
@@ -117,11 +117,11 @@ public class CosmConfig
 	/**
 	 * @return singleton instance
 	 */
-	public static CosmConfig getInstance()
+	public static AppConfig getInstance()
 	{
 		if (instance == null)
 		{
-			instance = new CosmConfig();
+			instance = new AppConfig();
 		}
 		return instance;
 	}

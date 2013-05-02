@@ -7,7 +7,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
-import com.cosm.client.CosmConfig;
+import com.cosm.client.AppConfig;
 import com.cosm.client.http.util.ParserUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,7 +38,7 @@ public class TestUtil
 
 	public static void loadDefaultTestConfig()
 	{
-		CosmConfig.getInstance().reload();
+		AppConfig.getInstance().reload();
 	}
 
 	public static ObjectMapper getObjectMapper()

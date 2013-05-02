@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.cosm.client.CosmConfig;
+import com.cosm.client.AppConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.TriggerRequester;
 import com.cosm.client.http.exception.HttpException;
@@ -59,7 +59,7 @@ public class TriggerRequesterTest
 		{
 			tearDownFixture(trigger2.getId());
 		}
-		CosmConfig.getInstance().reload();
+		AppConfig.getInstance().reload();
 		requester = null;
 	}
 

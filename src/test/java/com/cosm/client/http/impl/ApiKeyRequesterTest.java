@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.cosm.client.CosmConfig;
+import com.cosm.client.AppConfig;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.ApiKeyRequester;
 import com.cosm.client.http.exception.HttpException;
@@ -90,7 +90,7 @@ public class ApiKeyRequesterTest
 		{
 			tearDownFixture(apiKey2.getApiKey());
 		}
-		CosmConfig.getInstance().reload();
+		AppConfig.getInstance().reload();
 		requester = null;
 	}
 

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * 
  */
 @JsonRootName(value="keys")
-public class ApiKey implements ConnectedObject
+public class ApiKey implements DomainObject
 {
 	/**
 	 * Actual string of the api key. It is also the id.
@@ -91,7 +91,7 @@ public class ApiKey implements ConnectedObject
 	}
 
 	@Override
-	public boolean memberEquals(ConnectedObject obj)
+	public boolean memberEquals(DomainObject obj)
 	{
 		if (!equals(obj))
 		{

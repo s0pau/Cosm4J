@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * 
  */
 @JsonRootName(value = "triggers")
-public class Trigger implements ConnectedObject
+public class Trigger implements DomainObject
 {
 	/**
 	 * Types of triggers available
@@ -167,7 +167,7 @@ public class Trigger implements ConnectedObject
 	}
 
 	@Override
-	public boolean memberEquals(ConnectedObject obj)
+	public boolean memberEquals(DomainObject obj)
 	{
 		if (!equals(obj))
 		{
