@@ -4,7 +4,7 @@ cosm-java
 <p>
 Java Cosm Client <i>(formerly Pachube)</i> - wrapper for Cosm Api. 
 # Overview
-This is a RESTful java client for accessing Cosm Api. It uses Apache HttpComponent for handling HTTP requests. 
+This is a RESTful Java client for accessing Cosm Api. It uses Apache HttpComponent for handling HTTP requests while remaining decoupled. This fully featured Java library parses domain objects to and from Json.
 
 # Status
 
@@ -26,18 +26,18 @@ To use cosm-java library on Maven-based projects, use following dependency:
 
 ## Config
 
-CosmConfig contains the configuration needed for the library. 
-User preferences are loaded from config.properties into ConnectedObject, overwriting the default value if user preference is specified. 
+AppConfig contains the configuration needed for the library. 
+Application settings are loaded from config.properties into AppConfig, overwriting the default value where setting is specified. 
 
-## ConnectedObject
+## DomainObject
 
-ConnectedObject is the interface for all objects that can be directly accessed/modified via Cosm's restful API.
+DomainObject is the interface for all objects that can be directly accessed/modified via Cosm's RESTful API.
 
 Each model has a equals, hashcode and deepEquals defined to streamline downstream processing.
 
-## CRUD Operation on ConnectedObject
+## CRUD Operation on DomainObject
 
-Each ConnectedObject (model) has a corresponding interface for accessing the API in com.cosm.client.http.api package for all CRUD operations:
+Each DomainObject has a corresponding interface for accessing the API in com.cosm.client.http.api package for all CRUD operations:
 <ul>
 <li>Feed -> FeedRequester</li>
 <li>Datastream -> DatastreamRequester</li>
@@ -45,14 +45,14 @@ Each ConnectedObject (model) has a corresponding interface for accessing the API
 <li>ApiKey -> ApiKeyRequester</li>
 <li>Trigger -> TriggerRequester</li>
 </ul>
-Method calls takes ConnectedObject(s) as parameters and return ConnectedObject(s), therefore user of this library/downstream application does not need to be concerned about parsing or the underlying HTTP request/response details.
+Method calls takes DomainObject(s) as parameters and return DomainObject(s), therefore user of this library/downstream application does not need to be concerned about parsing or the underlying HTTP request/response details.
 
 <br/>On success, the Requester implementation will return the object post CRUD operation:
 <ul>
-<li>create - returns the ConnectedObject(s) created, fully populated with fields generated post API call</li>
-<li>get (read) - returns the ConnectedObject(s) retrieved</li>
-<li>update - returns the updated ConnectedObject</li>
-<li>delete - returns an empty ConnectedObject with the id only</li>
+<li>create - returns the DomainObject(s) created, fully populated with fields generated post API call</li>
+<li>get (read) - returns the DomainObject(s) retrieved</li>
+<li>update - returns the updated DomainObject</li>
+<li>delete - returns an empty DomainObject with the id only</li>
 </ul>
 
 <br/>On failure, the Requester implementation will throw:
@@ -63,9 +63,9 @@ Method calls takes ConnectedObject(s) as parameters and return ConnectedObject(s
 
 <br/><b><i>Actual implementation details:</i></b><br/>
 RESTful requests to Cosm's API are managed by DefaultRequestHandler; DefaultResponseHandler handles the response. Request and Response decouples this client from the HTTP client implementation.   
-Parsing to and from ConnectedObjects to HTTP request/response body are encapsulated in com.cosm.client.http.util.ParseUtil. 
-* ParseToObjectException, if the returned response cannot be parse into ConnectedObject implementations
-* ParseFromObjectException, if the ConnectedObject implementation cannot be parse into specified format (e.g. json)
+Parsing to and from DomainObjects to HTTP request/response body are encapsulated in com.cosm.client.http.util.ParseUtil. 
+* ParseToObjectException, if the returned response cannot be parse into DomainObject implementations
+* ParseFromObjectException, if the DomainObject implementation cannot be parse into specified format (e.g. json)
 
 ## Exception Hierarchy
 
@@ -77,19 +77,11 @@ Currently only JSON format is supported.
 
 ## Configuring HTTPClient
 
-Simeple timeouts can be configured via config.properties, which configures the HTTPClient via HttpClientBuilder. 
+Simple timeouts and retries can be configured via config.properties, which configures the HTTPClient via HttpClientBuilder. 
 For example, setting the http.connectionTimeout=5000 at properties is actually the same as writing the following code:
 
 	HttpClientBuilder.getInstance().setConnectionTimeout(5000);
 	
-Configuring retries can be done as follow:
-
-	HttpClientBuilder.getInstance().setRetryHandler(youRetryHandlerInstance);
-	* yourRetryHandlerInstance must implement org.apache.http.client.HttpRequestRetryHandler.
-	
-Configuration must be carried out before making the first requester call.
-
-
 ## Example
 
 To make get a feed via the API, for example:
