@@ -25,6 +25,13 @@ public class TriggerRequesterImpl extends AbstractRequester<Integer, Trigger> im
 	private static final String RESOURCES_PATH = "triggers";
 
 	@Override
+	public Collection<Trigger> list() throws HttpException, ParseToObjectException
+	{
+		Response<Trigger> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcesPath());
+		return response.getBodyAsObjects(Trigger.class);
+	}
+
+	@Override
 	public Collection<Trigger> getByFeedId(int feedId) throws HttpException, ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();

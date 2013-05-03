@@ -32,6 +32,15 @@ public interface FeedRequester
 	public Feed get(Integer feedId) throws HttpException, ParseToObjectException;
 
 	/**
+	 * @return all feed for this authenticated account
+	 * @throws HttpException
+	 *             if failed to get feed over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to feed
+	 */
+	public Collection<Feed> list() throws HttpException, ParseToObjectException;
+
+	/**
 	 * @param isShowUser
 	 * @param dataStreamIds
 	 * @return a collection of feed objects matching the params, parsed from the

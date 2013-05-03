@@ -33,6 +33,16 @@ public interface TriggerRequester
 
 	/**
 	 * 
+	 * @return all triggers for this authenticated account
+	 * @throws HttpException
+	 *             if failed to get triggers over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to trigger
+	 */
+	public Collection<Trigger> list() throws HttpException, ParseToObjectException;
+
+	/**
+	 * 
 	 * @param triggerId
 	 *            the id of the trigger to be retrieved
 	 * @param feedId

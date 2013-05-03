@@ -12,7 +12,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cosm.client.AppConfig;
@@ -26,8 +25,6 @@ import com.cosm.client.model.Datastream;
 import com.cosm.client.model.Feed;
 import com.cosm.client.model.Trigger;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class TriggerRequesterTest
 {
@@ -106,7 +103,7 @@ public class TriggerRequesterTest
 	}
 
 	@Test
-	public void testCreate()
+	public void testCreateAndList()
 	{
 		try
 		{
@@ -126,6 +123,17 @@ public class TriggerRequesterTest
 		{
 			fail("failed on requesting to create a trigger");
 		}
+
+		try
+		{
+			Collection<Trigger> retvals = requester.list();
+
+			assertTrue(retvals.contains(trigger1));
+			assertTrue(retvals.contains(trigger2));
+		} catch (HttpException e)
+		{
+			fail("failed on requesting to list feed");
+		}
 	}
 
 	@Test
@@ -142,20 +150,6 @@ public class TriggerRequesterTest
 		{
 			fail("response is not a valid json");
 		}
-	}
-
-	@Ignore("unable to deserialise EEML atm")
-	@Test
-	public void testXMLAcceptHeaderAndConverstion()
-	{
-		ObjectMapper mapper = new XmlMapper();
-	}
-
-	@Ignore("unable to deserialise CSV atm")
-	@Test
-	public void testCSVAcceptHeaderAndConverstion()
-	{
-		CsvMapper mapper = new CsvMapper();
 	}
 
 	@Test

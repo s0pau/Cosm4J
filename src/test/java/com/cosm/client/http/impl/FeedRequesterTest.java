@@ -24,8 +24,6 @@ import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datastream;
 import com.cosm.client.model.Feed;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class FeedRequesterTest
 {
@@ -43,7 +41,7 @@ public class FeedRequesterTest
 		feed1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")), Feed.class);
 		feed2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed2.json")), Feed.class);
 
-		requester = new FeedRequesterImpl();
+		requester = CosmService.instance().feed();
 	}
 
 	@After
@@ -78,11 +76,12 @@ public class FeedRequesterTest
 	}
 
 	@Test
-	public void testCreate()
+	public void testCreateAndList()
 	{
 		try
 		{
 			Feed retval = requester.create(feed2);
+
 			// update fields returned from creation before comparing all fields
 			feed2.setId(retval.getId());
 
@@ -90,6 +89,18 @@ public class FeedRequesterTest
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to create a feed");
+		}
+
+		feed1 = requester.create(feed1);
+		try
+		{
+			Collection<Feed> retvals = requester.list();
+
+			assertTrue(retvals.contains(feed1));
+			assertTrue(retvals.contains(feed2));
+		} catch (HttpException e)
+		{
+			fail("failed on requesting to list feed");
 		}
 	}
 
@@ -109,20 +120,6 @@ public class FeedRequesterTest
 		{
 			fail("response is not a valid json");
 		}
-	}
-
-	@Ignore("unable to deserialise EEML atm")
-	@Test
-	public void testXMLAcceptHeaderAndConverstion()
-	{
-		ObjectMapper mapper = new XmlMapper();
-	}
-
-	@Ignore("unable to deserialise CSV atm")
-	@Test
-	public void testCSVAcceptHeaderAndConverstion()
-	{
-		CsvMapper mapper = new CsvMapper();
 	}
 
 	@Test

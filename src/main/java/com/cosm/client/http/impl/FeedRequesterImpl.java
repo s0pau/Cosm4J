@@ -26,6 +26,13 @@ public class FeedRequesterImpl extends AbstractRequester<Integer, Feed> implemen
 	private static final String RESOURCES_PATH = "feeds";
 
 	@Override
+	public Collection<Feed> list() throws HttpException, ParseToObjectException
+	{
+		Response<Feed> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcesPath());
+		return response.getBodyAsObjects(Feed.class);
+	}
+
+	@Override
 	public Feed getHistoryWithDatastreams(Boolean isShowUser, String... dataStreamIds) throws HttpException,
 			ParseToObjectException
 	{
