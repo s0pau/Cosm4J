@@ -16,8 +16,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cosm.client.AppConfig;
+import com.cosm.client.CosmService;
 import com.cosm.client.http.TestUtil;
-import com.cosm.client.http.api.DatastreamRequester;
 import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
@@ -155,8 +155,7 @@ public class FeedRequesterTest
 					Datastream.class);
 
 			feed1 = requester.create(feed1);
-			DatastreamRequester dpRequester = new DatastreamRequesterImpl();
-			dpRequester.create(feed1.getId(), datastream1, datastream2);
+			CosmService.instance().datastream(feed1.getId()).create(datastream1, datastream2);
 		} catch (Exception e)
 		{
 			fail(String.format("fail to set up test, %s", e.getLocalizedMessage()));

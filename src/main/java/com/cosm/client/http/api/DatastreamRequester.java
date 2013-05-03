@@ -10,8 +10,6 @@ import com.cosm.client.model.Datastream;
 public interface DatastreamRequester
 {
 	/**
-	 * @param feedId
-	 *            parent of the datastream
 	 * @param toCreate
 	 *            datastream to be created datapoint to be created over the API
 	 * @return the datastream with created fields populated, on successful
@@ -19,11 +17,9 @@ public interface DatastreamRequester
 	 * @throws HttpException
 	 *             if failed to create datastream over the API
 	 */
-	public Datastream create(int feedId, Datastream toCreate) throws HttpException;
+	public Datastream create(Datastream toCreate) throws HttpException;
 
 	/**
-	 * @param feedId
-	 *            parent of the datastream
 	 * @param toCreate
 	 *            one or more datastreams to be created datapoint to be created
 	 *            over the API
@@ -34,11 +30,9 @@ public interface DatastreamRequester
 	 * @see DatastreamRequesterImpl#create(int, Datastream) for creating and
 	 *      returning one datastream
 	 */
-	public Collection<Datastream> create(int feedId, Datastream... toCreate) throws HttpException;
+	public Collection<Datastream> create(Datastream... toCreate) throws HttpException;
 
 	/**
-	 * @param feedId
-	 *            parent of the datastream
 	 * @param dataStreamId
 	 *            the id of the datastream to be retrieved
 	 * @return a datastream object parsed from the json returned from the API
@@ -47,11 +41,9 @@ public interface DatastreamRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to datastream
 	 */
-	public Datastream get(int feedId, String dataStreamId) throws HttpException, ParseToObjectException;
+	public Datastream get(String dataStreamId) throws HttpException, ParseToObjectException;
 
 	/**
-	 * @param feedId
-	 *            parent of the datastream
 	 * @param dataStreamId
 	 * @param startAt
 	 * @param endAt
@@ -63,27 +55,23 @@ public interface DatastreamRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to datastream
 	 */
-	public Datastream getHistoryWithDatapoints(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
+	public Datastream getHistoryWithDatapoints(String dataStreamId, String startAt, String endAt, int samplingInterval)
 			throws HttpException, ParseToObjectException;
 
 	/**
-	 * @param feedId
-	 *            parent of the datastream
 	 * @param toUpdate
 	 *            datastream to be updated over the API
 	 * @return the datastream that was passed in, on successful operation
 	 * @throws HttpException
 	 *             if failed to create datastream over the API
 	 */
-	public Datastream update(int feedId, Datastream toUpdate) throws HttpException;
+	public Datastream update(Datastream toUpdate) throws HttpException;
 
 	/**
-	 * @param feedId
-	 *            the id of the parent of the datastream
 	 * @param dataStreamId
 	 *            the datastream to be deleted over the API
 	 * @throws HttpException
 	 *             if failed to delete the datastream over the API
 	 */
-	public void delete(int feedId, String dataStreamId) throws HttpException;
+	public void delete(String dataStreamId) throws HttpException;
 }

@@ -3,36 +3,56 @@ package com.cosm.client.http.impl;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.cosm.client.AppConfig;
+import com.cosm.client.CosmService;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.ApiKeyRequester;
+import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.ApiKey;
+import com.cosm.client.model.Feed;
 import com.cosm.client.model.Permission;
 import com.cosm.client.model.Permission.AccessMethod;
 import com.cosm.client.model.Resource;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class ApiKeyRequesterTest
 {
-	private static int FEED_ID = 123;
+	private static int feedId;
 
 	private ApiKeyRequester requester;
 	private ApiKey apiKey1;
 	private ApiKey apiKey2;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception
+	{
+		// setup a general purpose feed set up for testing all it's children
+		Feed feed = TestUtil.getObjectMapper().readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")),
+				Feed.class);
+		feed = CosmService.instance().feed().create(feed);
+		feedId = feed.getId();
+	}
+
+	@AfterClass
+	public static void tearDownClass()
+	{
+		FeedRequester requester = new FeedRequesterImpl();
+		requester.delete(feedId);
+	}
 
 	@Before
 	public void setUp() throws Exception
@@ -59,7 +79,7 @@ public class ApiKeyRequesterTest
 		List<AccessMethod> am2 = new ArrayList<>();
 		am2.add(AccessMethod.get);
 		List<Resource> resources = new ArrayList<>();
-		Resource r2 = new Resource(FEED_ID, null);
+		Resource r2 = new Resource(feedId, null);
 		resources.add(r2);
 		Permission p2 = new Permission("66.66.66.66", am2, resources);
 
@@ -161,9 +181,8 @@ public class ApiKeyRequesterTest
 	{
 		try
 		{
-			Collection<ApiKey> retval = requester.getByFeedId(FEED_ID);
-			assertTrue(retval.size() == 2);
-			assertTrue(retval.contains(apiKey1));
+			Collection<ApiKey> retval = requester.getByFeedId(feedId);
+			assertTrue(retval.size() == 1);
 			assertTrue(retval.contains(apiKey2));
 		} catch (HttpException e)
 		{

@@ -7,10 +7,8 @@ import java.util.Map;
 
 import com.cosm.client.http.DefaultRequestHandler;
 import com.cosm.client.http.DefaultRequestHandler.HttpMethod;
-import com.cosm.client.http.Response;
 import com.cosm.client.http.api.DatapointRequester;
 import com.cosm.client.http.exception.HttpException;
-import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
 
 /**
@@ -21,75 +19,43 @@ import com.cosm.client.model.Datapoint;
  * @author s0pau
  * 
  */
-public class DatapointRequesterImpl implements DatapointRequester
+public class DatapointRequesterImpl extends AbstractRequester<String, Datapoint> implements DatapointRequester
 {
-	@Override
-	public Datapoint create(int feedId, String dataStreamId, Datapoint toCreate) throws HttpException
+	private int feedId;
+	private String dataStreamId;
+
+	public DatapointRequesterImpl(int feedId, String dataStreamId)
 	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
-		return toCreate;
+		this.feedId = feedId;
+		this.dataStreamId = dataStreamId;
 	}
 
 	@Override
-	public Collection<Datapoint> create(int feedId, String dataStreamId, Datapoint... toCreate) throws HttpException
+	public Collection<Datapoint> create(Datapoint... toCreate) throws HttpException
 	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.POST, getResourcesPath(feedId, dataStreamId), toCreate);
+		DefaultRequestHandler.getInstance().doRequest(HttpMethod.POST, getResourcesPath(), toCreate);
 		return Arrays.asList(toCreate);
 	}
 
 	@Override
-	public Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException, ParseToObjectException
-	{
-		Response<Datapoint> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET,
-				getResourcePath(feedId, dataStreamId, datapointAt));
-		return response.getBodyAsObject(Datapoint.class);
-	}
-
-	@Override
-	public Datapoint update(int feedId, String dataStreamId, Datapoint toUpdate) throws HttpException
-	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.PUT, getResourcePath(feedId, dataStreamId, toUpdate.getAt()), toUpdate);
-		return toUpdate;
-	}
-
-	@Override
-	public void delete(int feedId, String dataStreamId, String datapointAt) throws HttpException
-	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.DELETE, getResourcePath(feedId, dataStreamId, datapointAt));
-	}
-
-	@Override
-	public void deleteMultiple(int feedId, String dataStreamId, String startAt) throws HttpException
+	public void deleteMultiple(String startAt) throws HttpException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("start", startAt);
 
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.DELETE, getResourcesPath(feedId, dataStreamId), params);
+		DefaultRequestHandler.getInstance().doRequest(HttpMethod.DELETE, getResourcesPath(), params);
 	}
 
-	/**
-	 * @param feedId
-	 * @param dataStreamId
-	 * @param datapointAt
-	 *            of the datapoint
-	 * @return the restful path to a specifc datapoint resource, which can then
-	 *         be appended to a base path for a complete uri
-	 */
-	private String getResourcePath(int feedId, String dataStreamId, String datapointAt)
+	@Override
+	protected String getResourcePath(String datapointAt)
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append(getResourcesPath(feedId, dataStreamId)).append("/").append(datapointAt);
+		sb.append(getResourcesPath()).append("/").append(datapointAt);
 		return sb.toString();
 	}
 
-	/**
-	 * @param feedId
-	 * @param dataStreamId
-	 * @return the restful path to a all datapoints resource for the given feed
-	 *         and datastream, which can then be appended to a base path for a
-	 *         complete uri
-	 */
-	private String getResourcesPath(int feedId, String dataStreamId)
+	@Override
+	protected String getResourcesPath()
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("feeds").append("/").append(feedId);
@@ -98,17 +64,9 @@ public class DatapointRequesterImpl implements DatapointRequester
 		return sb.toString();
 	}
 
-	/**
-	 * @param feedId
-	 * @param dataStreamId
-	 * @return the restful path to a the datastream, which can then be appended
-	 *         to a base path for a complete uri
-	 */
-	private String getParentResourcePath(int feedId, String dataStreamId)
+	@Override
+	protected Class getObjectClass()
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("feeds").append("/").append(feedId);
-		sb.append("/").append("datastreams").append("/").append(dataStreamId);
-		return sb.toString();
+		return Datapoint.class;
 	}
 }

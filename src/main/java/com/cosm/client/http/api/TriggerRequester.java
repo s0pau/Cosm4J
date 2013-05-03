@@ -29,7 +29,7 @@ public interface TriggerRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to trigger
 	 */
-	public Trigger get(int triggerId) throws HttpException, ParseToObjectException;
+	public Trigger get(Integer triggerId) throws HttpException, ParseToObjectException;
 
 	/**
 	 * 
@@ -60,5 +60,5 @@ public interface TriggerRequester
 	 * @throws HttpException
 	 *             if failed to delete the trigger over the API
 	 */
-	public void delete(int triggerId) throws HttpException;
+	public void delete(Integer triggerId) throws HttpException;
 }

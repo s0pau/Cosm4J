@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * @author s0pau
  * 
  */
-@JsonRootName(value="keys")
+@JsonRootName(value = "keys")
 public class ApiKey implements DomainObject
 {
 	/**
@@ -88,6 +88,13 @@ public class ApiKey implements DomainObject
 	public String getIdString()
 	{
 		return apiKey;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getId()
+	{
+		return getApiKey();
 	}
 
 	@Override

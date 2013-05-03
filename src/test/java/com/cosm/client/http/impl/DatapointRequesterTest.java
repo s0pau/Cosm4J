@@ -16,10 +16,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.cosm.client.AppConfig;
+import com.cosm.client.CosmService;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatapointRequester;
-import com.cosm.client.http.api.DatastreamRequester;
-import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.Datapoint;
@@ -32,9 +31,10 @@ public class DatapointRequesterTest
 	private static int feedId;
 	private static String datastreamId;
 
-	private DatapointRequester requester;
 	private Datapoint datapoint1;
 	private Datapoint datapoint2;
+
+	private DatapointRequester requester;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception
@@ -42,26 +42,19 @@ public class DatapointRequesterTest
 		// setup a general purpose feed set up for testing all it's children
 		Feed feed = TestUtil.getObjectMapper().readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")),
 				Feed.class);
-		FeedRequester fRequester = new FeedRequesterImpl();
-		feed = fRequester.create(feed);
+		feed = CosmService.instance().feed().create(feed);
+		feedId = feed.getId();
 
 		Datastream datastream = TestUtil.getObjectMapper().readValue(
 				new FileInputStream(new File(TestUtil.fixtureUri + "datastream1.json")), Datastream.class);
-		DatastreamRequester dsRequester = new DatastreamRequesterImpl();
-		dsRequester.create(feed.getId(), datastream);
-
-		feedId = feed.getId();
+		CosmService.instance().datastream(feedId).create(datastream);
 		datastreamId = datastream.getId();
 	}
 
 	@AfterClass
 	public static void tearDownClass()
 	{
-		FeedRequester fRequester = new FeedRequesterImpl();
-		fRequester.delete(feedId);
-
-		// DatastreamRequester dsRequester = new DatastreamRequesterImpl();
-		// dsRequester.delete(feedId, datastreamId);
+		CosmService.instance().feed().delete(feedId);
 	}
 
 	@Before
@@ -73,7 +66,7 @@ public class DatapointRequesterTest
 		datapoint1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datapoint1.json")), Datapoint.class);
 		datapoint2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datapoint2.json")), Datapoint.class);
 
-		requester = new DatapointRequesterImpl();
+		requester = CosmService.instance().datapoint(feedId, datastreamId);
 	}
 
 	@After
@@ -89,7 +82,7 @@ public class DatapointRequesterTest
 	{
 		try
 		{
-			requester.delete(feedId, datastreamId, fixtureId);
+			requester.delete(fixtureId);
 		} catch (HttpException e)
 		{
 			// NOT_FOUND is ok as the test ran could have not created/deleted it
@@ -105,7 +98,7 @@ public class DatapointRequesterTest
 	{
 		try
 		{
-			Datapoint retval = requester.create(feedId, datastreamId, datapoint2);
+			Datapoint retval = requester.create(datapoint2);
 			assertTrue(datapoint2.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -118,7 +111,7 @@ public class DatapointRequesterTest
 	{
 		try
 		{
-			Collection<Datapoint> retval = requester.create(feedId, datastreamId, datapoint1, datapoint2);
+			Collection<Datapoint> retval = requester.create(datapoint1, datapoint2);
 			assertEquals(2, retval.size());
 			assertTrue(retval.contains(datapoint1));
 			assertTrue(retval.contains(datapoint2));
@@ -131,11 +124,11 @@ public class DatapointRequesterTest
 	@Test
 	public void testJSONAcceptHeaderAndConverstion()
 	{
-		requester.create(feedId, datastreamId, datapoint1);
+		requester.create(datapoint1);
 
 		try
 		{
-			Datapoint retval = requester.get(feedId, datastreamId, datapoint1.getAt());
+			Datapoint retval = requester.get(datapoint1.getAt());
 			assertTrue(datapoint1.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -149,11 +142,11 @@ public class DatapointRequesterTest
 	@Test
 	public void testGet()
 	{
-		requester.create(feedId, datastreamId, datapoint1);
+		requester.create(datapoint1);
 
 		try
 		{
-			Datapoint retval = requester.get(feedId, datastreamId, datapoint1.getAt());
+			Datapoint retval = requester.get(datapoint1.getAt());
 			assertTrue(datapoint1.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -164,13 +157,13 @@ public class DatapointRequesterTest
 	@Test
 	public void testUpdate()
 	{
-		requester.create(feedId, datastreamId, datapoint1);
+		requester.create(datapoint1);
 		datapoint1.setValue("555");
 
 		try
 		{
-			requester.update(feedId, datastreamId, datapoint1);
-			Datapoint retval = requester.update(feedId, datastreamId, datapoint1);
+			requester.update(datapoint1);
+			Datapoint retval = requester.update(datapoint1);
 			assertTrue(datapoint1.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -181,11 +174,11 @@ public class DatapointRequesterTest
 	@Test
 	public void testDelete()
 	{
-		requester.create(feedId, datastreamId, datapoint1);
+		requester.create(datapoint1);
 
 		try
 		{
-			requester.delete(feedId, datastreamId, datapoint1.getAt());
+			requester.delete(datapoint1.getAt());
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a datapoint");
@@ -193,7 +186,7 @@ public class DatapointRequesterTest
 
 		try
 		{
-			requester.get(feedId, datastreamId, datapoint1.getAt());
+			requester.get(datapoint1.getAt());
 			fail("should not be able to get deleted datapoint");
 		} catch (HttpException e)
 		{

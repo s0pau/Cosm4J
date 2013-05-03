@@ -46,6 +46,13 @@ public class Datapoint implements DomainObject
 
 	@JsonIgnore
 	@Override
+	public String getId()
+	{
+		return getAt();
+	}
+
+	@JsonIgnore
+	@Override
 	public boolean memberEquals(DomainObject obj)
 	{
 		if (!equals(obj))

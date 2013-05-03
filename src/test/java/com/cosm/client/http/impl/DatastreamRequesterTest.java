@@ -17,6 +17,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cosm.client.AppConfig;
+import com.cosm.client.CosmService;
 import com.cosm.client.http.TestUtil;
 import com.cosm.client.http.api.DatapointRequester;
 import com.cosm.client.http.api.DatastreamRequester;
@@ -31,7 +32,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DatastreamRequesterTest
 {
 	private static int feedId;
-
 	private static final String datastreamId1 = "test_stream_1";
 	private static final String datastreamId2 = "test_stream_2";
 
@@ -46,8 +46,7 @@ public class DatastreamRequesterTest
 		// setup a general purpose feed set up for testing all it's children
 		Feed feed = TestUtil.getObjectMapper().readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")),
 				Feed.class);
-		FeedRequester requester = new FeedRequesterImpl();
-		feed = requester.create(feed);
+		feed = CosmService.instance().feed().create(feed);
 		feedId = feed.getId();
 	}
 
@@ -67,7 +66,7 @@ public class DatastreamRequesterTest
 		datastream1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datastream1.json")), Datastream.class);
 		datastream2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datastream2.json")), Datastream.class);
 
-		requester = new DatastreamRequesterImpl();
+		requester = CosmService.instance().datastream(feedId);
 	}
 
 	@After
@@ -83,7 +82,7 @@ public class DatastreamRequesterTest
 	{
 		try
 		{
-			requester.delete(feedId, fixtureId);
+			requester.delete(fixtureId);
 		} catch (HttpException e)
 		{
 			// NOT_FOUND is ok as the test ran could have not created/deleted it
@@ -99,7 +98,7 @@ public class DatastreamRequesterTest
 	{
 		try
 		{
-			Datastream retval = requester.create(feedId, datastream2);
+			Datastream retval = requester.create(datastream2);
 
 			// set fields updated by create so we can compare all other fields
 			assertTrue(retval.getUpdatedAt() != null);
@@ -117,7 +116,7 @@ public class DatastreamRequesterTest
 	{
 		try
 		{
-			Collection<Datastream> retval = requester.create(feedId, datastream1, datastream2);
+			Collection<Datastream> retval = requester.create(datastream1, datastream2);
 			assertEquals(2, retval.size());
 			assertTrue(retval.contains(datastream1));
 			assertTrue(retval.contains(datastream2));
@@ -130,11 +129,11 @@ public class DatastreamRequesterTest
 	@Test
 	public void testJSONAcceptHeaderAndConverstion()
 	{
-		datastream1 = requester.create(feedId, datastream1);
+		datastream1 = requester.create(datastream1);
 
 		try
 		{
-			Datastream retval = requester.get(feedId, datastreamId1);
+			Datastream retval = requester.get(datastreamId1);
 			assertTrue(datastream1.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -148,11 +147,11 @@ public class DatastreamRequesterTest
 	@Test
 	public void testGet()
 	{
-		datastream1 = requester.create(feedId, datastream1);
+		datastream1 = requester.create(datastream1);
 
 		try
 		{
-			Datastream retval = requester.get(feedId, datastreamId1);
+			Datastream retval = requester.get(datastreamId1);
 			assertTrue(datastream1.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -173,10 +172,10 @@ public class DatastreamRequesterTest
 			datapoint2 = mapper
 					.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "datapoint1.json")), Datapoint.class);
 
-			datastream1 = requester.create(feedId, datastream1);
-			DatapointRequester dpRequester = new DatapointRequesterImpl();
-			dpRequester.create(feedId, datastream1.getId(), datapoint1);
-			dpRequester.create(feedId, datastream1.getId(), datapoint2);
+			datastream1 = requester.create(datastream1);
+			DatapointRequester dpRequester = CosmService.instance().datapoint(feedId, datastreamId1);
+			dpRequester.create(datapoint1);
+			dpRequester.create(datapoint2);
 		} catch (Exception e)
 		{
 			fail(String.format("fail to set up test, %s", e.getLocalizedMessage()));
@@ -184,7 +183,7 @@ public class DatastreamRequesterTest
 
 		try
 		{
-			Datastream retval = requester.getHistoryWithDatapoints(feedId, datastream1.getId(), "2012-02-02T00:00:00.000000Z",
+			Datastream retval = requester.getHistoryWithDatapoints(datastream1.getId(), "2012-02-02T00:00:00.000000Z",
 					"2013-02-03T00:00:00.000000Z", 86400);
 			assertEquals(1, retval.getDatapoints().size());
 
@@ -203,12 +202,12 @@ public class DatastreamRequesterTest
 	@Test
 	public void testUpdate()
 	{
-		datastream1 = requester.create(feedId, datastream1);
+		datastream1 = requester.create(datastream1);
 		datastream1.setValue("666");
 
 		try
 		{
-			Datastream retval = requester.update(feedId, datastream1);
+			Datastream retval = requester.update(datastream1);
 			assertTrue(datastream1.memberEquals(retval));
 		} catch (HttpException e)
 		{
@@ -219,11 +218,11 @@ public class DatastreamRequesterTest
 	@Test
 	public void testDelete()
 	{
-		datastream1 = requester.create(feedId, datastream1);
+		datastream1 = requester.create(datastream1);
 
 		try
 		{
-			requester.delete(feedId, datastreamId1);
+			requester.delete(datastreamId1);
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to delete a datastream");
@@ -231,7 +230,7 @@ public class DatastreamRequesterTest
 
 		try
 		{
-			requester.get(feedId, datastreamId1);
+			requester.get(datastreamId1);
 			fail("should not be able to get deleted datasteram");
 		} catch (HttpException e)
 		{

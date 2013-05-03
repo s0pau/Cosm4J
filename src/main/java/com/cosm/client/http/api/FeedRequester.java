@@ -29,7 +29,7 @@ public interface FeedRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to feed
 	 */
-	public Feed get(int feedId) throws HttpException, ParseToObjectException;
+	public Feed get(Integer feedId) throws HttpException, ParseToObjectException;
 
 	/**
 	 * @param isShowUser
@@ -41,7 +41,8 @@ public interface FeedRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to feed
 	 */
-	public Feed getHistoryWithDatastreams(Boolean isShowUser, String... dataStreamIds) throws HttpException, ParseToObjectException;
+	public Feed getHistoryWithDatastreams(Boolean isShowUser, String... dataStreamIds) throws HttpException,
+			ParseToObjectException;
 
 	/**
 	 * @param latitude
@@ -81,7 +82,7 @@ public interface FeedRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to feed
 	 */
-	public Feed getHistory(int feedId, String startAt, String endAt, int samplingInterval) throws HttpException,
+	public Feed getHistory(Integer feedId, String startAt, String endAt, int samplingInterval) throws HttpException,
 			ParseToObjectException;
 
 	/**
@@ -99,5 +100,5 @@ public interface FeedRequester
 	 * @throws HttpException
 	 *             if failed to delete the feed over the API
 	 */
-	public void delete(int feedId) throws HttpException;
+	public void delete(Integer feedId) throws HttpException;
 }
