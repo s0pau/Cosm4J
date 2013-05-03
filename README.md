@@ -1,4 +1,4 @@
-cosm-java
+Cosm4J
 =========
 
 <p>
