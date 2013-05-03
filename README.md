@@ -24,6 +24,12 @@ To use cosm-java library on Maven-based projects, use following dependency:
 
 # Quickstart
 
+To get started:
+<ul>
+<li>Update API Key and another config in properties</li>
+<li>CosmService.instance() will give you access to all operations</li>
+</ul>
+
 ## AppConfig
 
 AppConfig contains the configuration needed for the library. 
@@ -85,9 +91,15 @@ Currently only JSON format is supported.
 ## Configuring HTTPClient
 
 Simple timeouts and retries can be configured via config.properties, which configures the HTTPClient via HttpClientBuilder. 
-For example, setting the http.connectionTimeout=5000 at properties is actually the same as writing the following code:
+For example, setting the following in properties file:
+
+	http.connectionTimeout=5000 
+
+is actually the same as writing the following code:
 
 	HttpClientBuilder.getInstance().setConnectionTimeout(5000);
+	
+The properties file provides an easy accesss.
 	
 ## Example
 
