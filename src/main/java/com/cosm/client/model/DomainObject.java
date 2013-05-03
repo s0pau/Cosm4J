@@ -21,4 +21,9 @@ public interface DomainObject
 	 *         ; false otherwise
 	 */
 	boolean memberEquals(DomainObject other);
+
+	/**
+	 * @return the id of this object
+	 */
+	Object getId();
 }

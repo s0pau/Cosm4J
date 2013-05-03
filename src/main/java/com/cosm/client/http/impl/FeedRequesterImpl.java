@@ -21,28 +21,13 @@ import com.cosm.client.model.Feed;
  * @author s0pau
  * 
  */
-public class FeedRequesterImpl implements FeedRequester
+public class FeedRequesterImpl extends AbstractRequester<Integer, Feed> implements FeedRequester
 {
 	private static final String RESOURCES_PATH = "feeds";
 
 	@Override
-	public Feed create(Feed toCreate) throws HttpException
-	{
-		Response<Feed> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.POST, getResourcesPath(), toCreate);
-		int feedId = Integer.valueOf(response.getIdFromResponse());
-		return get(feedId);
-	}
-
-	@Override
-	public Feed get(int feedId) throws HttpException, ParseToObjectException
-
-	{
-		Response<Feed> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcePath(feedId));
-		return response.getBodyAsObject(Feed.class);
-	}
-
-	@Override
-	public Feed getHistoryWithDatastreams(Boolean isShowUser, String... dataStreamIds) throws HttpException, ParseToObjectException
+	public Feed getHistoryWithDatastreams(Boolean isShowUser, String... dataStreamIds) throws HttpException,
+			ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
 		params.put("datastreams", Arrays.asList(dataStreamIds));
@@ -74,7 +59,7 @@ public class FeedRequesterImpl implements FeedRequester
 	}
 
 	@Override
-	public Feed getHistory(int feedId, String startAt, String endAt, int samplingInterval) throws HttpException,
+	public Feed getHistory(Integer feedId, String startAt, String endAt, int samplingInterval) throws HttpException,
 			ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
@@ -88,36 +73,28 @@ public class FeedRequesterImpl implements FeedRequester
 	}
 
 	@Override
-	public Feed update(Feed toUpdate) throws HttpException
-	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.PUT, getResourcePath(toUpdate.getId()), toUpdate);
-		return toUpdate;
-	}
-
-	@Override
-	public void delete(int feedId) throws HttpException
-	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.DELETE, getResourcePath(feedId));
-	}
-
-	/**
-	 * @param feedId
-	 * @return the restful path to a specifc feed resource, which can then be
-	 *         appended to a base path for a complete uri
-	 */
-	private String getResourcePath(int feedId)
+	protected String getResourcePath(Integer feedId)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append(getResourcesPath()).append("/").append(String.valueOf(feedId));
 		return sb.toString();
 	}
 
-	/**
-	 * @return the restful path to a all feeds, which can then be appended to a
-	 *         base path for a complete uri
-	 */
-	private String getResourcesPath()
+	@Override
+	protected String getResourcesPath()
 	{
 		return RESOURCES_PATH;
+	}
+
+	@Override
+	protected Class getObjectClass()
+	{
+		return Feed.class;
+	}
+
+	@Override
+	protected Integer getCreatedId(Response<Feed> response)
+	{
+		return Integer.valueOf(response.getIdFromResponse());
 	}
 }

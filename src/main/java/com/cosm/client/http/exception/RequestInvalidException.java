@@ -14,4 +14,9 @@ public class RequestInvalidException extends CosmClientException
 	{
 		super(msg, e);
 	}
+	
+	public RequestInvalidException(String msg)
+	{
+		super(msg);
+	}
 }

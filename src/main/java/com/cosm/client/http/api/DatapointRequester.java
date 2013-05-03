@@ -10,10 +10,6 @@ import com.cosm.client.model.Datapoint;
 public interface DatapointRequester
 {
 	/**
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
 	 * @param toCreate
 	 *            datapoint to be created over the API
 	 * @return the datapoint with created fields populated, on successful
@@ -21,13 +17,9 @@ public interface DatapointRequester
 	 * @throws HttpException
 	 *             if failed to create datapoint over the API
 	 */
-	public Datapoint create(int feedId, String dataStreamId, Datapoint toCreate) throws HttpException;
+	public Datapoint create(Datapoint toCreate) throws HttpException;
 
 	/**
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
 	 * @param toCreate
 	 *            one or many datapoints to be created over the API
 	 * @return a collection of datapoints with created fields populated, on
@@ -37,13 +29,9 @@ public interface DatapointRequester
 	 * @see DatapointRequesterImpl#create(int, String, Datapoint) for creating
 	 *      and returning one datapoint
 	 */
-	public Collection<Datapoint> create(int feedId, String dataStreamId, Datapoint... toCreate) throws HttpException;
+	public Collection<Datapoint> create(Datapoint... toCreate) throws HttpException;
 
 	/**
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
 	 * @param datapointAt
 	 *            the id of the datapoint to be retrieved
 	 * @return a datapoint object parsed from the json returned from the API
@@ -52,46 +40,32 @@ public interface DatapointRequester
 	 * @throws ParseToObjectException
 	 *             if failed to parse the returned json to datapoint
 	 */
-	public Datapoint get(int feedId, String dataStreamId, String datapointAt) throws HttpException, ParseToObjectException;
+	public Datapoint get(String datapointAt) throws HttpException, ParseToObjectException;
 
 	/**
-	 * @param feedId
-	 *            indirect parent of the datapoint
-	 * @param dataStreamId
-	 *            parent of the datapoint
 	 * @param toUpdate
 	 *            datapoint to be updated over the API
 	 * @return the datapoint that was passed in, on successful operation
 	 * @throws HttpException
 	 *             if failed to create datapoint over the API
 	 */
-	public Datapoint update(int feedId, String dataStreamId, Datapoint toUpdate) throws HttpException;
+	public Datapoint update(Datapoint toUpdate) throws HttpException;
 
 	/**
-	 * @param feedId
-	 *            the id of the parent of the datastream that holds the
-	 *            datapoint
-	 * @param dataStreamId
-	 *            the id of the parent of the datapoint
 	 * @param datapointAt
 	 *            the id of the datapoint for the given datastreamId and feedId
 	 *            to be deleted over the API
 	 * @throws HttpException
 	 *             if failed to delete the datapoint over the API
 	 */
-	public void delete(int feedId, String dataStreamId, String datapointAt) throws HttpException;
+	public void delete(String datapointAt) throws HttpException;
 
 	/**
-	 * @param feedId
-	 *            the id of the parent of the datastream that holds the
-	 *            datapoints
-	 * @param dataStreamId
-	 *            the id of the parent of the datapoints
 	 * @param startAt
 	 *            any datapoints starting from this date, inclusive will be
 	 *            deleted over the API
 	 * @throws HttpException
 	 *             if failed to delete the datapoints over the API
 	 */
-	public void deleteMultiple(int feedId, String dataStreamId, String startAt) throws HttpException;
+	public void deleteMultiple(String startAt) throws HttpException;
 }

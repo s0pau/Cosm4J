@@ -22,33 +22,24 @@ import com.cosm.client.model.Datastream;
  * @author s0pau
  * 
  */
-public class DatastreamRequesterImpl implements DatastreamRequester
+public class DatastreamRequesterImpl extends AbstractRequester<String, Datastream> implements DatastreamRequester
 {
-	@Override
-	public Datastream create(int feedId, Datastream toCreate) throws HttpException
+	private int feedId;
+
+	public DatastreamRequesterImpl(int feedId)
 	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.POST, getResourcesPath(feedId), toCreate);
-		// get params generated at server, e.g. timestamp
-		return get(feedId, toCreate.getId());
+		this.feedId = feedId;
 	}
 
 	@Override
-	public Collection<Datastream> create(int feedId, Datastream... toCreate) throws HttpException
+	public Collection<Datastream> create(Datastream... toCreate) throws HttpException
 	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.POST, getResourcesPath(feedId), toCreate);
+		DefaultRequestHandler.getInstance().doRequest(HttpMethod.POST, getResourcesPath(), toCreate);
 		return Arrays.asList(toCreate);
 	}
 
 	@Override
-	public Datastream get(int feedId, String dataStreamId) throws HttpException, ParseToObjectException
-	{
-		Response<Datastream> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET,
-				getResourcePath(feedId, dataStreamId));
-		return response.getBodyAsObject(Datastream.class);
-	}
-
-	@Override
-	public Datastream getHistoryWithDatapoints(int feedId, String dataStreamId, String startAt, String endAt, int samplingInterval)
+	public Datastream getHistoryWithDatapoints(String dataStreamId, String startAt, String endAt, int samplingInterval)
 			throws HttpException, ParseToObjectException
 	{
 		Map<String, Object> params = new HashMap<>();
@@ -57,46 +48,29 @@ public class DatastreamRequesterImpl implements DatastreamRequester
 		params.put("interval", samplingInterval);
 
 		Response<Datastream> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET,
-				getResourcePath(feedId, dataStreamId), params);
+				getResourcePath(dataStreamId), params);
 		return response.getBodyAsObject(Datastream.class);
 	}
 
 	@Override
-	public Datastream update(int feedId, Datastream toUpdate) throws HttpException
-	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.PUT, getResourcePath(feedId, toUpdate.getId()), toUpdate);
-		return toUpdate;
-	}
-
-	@Override
-	public void delete(int feedId, String dataStreamId) throws HttpException
-	{
-		DefaultRequestHandler.getInstance().doRequest(HttpMethod.DELETE, getResourcePath(feedId, dataStreamId));
-	}
-
-	/**
-	 * @param feedId
-	 * @param dataStreamId
-	 * @return the restful path to a specifc datastream resource, which can then
-	 *         be appended to a base path for a complete uri
-	 */
-	private String getResourcePath(int feedId, String dataStreamId)
+	protected String getResourcePath(String dataStreamId)
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append(getResourcesPath(feedId)).append("/").append(dataStreamId);
+		sb.append(getResourcesPath()).append("/").append(dataStreamId);
 		return sb.toString();
 	}
 
-	/**
-	 * @param feedId
-	 * @return the restful path to a all datastream resource for the given feed
-	 *         and datastream, which can then be appended to a base path for a
-	 *         complete uri
-	 */
-	private String getResourcesPath(int feedId)
+	@Override
+	protected String getResourcesPath()
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("feeds").append("/").append(String.valueOf(feedId)).append("/").append("datastreams");
 		return sb.toString();
+	}
+
+	@Override
+	protected Class getObjectClass()
+	{
+		return Datastream.class;
 	}
 }

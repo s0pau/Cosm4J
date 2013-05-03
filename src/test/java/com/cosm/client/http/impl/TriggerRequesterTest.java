@@ -9,15 +9,21 @@ import java.util.Collection;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cosm.client.AppConfig;
+import com.cosm.client.CosmService;
 import com.cosm.client.http.TestUtil;
+import com.cosm.client.http.api.FeedRequester;
 import com.cosm.client.http.api.TriggerRequester;
 import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
+import com.cosm.client.model.Datastream;
+import com.cosm.client.model.Feed;
 import com.cosm.client.model.Trigger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -25,11 +31,30 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class TriggerRequesterTest
 {
-	private static int FEED_ID = 123;
+	private static int feedId;
+	private static String datastreamId;
 
 	private TriggerRequester requester;
 	private Trigger trigger1;
 	private Trigger trigger2;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception
+	{
+		// setup a general purpose feed set up for testing all it's children
+		Feed feed = TestUtil.getObjectMapper().readValue(new FileInputStream(new File(TestUtil.fixtureUri + "feed1.json")),
+				Feed.class);
+		feed = CosmService.instance().feed().create(feed);
+		feedId = feed.getId();
+		datastreamId = ((Datastream) (feed.getDatastreams().toArray()[0])).getId();
+	}
+
+	@AfterClass
+	public static void tearDownClass()
+	{
+		FeedRequester requester = new FeedRequesterImpl();
+		requester.delete(feedId);
+	}
 
 	@Before
 	public void setUp() throws Exception
@@ -38,12 +63,14 @@ public class TriggerRequesterTest
 		ObjectMapper mapper = TestUtil.getObjectMapper();
 
 		trigger1 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "trigger1.json")), Trigger.class);
-		trigger1.setFeedId(FEED_ID);
+		trigger1.setFeedId(feedId);
+		trigger1.setDatastreamId(datastreamId);
 
 		trigger2 = mapper.readValue(new FileInputStream(new File(TestUtil.fixtureUri + "trigger2.json")), Trigger.class);
-		trigger2.setFeedId(FEED_ID);
+		trigger2.setFeedId(feedId);
+		trigger2.setDatastreamId(datastreamId);
 
-		requester = new TriggerRequesterImpl();
+		requester = CosmService.instance().trigger();
 		trigger1 = requester.create(trigger1);
 	}
 
@@ -150,7 +177,7 @@ public class TriggerRequesterTest
 		trigger2 = requester.create(trigger2);
 		try
 		{
-			Collection<Trigger> retval = requester.getByFeedId(FEED_ID);
+			Collection<Trigger> retval = requester.getByFeedId(feedId);
 			assertTrue(retval.size() == 2);
 			assertTrue(retval.contains(trigger1));
 			assertTrue(retval.contains(trigger2));
