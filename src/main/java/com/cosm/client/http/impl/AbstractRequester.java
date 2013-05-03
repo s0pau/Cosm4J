@@ -7,6 +7,12 @@ import com.cosm.client.http.exception.HttpException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.DomainObject;
 
+/**
+ * Base request implementation for basic CRUD operations and hooks.
+ * 
+ * @author s0pau
+ * 
+ */
 public abstract class AbstractRequester<I extends Object, T extends DomainObject>
 {
 	public T create(T toCreate) throws HttpException
