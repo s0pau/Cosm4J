@@ -27,6 +27,13 @@ public class ApiKeyRequesterImpl extends AbstractRequester<String, ApiKey> imple
 	private static final String RESOURCES_PATH = "keys";
 
 	@Override
+	public Collection<ApiKey> list() throws HttpException, ParseToObjectException
+	{
+		Response<ApiKey> response = DefaultRequestHandler.getInstance().doRequest(HttpMethod.GET, getResourcesPath());
+		return response.getBodyAsObjects(ApiKey.class);
+	}
+
+	@Override
 	public ApiKey update(ApiKey toUpdate) throws HttpException
 	{
 		throw new RequestInvalidException("This operation is currently unsupported.");

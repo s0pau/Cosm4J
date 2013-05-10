@@ -29,6 +29,16 @@ public interface ApiKeyRequester
 	public ApiKey get(String apiKey) throws HttpException, ParseToObjectException;
 
 	/**
+	 * 
+	 * @return all apiKey for this authenticated account
+	 * @throws HttpException
+	 *             if failed to get apiKey over the API
+	 * @throws ParseToObjectException
+	 *             if failed to parse the returned json to apiKey
+	 */
+	public Collection<ApiKey> list() throws HttpException, ParseToObjectException;
+
+	/**
 	 * @param triggerId
 	 *            the id of the trigger to be retrieved
 	 * @param feedId

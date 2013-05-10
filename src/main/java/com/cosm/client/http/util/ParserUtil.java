@@ -9,11 +9,12 @@ import org.apache.log4j.Logger;
 import com.cosm.client.http.util.exception.ParseFromObjectException;
 import com.cosm.client.http.util.exception.ParseToObjectException;
 import com.cosm.client.model.ApiKey;
-import com.cosm.client.model.DomainObject;
 import com.cosm.client.model.Datapoint;
 import com.cosm.client.model.Datastream;
+import com.cosm.client.model.DomainObject;
 import com.cosm.client.model.Feed;
 import com.cosm.client.model.Trigger;
+import com.cosm.client.utils.StringUtil;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -167,7 +168,7 @@ public class ParserUtil
 			}
 
 			// ApiKey needs to be wrapped in a root node without the array
-			// container, hack the standards!
+			// container, hacking...
 			if (arg.objClass == ApiKey.class)
 			{
 				int start = json.indexOf("\"key\":[") + 6;
@@ -186,12 +187,24 @@ public class ParserUtil
 		return json;
 	}
 
+	/**
+	 * 
+	 * @param body
+	 * @param elementType
+	 * @return empty array if parsed to no objects
+	 */
 	public static <T extends DomainObject> Collection<T> toConnectedObjects(String body, Class elementType)
 	{
 		log.debug(String.format("Parsing string to objects: %s", body));
 
-		Collection<T> objs;
+		Collection<T> objs = new ArrayList<>();
+		if (StringUtil.isNullOrEmpty(body))
+		{
+			return objs;
+		}
+
 		CollectionType collectionType = TypeFactory.defaultInstance().constructCollectionType(ArrayList.class, elementType);
+		String toParse = null;
 
 		try
 		{
@@ -200,12 +213,19 @@ public class ParserUtil
 			if (total != null)
 			{
 				JsonNode results = node.get("results");
-				objs = getObjectMapper().readValue(results.toString(), collectionType);
-				log.debug(String.format("Parsed string to %s objects", total));
+				toParse = results.toString();
+				log.debug(String.format("Parsing string to %s objects", total));
 			} else
 			{
-				objs = getObjectMapper().readValue(body, collectionType);
+				if (ApiKey.class.equals(elementType))
+				{
+					JsonNode results = node.get("keys");
+					toParse = results.toString();
+				}
+				toParse = body;
 			}
+
+			objs = getObjectMapper().readValue(toParse, collectionType);
 		} catch (IOException e)
 		{
 			throw new ParseToObjectException(String.format("Unable to parse [%s] to %s.", body, elementType), e);

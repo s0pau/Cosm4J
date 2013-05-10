@@ -94,7 +94,7 @@ public class ApiKeyRequesterTest
 		permissions2.add(p3);
 		apiKey2.setPermissions(permissions2);
 
-		requester = new ApiKeyRequesterImpl();
+		requester = CosmService.instance().apiKey();
 		apiKey1 = requester.create(apiKey1);
 	}
 
@@ -130,7 +130,7 @@ public class ApiKeyRequesterTest
 	}
 
 	@Test
-	public void testCreate()
+	public void testCreateAndList()
 	{
 		try
 		{
@@ -144,6 +144,18 @@ public class ApiKeyRequesterTest
 		} catch (HttpException e)
 		{
 			fail("failed on requesting to create a apiKey");
+		}
+
+		try
+		{
+			Collection<ApiKey> retvals = requester.list();
+
+			assertTrue(retvals.contains(apiKey1));
+			assertTrue(retvals.contains(apiKey2));
+
+		} catch (HttpException e)
+		{
+			fail("failed on requesting to list apiKey");
 		}
 	}
 
